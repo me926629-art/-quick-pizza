@@ -22,7 +22,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
     const count = await Category.countDocuments();
     if (count === 0) {
       console.log('Empty database detected, running seed...');
-      require('./seed');
+      const seed = require('./seed');
+      await seed();
     }
   })
   .catch(err => console.error('MongoDB error:', err));
