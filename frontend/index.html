@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#d32f2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>كويك بيتزا | Quick Pizza</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo-wrap">
+        <div class="splash-pizza-wrap">
+          <div class="splash-pizza">🍕</div>
+          <div class="splash-ring"></div>
+          <div class="splash-ring splash-ring-2"></div>
+        </div>
+      </div>
+      <h1 class="splash-title">كويك بيتزا</h1>
+      <p class="splash-subtitle">QUICK PIZZA</p>
+      <div class="splash-loader">
+        <div class="loader-dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeAuthModal()"></div>
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      
+      <div id="login-form" class="auth-form">
+        <div class="auth-header">
+          <div class="auth-avatar">👋</div>
+          <h2>أهلاً بيك تاني!</h2>
+          <p>سجل دخولك عشان تكمل طلبك</p>
+        </div>
+        <form onsubmit="handleLogin(event)">
+          <div class="input-group">
+            <span class="input-icon">📧</span>
+            <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-password" placeholder="كلمة المرور" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">تسجيل الدخول</button>
+        </form>
+        <div class="auth-footer">
+          <p>مش عندك حساب؟ <a onclick="showRegister()">سجل الآن</a></p>
+        </div>
+      </div>
+
+      <div id="register-form" class="auth-form hidden">
+        <div class="auth-header">
+          <div class="auth-avatar">🎉</div>
+          <h2>اعمل حساب جديد</h2>
+          <p>ابدأ تطلب من كويك بيتزا</p>
+        </div>
+        <form onsubmit="handleRegister(event)">
+          <div class="input-group">
+            <span class="input-icon">👤</span>
+            <input type="text" id="reg-name" placeholder="الاسم الكامل" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">📧</span>
+            <input type="email" id="reg-email" placeholder="البريد الإلكتروني" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">📱</span>
+            <input type="tel" id="reg-phone" placeholder="رقم الموبايل" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-password" placeholder="كلمة المرور (6 أحرف على الأقل)" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">إنشاء حساب</button>
+        </form>
+        <div class="auth-footer">
+          <p>عندك حساب؟ <a onclick="showLogin()">سجل دخول</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div id="product-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeProductModal()"></div>
+    <div class="modal-sheet product-sheet">
+      <div class="sheet-handle"></div>
+      <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+      <div id="product-detail"></div>
+    </div>
+  </div>
+
+  <!-- Address Modal -->
+  <div id="address-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeAddressModal()"></div>
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <h3 style="text-align:center;margin-bottom:20px;font-weight:800">📍 عنوان التوصيل</h3>
+      <form onsubmit="saveAddress(event)">
+        <div class="input-group">
+          <span class="input-icon">🏙️</span>
+          <input type="text" id="addr-city" placeholder="المدينة" required>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🏘️</span>
+          <input type="text" id="addr-district" placeholder="الحي / المنطقة" required>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🛣️</span>
+          <input type="text" id="addr-street" placeholder="الشارع" required>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🏢</span>
+          <input type="text" id="addr-building" placeholder="رقم المبنى / العمارة" required>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="input-group">
+            <span class="input-icon">🚪</span>
+            <input type="text" id="addr-floor" placeholder="الدور">
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🏠</span>
+            <input type="text" id="addr-apartment" placeholder="الشقة">
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">📝</span>
+          <input type="text" id="addr-location" placeholder="وصف أقرب نقطة معلم">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">حفظ العنوان</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Product Form Modal -->
+  <div id="product-form-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeProductFormModal()"></div>
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      <h3 style="text-align:center;margin-bottom:20px;font-weight:800" id="product-form-title">➕ إضافة منتج جديد</h3>
+      <form onsubmit="handleProductForm(event)">
+        <input type="hidden" id="pf-id">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="input-group">
+            <span class="input-icon">🏷️</span>
+            <input type="text" id="pf-name" placeholder="الاسم بالإنجليزي" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🏷️</span>
+            <input type="text" id="pf-nameAr" placeholder="الاسم بالعربي" required>
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">📝</span>
+          <input type="text" id="pf-desc" placeholder="الوصف بالإنجليزي">
+        </div>
+        <div class="input-group">
+          <span class="input-icon">📝</span>
+          <input type="text" id="pf-descAr" placeholder="الوصف بالعربي">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="input-group">
+            <span class="input-icon">💰</span>
+            <input type="number" id="pf-price" placeholder="السعر الأساسي" min="0" required>
+          </div>
+          <div class="input-group">
+            <span class="input-icon">📁</span>
+            <select id="pf-category" class="input-group select-input" required>
+              <option value="">اختر القسم</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+          <div class="input-group">
+            <span class="input-icon">⏱️</span>
+            <input type="number" id="pf-prepTime" placeholder="وقت التحضير (دقيقة)" min="0">
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🔥</span>
+            <input type="number" id="pf-calories" placeholder="السعرات" min="0">
+          </div>
+          <div class="input-group">
+            <span class="input-icon">🌶️</span>
+            <select id="pf-spicy" class="input-group select-input">
+              <option value="0">بدون حار</option>
+              <option value="1">حار</option>
+              <option value="2">حار جداً</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-icon">🏷️</span>
+          <input type="text" id="pf-tags" placeholder="التصنيفات (مفصولة بفاصلة)">
+        </div>
+        <div style="display:flex;gap:12px;margin:12px 0">
+          <label class="check-label"><input type="checkbox" id="pf-featured"> ⭐ مميز</label>
+          <label class="check-label"><input type="checkbox" id="pf-popular"> 🔥 الأكثر مبيعاً</label>
+          <label class="check-label"><input type="checkbox" id="pf-available" checked> ✅ متاح</label>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1" id="pf-submit-btn">حفظ المنتج</button>
+          <button type="button" class="btn btn-outline btn-lg" onclick="closeProductFormModal()">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile Page (as modal) -->
+  <div id="profile-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeProfileModal()"></div>
+    <div class="modal-sheet profile-sheet">
+      <div class="sheet-handle"></div>
+      <div id="profile-content"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-content">
+      <div class="header-logo" onclick="navigateTo('home')">
+        <div class="logo-icon-wrap">
+          <span class="logo-emoji">🍕</span>
+        </div>
+        <div class="logo-text">
+          <h1>كويك بيتزا</h1>
+          <span>QUICK PIZZA</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="search-toggle" id="search-toggle" onclick="toggleSearch()">
+          <span>🔍</span>
+        </div>
+        <button class="header-icon-btn location-btn" onclick="openAddressModal()">
+          <span>📍</span>
+          <span class="location-label" id="location-label">اختر العنوان</span>
+        </button>
+        <button class="header-icon-btn cart-btn" onclick="navigateTo('cart')" id="cart-header-btn">
+          <span>🛒</span>
+          <span class="badge" id="cart-count">0</span>
+        </button>
+        <button class="header-icon-btn profile-btn" id="auth-btn" onclick="handleAuthClick()">
+          <span>👤</span>
+        </button>
+        <button class="header-icon-btn mobile-menu-btn" onclick="toggleMobileMenu()">
+          <span>☰</span>
+        </button>
+      </div>
+    </div>
+    <!-- Search Bar (expandable) -->
+    <div class="search-expand hidden" id="search-expand">
+      <div class="search-expand-inner">
+        <span>🔍</span>
+        <input type="text" id="search-input" placeholder="ابحث عن بيتزا، فطاير، مشروبات..." oninput="handleSearch(this.value)">
+        <button onclick="toggleSearch()">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-menu hidden" id="mobile-menu">
+    <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-header">
+        <div class="mobile-logo">
+          <span>🍕</span>
+          <div>
+            <h2>كويك بيتزا</h2>
+            <small>Quick Pizza</small>
+          </div>
+        </div>
+      </div>
+      <nav class="mobile-nav-list">
+        <a class="mobile-nav-item" onclick="navigateTo('home'); toggleMobileMenu()">
+          <span class="mnav-icon">🏠</span><span>الرئيسية</span>
+        </a>
+        <a class="mobile-nav-item" onclick="navigateTo('menu'); toggleMobileMenu()">
+          <span class="mnav-icon">📋</span><span>القائمة</span>
+        </a>
+        <a class="mobile-nav-item" onclick="navigateTo('cart'); toggleMobileMenu()">
+          <span class="mnav-icon">🛒</span><span>سلة الطلب</span>
+        </a>
+        <a class="mobile-nav-item" onclick="navigateTo('orders'); toggleMobileMenu()">
+          <span class="mnav-icon">📦</span><span>طلباتي</span>
+        </a>
+        <a class="mobile-nav-item" id="mobile-admin-link" onclick="navigateTo('admin'); toggleMobileMenu()" style="display:none">
+          <span class="mnav-icon">⚙️</span><span>لوحة التحكم</span>
+        </a>
+        <div class="mobile-nav-divider"></div>
+        <a class="mobile-nav-item" id="mobile-auth-link" onclick="handleAuthClick(); toggleMobileMenu()">
+          <span class="mnav-icon">👤</span><span>تسجيل الدخول</span>
+        </a>
+      </nav>
+      <div class="mobile-menu-footer">
+        <p>Quick Pizza v2.0</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content" id="main-content">
+
+    <!-- HOME PAGE -->
+    <section id="page-home" class="page active">
+      <!-- Hero Slider -->
+      <div class="hero-section">
+        <div class="hero-slider" id="hero-slider">
+          <div class="hero-slide active" data-bg="red">
+            <div class="hero-content">
+              <span class="hero-badge hot">🔥 العرض الحار</span>
+              <h2>بيتزا بيبروني</h2>
+              <p>خصم 20% على كل البيtzas الكبيرة</p>
+              <button class="btn btn-white" onclick="navigateTo('menu')">اطلب الآن</button>
+            </div>
+            <div class="hero-visual">
+              <div class="hero-emoji-float">🍕</div>
+            </div>
+          </div>
+          <div class="hero-slide" data-bg="blue">
+            <div class="hero-content">
+              <span class="hero-badge star">⭐ الأكثر طلباً</span>
+              <h2>كومبو عائلي</h2>
+              <p>2 بيتزا + بطاطس + أجنحة + مشروبات</p>
+              <button class="btn btn-white" onclick="navigateTo('menu')">اطلب الآن</button>
+            </div>
+            <div class="hero-visual">
+              <div class="hero-emoji-float">🍽️</div>
+            </div>
+          </div>
+          <div class="hero-slide" data-bg="green">
+            <div class="hero-content">
+              <span class="hero-badge new">🆕 جديد</span>
+              <h2>فطاير طازجة</h2>
+              <p>فطاير تقليدية معمولة كل يوم</p>
+              <button class="btn btn-white" onclick="navigateTo('menu')">اطلب الآن</button>
+            </div>
+            <div class="hero-visual">
+              <div class="hero-emoji-float">🫓</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-dots" id="hero-dots"></div>
+        <div class="hero-progress"><div class="hero-progress-bar" id="hero-progress"></div></div>
+      </div>
+
+      <!-- Quick Categories -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">الأقسام</h2>
+            <p class="section-subtitle">تصفح حسب القسم</p>
+          </div>
+        </div>
+        <div class="categories-row" id="home-categories"></div>
+      </section>
+
+      <!-- Featured Products -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">⭐ المميزة</h2>
+            <p class="section-subtitle">اختياراتنا لك</p>
+          </div>
+          <a class="see-all-btn" onclick="navigateTo('menu')">عرض الكل →</a>
+        </div>
+        <div class="products-scroll" id="featured-products"></div>
+      </section>
+
+      <!-- Popular Products -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">🔥 الأكثر طلباً</h2>
+            <p class="section-subtitle">الأكثر من عند الناس</p>
+          </div>
+        </div>
+        <div class="products-scroll" id="popular-products"></div>
+      </section>
+
+      <!-- Promo Banner -->
+      <section class="section">
+        <div class="promo-banner">
+          <div class="promo-content">
+            <span class="promo-tag">🎉 عرض خاص</span>
+            <h3>توصيل مجاني على أول طلب</h3>
+            <p>استخدم الكود: <strong>FREEQP</strong></p>
+          </div>
+          <div class="promo-emoji">🛵</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- MENU PAGE -->
+    <section id="page-menu" class="page">
+      <div class="menu-container">
+        <div class="menu-sidebar-scroll" id="menu-sidebar"></div>
+        <div class="menu-main">
+          <div class="menu-top-bar">
+            <h2 id="menu-title">القائمة</h2>
+            <div class="menu-filter-pills">
+              <button class="pill active" onclick="filterProducts('all', this)">الكل</button>
+              <button class="pill" onclick="filterProducts('popular', this)">🔥 الأكثر مبيعاً</button>
+              <button class="pill" onclick="filterProducts('new', this)">🆕 جديد</button>
+            </div>
+          </div>
+          <div class="products-grid" id="menu-products"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART PAGE -->
+    <section id="page-cart" class="page">
+      <div class="cart-page">
+        <div class="cart-header-bar">
+          <h2>🛒 سلة الطلب</h2>
+          <button class="btn-text danger" id="clear-cart-btn" onclick="clearCart()" style="display:none">مسح الكل</button>
+        </div>
+        
+        <!-- Empty Cart -->
+        <div id="empty-cart" class="empty-state">
+          <div class="empty-illustration">
+            <div class="empty-emoji">🛒</div>
+            <div class="empty-rings">
+              <div class="empty-ring"></div>
+              <div class="empty-ring empty-ring-2"></div>
+            </div>
+          </div>
+          <h3>السلة فاضية</h3>
+          <p>ambience عشان تبدأ تطلب أحلى أكل</p>
+          <button class="btn btn-primary btn-lg" onclick="navigateTo('menu')">تصفح القائمة</button>
+        </div>
+
+        <!-- Cart Content -->
+        <div id="cart-content" class="hidden">
+          <div class="cart-body">
+            <div class="cart-items-list" id="cart-items"></div>
+            <div class="cart-sidebar">
+              <!-- Delivery Address -->
+              <div class="cart-card" id="cart-address-card">
+                <div class="cart-card-header">
+                  <h4>📍 عنوان التوصيل</h4>
+                  <a class="btn-text" onclick="openAddressModal()">تغيير</a>
+                </div>
+                <p class="address-display" id="cart-address-display">اضغط هنا لتحديد العنوان</p>
+              </div>
+              <!-- Payment Method -->
+              <div class="cart-card">
+                <div class="cart-card-header">
+                  <h4>💳 طريقة الدفع</h4>
+                </div>
+                <div class="payment-options">
+                  <label class="payment-option active">
+                    <input type="radio" name="payment" value="cash" checked onchange="selectPayment(this)">
+                    <span class="payment-icon">💵</span>
+                    <span>كاش</span>
+                  </label>
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="card" onchange="selectPayment(this)">
+                    <span class="payment-icon">💳</span>
+                    <span>بطاقة</span>
+                  </label>
+                  <label class="payment-option">
+                    <input type="radio" name="payment" value="online" onchange="selectPayment(this)">
+                    <span class="payment-icon">📱</span>
+                    <span>أونلاين</span>
+                  </label>
+                </div>
+              </div>
+              <!-- Promo Code -->
+              <div class="cart-card">
+                <div class="promo-row">
+                  <input type="text" id="promo-input" placeholder="كود الخصم" class="promo-input">
+                  <button class="btn btn-outline btn-sm" onclick="applyPromo()">تطبيق</button>
+                </div>
+              </div>
+              <!-- Order Summary -->
+              <div class="cart-card summary-card">
+                <h4>ملخص الطلب</h4>
+                <div class="summary-line">
+                  <span>المجموع الفرعي</span>
+                  <span id="cart-subtotal">0 ج.م</span>
+                </div>
+                <div class="summary-line">
+                  <span>رسوم التوصيل</span>
+                  <span id="cart-delivery">15 ج.م</span>
+                </div>
+                <div class="summary-line">
+                  <span>الضريبة (14%)</span>
+                  <span id="cart-tax">0 ج.م</span>
+                </div>
+                <div class="summary-line discount hidden" id="discount-line">
+                  <span>الخصم</span>
+                  <span id="cart-discount">-0 ج.م</span>
+                </div>
+                <div class="summary-total">
+                  <span>الإجمالي</span>
+                  <span id="cart-total">0 ج.م</span>
+                </div>
+              </div>
+              <!-- Special Instructions -->
+              <div class="cart-card">
+                <h4>📝 ملاحظات خاصة</h4>
+                <textarea id="special-instructions" class="cart-textarea" placeholder="مثلاً: بدون بصل، صوص زيادة، بيتزا مشوية..."></textarea>
+              </div>
+              <button class="btn btn-primary btn-block btn-xl" onclick="placeOrder()" id="place-order-btn">
+                تأكيد الطلب
+                <span id="order-total-btn">0 ج.م</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS PAGE -->
+    <section id="page-orders" class="page">
+      <div class="page-container">
+        <div class="page-title-bar">
+          <h2>📦 طلباتي</h2>
+        </div>
+        <div id="orders-content">
+          <div id="empty-orders" class="empty-state">
+            <div class="empty-illustration">
+              <div class="empty-emoji">📦</div>
+            </div>
+            <h3>مفيش طلبات لسه</h3>
+            <p>ابدأ أول طلب ليك!</p>
+            <button class="btn btn-primary btn-lg" onclick="navigateTo('menu')">تصفح القائمة</button>
+          </div>
+          <div class="orders-list hidden" id="orders-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER TRACKING PAGE -->
+    <section id="page-tracking" class="page">
+      <div class="page-container">
+        <div id="tracking-content"></div>
+      </div>
+    </section>
+
+    <!-- ADMIN PAGE -->
+    <section id="page-admin" class="page">
+      <div class="page-container">
+        <div class="admin-header-bar">
+          <div>
+            <h2>⚙️ لوحة التحكم</h2>
+            <p class="admin-subtitle" id="admin-updated-at">آخر تحديث: --</p>
+          </div>
+          <div class="admin-header-actions">
+            <button class="btn btn-primary btn-sm" onclick="window.open('/orders.html', '_blank')">🖥️ شاشة الطلبات</button>
+            <button class="btn btn-outline btn-sm" onclick="loadAdminDashboard()">🔄 تحديث</button>
+            <label class="check-label" style="font-size:13px">
+              <input type="checkbox" id="admin-auto-refresh" checked onchange="toggleAdminAutoRefresh()"> تحديث تلقائي
+            </label>
+          </div>
+        </div>
+        <div class="admin-layout">
+          <div class="admin-tabs">
+            <button class="admin-tab active" onclick="showAdminSection('dashboard', this)">📊 لوحة المعلومات</button>
+            <button class="admin-tab" onclick="showAdminSection('orders', this)">📦 الطلبات</button>
+            <button class="admin-tab" onclick="showAdminSection('products', this)">🍕 المنتجات</button>
+          </div>
+          <div class="admin-content" id="admin-content"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER MANAGER PAGE (KDS) -->
+    <section id="page-order-manager" class="page">
+      <div class="om-container">
+        <!-- Top Bar -->
+        <div class="om-topbar">
+          <div class="om-topbar-left">
+            <button class="om-back-btn" onclick="navigateTo('admin')">→ رجوع</button>
+            <div class="om-logo"><span>🍕</span> كويك بيتزا</div>
+          </div>
+          <div class="om-topbar-center">
+            <div class="om-clock" id="om-clock"></div>
+          </div>
+          <div class="om-topbar-right">
+            <div class="om-live-dot"></div>
+            <span id="om-status-text">متصل</span>
+            <label class="om-toggle">
+              <input type="checkbox" id="om-auto-toggle" checked onchange="toggleOMAutoRefresh()">
+              <span class="om-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="om-stats-strip" id="om-stats-strip"></div>
+
+        <!-- Filter Tabs -->
+        <div class="om-filters" id="om-filters">
+          <button class="om-filter active" onclick="omFilterOrders('all', this)">
+            <span class="om-filter-count" id="om-count-all">0</span> الكل
+          </button>
+          <button class="om-filter om-filter-pending" onclick="omFilterOrders('pending', this)">
+            <span class="om-filter-count" id="om-count-pending">0</span> جديد
+          </button>
+          <button class="om-filter om-filter-active" onclick="omFilterOrders('active', this)">
+            <span class="om-filter-count" id="om-count-active">0</span> قيد التنفيذ
+          </button>
+          <button class="om-filter om-filter-done" onclick="omFilterOrders('delivered', this)">
+            <span class="om-filter-count" id="om-count-delivered">0</span> موصلاة
+          </button>
+        </div>
+
+        <!-- Orders Grid -->
+        <div class="om-orders-grid" id="om-orders-grid"></div>
+
+        <!-- Empty State -->
+        <div class="om-empty" id="om-empty">
+          <div class="om-empty-icon">📭</div>
+          <h3>مفيش طلبات حالياً</h3>
+          <p>الطلبات الجديدة هتظهر هنا تلقائي</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="bnav-item active" onclick="navigateTo('home')" data-page="home">
+      <div class="bnav-icon">🏠</div>
+      <small>الرئيسية</small>
+    </button>
+    <button class="bnav-item" onclick="navigateTo('menu')" data-page="menu">
+      <div class="bnav-icon">📋</div>
+      <small>القائمة</small>
+    </button>
+    <button class="bnav-item bnav-cart" onclick="navigateTo('cart')" data-page="cart">
+      <div class="bnav-icon cart-icon-wrap">
+        🛒
+        <span class="bnav-badge" id="bottom-cart-count">0</span>
+      </div>
+      <small>السلة</small>
+    </button>
+    <button class="bnav-item" onclick="navigateTo('orders')" data-page="orders">
+      <div class="bnav-icon">📦</div>
+      <small>طلباتي</small>
+    </button>
+    <button class="bnav-item" onclick="handleAuthClick()" data-page="profile">
+      <div class="bnav-icon">👤</div>
+      <small>حسابي</small>
+    </button>
+  </nav>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شاشة الطلبات | كويك بيتزا</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Cairo', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+
+    .login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .login-box {
+      background: #161b22; border: 1px solid #30363d; border-radius: 16px;
+      padding: 40px 32px; width: 100%; max-width: 400px; text-align: center;
+    }
+    .login-box h1 { font-size: 28px; margin-bottom: 6px; }
+    .login-box h1 span { font-size: 36px; }
+    .login-box p { color: #8b949e; margin-bottom: 28px; font-size: 14px; }
+    .login-input {
+      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #30363d;
+      background: #0d1117; color: #e6edf3; font-family: 'Cairo'; font-size: 15px;
+      margin-bottom: 12px; outline: none; transition: border 0.2s;
+    }
+    .login-input:focus { border-color: #1f6feb; }
+    .login-btn {
+      width: 100%; padding: 14px; border-radius: 10px; border: none;
+      background: #238636; color: #fff; font-family: 'Cairo'; font-size: 16px;
+      font-weight: 800; cursor: pointer; transition: background 0.2s; margin-top: 8px;
+    }
+    .login-btn:hover { background: #2ea043; }
+    .login-btn:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+    .login-error { color: #f85149; font-size: 13px; margin-top: 10px; display: none; }
+
+    .om-container { display: none; min-height: 100vh; flex-direction: column; }
+    .om-container.active { display: flex; }
+    .login-screen.hidden { display: none; }
+
+    .om-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 24px; background: #161b22; border-bottom: 1px solid #30363d;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .om-topbar-left { display: flex; align-items: center; gap: 16px; }
+    .om-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 900; color: #fff; }
+    .om-logo span { font-size: 24px; }
+    .om-topbar-center { text-align: center; }
+    .om-clock { font-size: 28px; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+    .om-topbar-right { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #8b949e; }
+    .om-live-dot { width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: omPulse 2s ease-in-out infinite; }
+    @keyframes omPulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,185,80,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(63,185,80,0); } }
+    .om-toggle { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
+    .om-toggle input { opacity: 0; width: 0; height: 0; }
+    .om-toggle-slider {
+      position: absolute; inset: 0; background: #21262d; border-radius: 12px;
+      border: 1px solid #30363d; transition: 0.2s;
+    }
+    .om-toggle-slider::before {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      border-radius: 50%; background: #8b949e; top: 2px; right: 2px; transition: 0.2s;
+    }
+    .om-toggle input:checked + .om-toggle-slider { background: #238636; border-color: #2ea043; }
+    .om-toggle input:checked + .om-toggle-slider::before { transform: translateX(-20px); background: #fff; }
+
+    .om-stats-strip {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+      background: #30363d; border-bottom: 1px solid #30363d;
+    }
+    .om-stat-item { background: #161b22; padding: 16px 20px; text-align: center; }
+    .om-stat-num { font-size: 32px; font-weight: 900; line-height: 1; }
+    .om-stat-label { font-size: 12px; color: #8b949e; margin-top: 4px; font-weight: 600; }
+    .om-stat-item.s-pending .om-stat-num { color: #f0883e; }
+    .om-stat-item.s-preparing .om-stat-num { color: #a371f7; }
+    .om-stat-item.s-ready .om-stat-num { color: #3fb950; }
+    .om-stat-item.s-delivered .om-stat-num { color: #8b949e; }
+    .om-stat-item.s-revenue .om-stat-num { color: #58a6ff; }
+
+    .om-filters {
+      display: flex; gap: 8px; padding: 14px 24px; background: #0d1117;
+      border-bottom: 1px solid #21262d; overflow-x: auto; flex-shrink: 0;
+    }
+    .om-filter {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 20px; border: 1px solid #30363d;
+      background: #161b22; color: #8b949e; font-family: 'Cairo';
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: 0.15s; white-space: nowrap;
+    }
+    .om-filter:hover { border-color: #58a6ff; color: #e6edf3; }
+    .om-filter.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+    .om-filter-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 24px; height: 24px; border-radius: 12px; font-size: 12px;
+      font-weight: 900; padding: 0 6px;
+    }
+    .om-filter.active .om-filter-count { background: rgba(255,255,255,0.2); }
+    .om-filter:not(.active) .om-filter-count { background: #21262d; color: #8b949e; }
+    .om-filter-pending .om-filter-count { color: #f0883e; }
+    .om-filter-active .om-filter-count { color: #a371f7; }
+    .om-filter-done .om-filter-count { color: #3fb950; }
+
+    .om-orders-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px; padding: 20px 24px; flex: 1; overflow-y: auto;
+    }
+    .om-card {
+      background: #161b22; border: 1px solid #30363d; border-radius: 12px;
+      overflow: hidden; transition: 0.15s; display: flex; flex-direction: column;
+      animation: omCardIn 0.3s ease-out;
+    }
+    @keyframes omCardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .om-card:hover { border-color: #484f58; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .om-card-top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; border-bottom: 1px solid #21262d;
+    }
+    .om-card-order { font-size: 16px; font-weight: 900; color: #fff; }
+    .om-card-time { font-size: 13px; color: #8b949e; display: flex; align-items: center; gap: 6px; }
+    .om-card-timer { font-weight: 800; font-variant-numeric: tabular-nums; }
+    .om-card-timer.timer-warning { color: #f0883e; }
+    .om-card-timer.timer-danger { color: #f85149; }
+    .om-card-status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+    .om-status-pending { background: #f0883e22; color: #f0883e; }
+    .om-status-confirmed { background: #58a6ff22; color: #58a6ff; }
+    .om-status-preparing { background: #a371f722; color: #a371f7; }
+    .om-status-ready { background: #3fb95022; color: #3fb950; }
+    .om-status-out_for_delivery { background: #3fb95022; color: #3fb950; }
+    .om-status-delivered { background: #8b949e22; color: #8b949e; }
+    .om-status-cancelled { background: #f8514922; color: #f85149; }
+
+    .om-card-body { padding: 14px 16px; flex: 1; }
+    .om-card-customer { font-size: 14px; font-weight: 700; color: #e6edf3; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .om-card-items { display: flex; flex-direction: column; gap: 6px; }
+    .om-card-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px; background: #0d1117; border-radius: 8px; font-size: 13px;
+    }
+    .om-card-item-name { color: #e6edf3; font-weight: 600; }
+    .om-card-item-qty { color: #8b949e; font-weight: 800; font-size: 12px; }
+    .om-card-item-price { color: #58a6ff; font-weight: 700; font-size: 13px; }
+    .om-card-note { margin-top: 10px; padding: 8px 10px; background: #f0883e15; border: 1px solid #f0883e33; border-radius: 8px; font-size: 12px; color: #f0883e; }
+    .om-card-addr { margin-top: 8px; font-size: 12px; color: #8b949e; display: flex; align-items: center; gap: 4px; }
+    .om-card-footer { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #21262d; }
+    .om-card-total { font-size: 18px; font-weight: 900; color: #3fb950; margin-right: auto; display: flex; align-items: center; }
+    .om-action-btn {
+      flex: 1; padding: 10px 8px; border-radius: 8px; border: none;
+      font-family: 'Cairo'; font-size: 14px; font-weight: 800;
+      cursor: pointer; transition: 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .om-action-btn:active { transform: scale(0.96); }
+    .om-btn-confirm { background: #238636; color: #fff; }
+    .om-btn-confirm:hover { background: #2ea043; }
+    .om-btn-prepare { background: #8957e5; color: #fff; }
+    .om-btn-prepare:hover { background: #a371f7; }
+    .om-btn-ready { background: #1f6feb; color: #fff; }
+    .om-btn-ready:hover { background: #58a6ff; }
+    .om-btn-deliver { background: #3fb950; color: #fff; }
+    .om-btn-deliver:hover { background: #56d364; }
+    .om-btn-cancel { background: #21262d; color: #f85149; border: 1px solid #f8514933; }
+    .om-btn-cancel:hover { background: #f8514922; }
+
+    .om-empty {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 80px 20px; text-align: center; color: #8b949e;
+    }
+    .om-empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+    .om-empty h3 { font-size: 20px; font-weight: 800; color: #e6edf3; margin-bottom: 6px; }
+
+    .om-card.pulse-new { animation: omCardPulse 0.6s ease-out; }
+    @keyframes omCardPulse {
+      0% { box-shadow: 0 0 0 0 rgba(240,136,62,0.5); }
+      70% { box-shadow: 0 0 0 12px rgba(240,136,62,0); }
+      100% { box-shadow: 0 0 0 0 rgba(240,136,62,0); }
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1f6feb; color: #fff; padding: 12px 24px; border-radius: 10px;
+      font-family: 'Cairo'; font-size: 14px; font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999;
+      animation: toastIn 0.3s ease-out;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    @media (max-width: 768px) {
+      .om-stats-strip { grid-template-columns: repeat(3, 1fr); }
+      .om-orders-grid { grid-template-columns: 1fr; padding: 12px; }
+      .om-topbar { padding: 10px 16px; }
+      .om-clock { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <h1><span>🍕</span> كويك بيتزا</h1>
+      <p>شاشة إدارة الطلبات</p>
+      <input type="email" class="login-input" id="login-email" placeholder="البريد الإلكتروني" value="admin@quickpizza.com">
+      <input type="password" class="login-input" id="login-password" placeholder="كلمة المرور" value="admin123">
+      <button class="login-btn" id="login-btn" onclick="doLogin()">دخول</button>
+      <div class="login-error" id="login-error">بيانات الدخول غلط</div>
+    </div>
+  </div>
+
+  <!-- Order Manager -->
+  <div class="om-container" id="om-container">
+    <div class="om-topbar">
+      <div class="om-topbar-left">
+        <div class="om-logo"><span>🍕</span> كويك بيتزا — شاشة الطلبات</div>
+      </div>
+      <div class="om-topbar-center">
+        <div class="om-clock" id="om-clock"></div>
+      </div>
+      <div class="om-topbar-right">
+        <div class="om-live-dot"></div>
+        <span>مباشر</span>
+        <label class="om-toggle">
+          <input type="checkbox" id="om-auto-toggle" checked onchange="toggleAuto()">
+          <span class="om-toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="om-stats-strip" id="om-stats"></div>
+
+    <div class="om-filters" id="om-filters">
+      <button class="om-filter active" onclick="filterOrders('all', this)">
+        <span class="om-filter-count" id="om-count-all">0</span> الكل
+      </button>
+      <button class="om-filter om-filter-pending" onclick="filterOrders('pending', this)">
+        <span class="om-filter-count" id="om-count-pending">0</span> جديد
+      </button>
+      <button class="om-filter om-filter-active" onclick="filterOrders('active', this)">
+        <span class="om-filter-count" id="om-count-active">0</span> قيد التنفيذ
+      </button>
+      <button class="om-filter om-filter-done" onclick="filterOrders('delivered', this)">
+        <span class="om-filter-count" id="om-count-delivered">0</span> موصلاة
+      </button>
+    </div>
+
+    <div class="om-orders-grid" id="om-grid"></div>
+    <div class="om-empty" id="om-empty">
+      <div class="om-empty-icon">📭</div>
+      <h3>مفيش طلبات حالياً</h3>
+      <p>الطلبات الجديدة هتظهر هنا تلقائي</p>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script>
+    const API = '';
+    let token = localStorage.getItem('om_token');
+    let autoRefresh = null;
+    let clockInterval = null;
+    let currentFilter = 'all';
+    let prevOrders = [];
+    let audioCtx = null;
+
+    // Auto-login if token exists
+    if (token) showManager();
+
+    function getHeaders() {
+      return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+    }
+
+    async function apiGet(url) {
+      const res = await fetch(API + url, { headers: getHeaders() });
+      if (!res.ok) throw new Error('Error');
+      return res.json();
+    }
+
+    async function apiPut(url, data) {
+      const res = await fetch(API + url, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) });
+      if (!res.ok) throw new Error('Error');
+      return res.json();
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true; btn.textContent = 'جاري الدخول...';
+      try {
+        const data = await fetch(API + '/api/auth/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password: pass })
+        }).then(r => r.json());
+        if (!data.token) throw new Error();
+        token = data.token;
+        localStorage.setItem('om_token', token);
+        showManager();
+      } catch (e) {
+        document.getElementById('login-error').style.display = 'block';
+      } finally {
+        btn.disabled = false; btn.textContent = 'دخول';
+      }
+    }
+
+    function showManager() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('om-container').classList.add('active');
+      startClock();
+      startAutoRefresh();
+      loadOrders();
+    }
+
+    function startClock() {
+      if (clockInterval) clearInterval(clockInterval);
+      function tick() {
+        document.getElementById('om-clock').textContent = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+      tick();
+      clockInterval = setInterval(tick, 1000);
+    }
+
+    function startAutoRefresh() {
+      if (autoRefresh) clearInterval(autoRefresh);
+      if (document.getElementById('om-auto-toggle').checked) {
+        autoRefresh = setInterval(() => loadOrders(), 8000);
+      }
+    }
+
+    function toggleAuto() {
+      if (document.getElementById('om-auto-toggle').checked) startAutoRefresh();
+      else { clearInterval(autoRefresh); autoRefresh = null; }
+    }
+
+    function playSound() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = 800; o.type = 'sine';
+        g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        o.start(); o.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {}
+    }
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.remove('hidden');
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+
+    function filterOrders(filter, el) {
+      currentFilter = filter;
+      document.querySelectorAll('.om-filter').forEach(f => f.classList.remove('active'));
+      if (el) el.classList.add('active');
+      loadOrders();
+    }
+
+    async function loadOrders() {
+      try {
+        const allOrders = await apiGet('/api/orders/all');
+        const orders = allOrders.orders || [];
+
+        // Check for new orders
+        const newPending = orders.filter(o => o.status === 'pending').length;
+        const oldPending = prevOrders.filter(o => o.status === 'pending').length;
+        if (newPending > oldPending && prevOrders.length > 0) playSound();
+        prevOrders = [...orders];
+
+        const pending = orders.filter(o => o.status === 'pending');
+        const confirmed = orders.filter(o => o.status === 'confirmed');
+        const preparing = orders.filter(o => o.status === 'preparing');
+        const ready = orders.filter(o => o.status === 'ready');
+        const outDelivery = orders.filter(o => o.status === 'out_for_delivery');
+        const delivered = orders.filter(o => o.status === 'delivered');
+        const cancelled = orders.filter(o => o.status === 'cancelled');
+        const active = [...confirmed, ...preparing, ...ready, ...outDelivery];
+        const revenue = delivered.reduce((s, o) => s + o.total, 0);
+
+        document.getElementById('om-count-all').textContent = orders.length;
+        document.getElementById('om-count-pending').textContent = pending.length;
+        document.getElementById('om-count-active').textContent = active.length;
+        document.getElementById('om-count-delivered').textContent = delivered.length;
+
+        document.getElementById('om-stats').innerHTML = `
+          <div class="om-stat-item s-pending"><div class="om-stat-num">${pending.length}</div><div class="om-stat-label">جديد</div></div>
+          <div class="om-stat-item s-preparing"><div class="om-stat-num">${confirmed.length + preparing.length}</div><div class="om-stat-label">تحضير</div></div>
+          <div class="om-stat-item s-ready"><div class="om-stat-num">${ready.length + outDelivery.length}</div><div class="om-stat-label">جاهز / توصيل</div></div>
+          <div class="om-stat-item s-delivered"><div class="om-stat-num">${delivered.length}</div><div class="om-stat-label">تم التوصيل</div></div>
+          <div class="om-stat-item s-revenue"><div class="om-stat-num">${revenue} ج</div><div class="om-stat-label">إيرادات</div></div>
+        `;
+
+        let filtered;
+        switch (currentFilter) {
+          case 'pending': filtered = pending; break;
+          case 'active': filtered = active; break;
+          case 'delivered': filtered = delivered; break;
+          default: filtered = orders.filter(o => o.status !== 'cancelled'); break;
+        }
+
+        const grid = document.getElementById('om-grid');
+        const empty = document.getElementById('om-empty');
+
+        if (filtered.length === 0) {
+          grid.classList.add('hidden');
+          empty.style.display = 'flex';
+        } else {
+          grid.classList.remove('hidden');
+          empty.style.display = 'none';
+          grid.innerHTML = filtered.map(o => orderCard(o)).join('');
+        }
+      } catch (e) {
+        console.error('Load error:', e);
+      }
+    }
+
+    function orderCard(order) {
+      const s = {
+        pending: { label: 'جديد', cls: 'om-status-pending', next: 'confirmed', btn: '✅ تأكيد', bc: 'om-btn-confirm' },
+        confirmed: { label: 'مؤكد', cls: 'om-status-confirmed', next: 'preparing', btn: '👨‍🍳 تحضير', bc: 'om-btn-prepare' },
+        preparing: { label: 'قيد التحضير', cls: 'om-status-preparing', next: 'ready', btn: '📦 جاهز', bc: 'om-btn-ready' },
+        ready: { label: 'جاهز', cls: 'om-status-ready', next: 'out_for_delivery', btn: '🚗 توصيل', bc: 'om-btn-deliver' },
+        out_for_delivery: { label: 'في الطريق', cls: 'om-status-out_for_delivery', next: 'delivered', btn: '🎉 تم التوصيل', bc: 'om-btn-deliver' },
+        delivered: { label: 'تم التوصيل', cls: 'om-status-delivered', next: null },
+        cancelled: { label: 'ملغي', cls: 'om-status-cancelled', next: null }
+      }[order.status] || { label: order.status, cls: '', next: null };
+
+      const elapsed = Math.floor((Date.now() - new Date(order.createdAt)) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const tc = mins > 30 ? 'timer-danger' : mins > 15 ? 'timer-warning' : '';
+      const a = order.deliveryAddress || {};
+
+      return `
+        <div class="om-card ${order.status === 'pending' ? 'pulse-new' : ''}">
+          <div class="om-card-top">
+            <div>
+              <div class="om-card-order">#${order.orderNumber}</div>
+              <div class="om-card-time">
+                <span class="om-card-timer ${tc}">${mins} دقيقة</span>
+                <span>•</span>
+                <span>${new Date(order.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </div>
+            <span class="om-card-status ${s.cls}">${s.label}</span>
+          </div>
+          <div class="om-card-body">
+            <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'}</div>
+            <div class="om-card-items">
+              ${order.items.map(i => `
+                <div class="om-card-item">
+                  <span class="om-card-item-name">${i.nameAr || i.name}</span>
+                  <span class="om-card-item-qty">×${i.quantity}</span>
+                  <span class="om-card-item-price">${i.price * i.quantity} ج</span>
+                </div>
+              `).join('')}
+            </div>
+            ${order.specialInstructions ? `<div class="om-card-note">📝 ${order.specialInstructions}</div>` : ''}
+            <div class="om-card-addr">📍 ${[a.city, a.district, a.street, a.building].filter(Boolean).join('، ') || ''}</div>
+          </div>
+          <div class="om-card-footer">
+            <div class="om-card-total">${order.total} ج.م</div>
+            ${s.next ? `<button class="om-action-btn ${s.bc}" onclick="updateStatus('${order._id}', '${s.next}')">${s.btn}</button>` : ''}
+            ${order.status !== 'cancelled' && order.status !== 'delivered' ? `<button class="om-action-btn om-btn-cancel" onclick="updateStatus('${order._id}', 'cancelled')">✕</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        await apiPut('/api/orders/' + id + '/status', { status });
+        if (status === 'delivered' || status === 'cancelled') playSound();
+        loadOrders();
+        toast('تم التحديث ✅');
+      } catch (e) {
+        toast('خطأ في التحديث');
+      }
+    }
+
+    document.getElementById('login-password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+  </script>
+</body>
+</html>
