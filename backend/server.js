@@ -16,7 +16,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_pizza')
-  .then(() => console.log('MongoDB connected'))
+  .then(async () => {
+    console.log('MongoDB connected');
+    const Category = require('./models/Category');
+    const count = await Category.countDocuments();
+    if (count === 0) {
+      console.log('Empty database detected, running seed...');
+      require('./seed');
+    }
+  })
   .catch(err => console.error('MongoDB error:', err));
 
 app.use('/api/auth', require('./routes/auth'));
