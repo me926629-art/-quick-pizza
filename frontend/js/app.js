@@ -1711,3 +1711,23 @@ function showToast(message) {
   clearTimeout(toast._t);
   toast._t = setTimeout(() => toast.classList.add('hidden'), 3000);
 }
+
+// ===== BACKUP =====
+async function downloadBackup() {
+  try {
+    showToast('جاري تجهيز الباك أب...');
+    const token = localStorage.getItem('qp_token');
+    const res = await fetch('/api/backup', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Backup failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `quick-pizza-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('تم تحميل الباك أب ✅');
+  } catch (e) {
+    showToast('خطأ في الباك أب');
+  }
+}
