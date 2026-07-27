@@ -191,8 +191,8 @@
     <div class="login-box">
       <h1><span>🍕</span> كويك بيتزا</h1>
       <p>شاشة إدارة الطلبات</p>
-      <input type="email" class="login-input" id="login-email" placeholder="البريد الإلكتروني" value="admin@quickpizza.com">
-      <input type="password" class="login-input" id="login-password" placeholder="كلمة المرور" value="admin123">
+      <input type="email" class="login-input" id="login-email" placeholder="البريد الإلكتروني">
+      <input type="password" class="login-input" id="login-password" placeholder="كلمة المرور">
       <button class="login-btn" id="login-btn" onclick="doLogin()">دخول</button>
       <div class="login-error" id="login-error">بيانات الدخول غلط</div>
     </div>
@@ -213,6 +213,7 @@
           <input type="checkbox" id="om-auto-toggle" checked onchange="toggleAuto()">
           <span class="om-toggle-slider"></span>
         </label>
+        <button class="om-nav-btn" onclick="logout()" style="color:#f85149">🚪 خروج</button>
       </div>
     </div>
 
@@ -298,7 +299,7 @@
 
   <script>
     const API = '';
-    let token = localStorage.getItem('om_token');
+    let token = null;
     let autoRefresh = null;
     let clockInterval = null;
     let currentFilter = 'all';
@@ -308,7 +309,7 @@
     let allProducts = [];
     let activeTab = 'orders';
 
-    if (token) showManager();
+    // No auto-login - always require login
 
     function getHeaders() {
       const h = { 'Content-Type': 'application/json' };
@@ -352,7 +353,6 @@
         }).then(r => r.json());
         if (!data.token) throw new Error();
         token = data.token;
-        localStorage.setItem('om_token', token);
         showManager();
       } catch (e) {
         document.getElementById('login-error').style.display = 'block';
@@ -693,6 +693,16 @@
         toast('تم الحذف ✅');
         loadProducts();
       } catch (e) { toast('خطأ في الحذف'); }
+    }
+
+    function logout() {
+      token = null;
+      if (autoRefresh) { clearInterval(autoRefresh); autoRefresh = null; }
+      if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+      document.getElementById('om-container').classList.remove('active');
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-password').value = '';
     }
 
     document.getElementById('login-password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
