@@ -34,7 +34,9 @@
     .om-logo span { font-size: 24px; }
     .om-topbar-center { text-align: center; }
     .om-clock { font-size: 28px; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
-    .om-topbar-right { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #8b949e; }
+    .om-topbar-right { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #8b949e; }
+    .om-logout-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #f8514933; background: #f8514922; color: #f85149; font-family: 'Cairo'; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.15s; white-space: nowrap; }
+    .om-logout-btn:hover { background: #f8514944; border-color: #f85149; }
     .om-live-dot { width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: omPulse 2s ease-in-out infinite; }
     @keyframes omPulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,185,80,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(63,185,80,0); } }
     .om-toggle { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
@@ -213,7 +215,7 @@
           <input type="checkbox" id="om-auto-toggle" checked onchange="toggleAuto()">
           <span class="om-toggle-slider"></span>
         </label>
-        <button class="om-nav-btn" onclick="logout()" style="color:#f85149">🚪 خروج</button>
+        <button class="om-logout-btn" onclick="logout()">🚪 خروج</button>
       </div>
     </div>
 
