@@ -2,10 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const dotenv = require('dotenv');
 const envResult = dotenv.config({ path: require('path').join(__dirname, '.env') });
 if (envResult.error) console.log('dotenv warning:', envResult.error.message);
 console.log('JWT_SECRET loaded:', !!process.env.JWT_SECRET);
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
