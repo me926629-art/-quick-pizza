@@ -6,32 +6,20 @@
   <title>شاشة الطلبات | كويك بيتزا</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Cairo', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
 
-    .login-screen {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 20px;
-    }
-    .login-box {
-      background: #161b22; border: 1px solid #30363d; border-radius: 16px;
-      padding: 40px 32px; width: 100%; max-width: 400px; text-align: center;
-    }
+    .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .login-box { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 40px 32px; width: 100%; max-width: 400px; text-align: center; }
     .login-box h1 { font-size: 28px; margin-bottom: 6px; }
     .login-box h1 span { font-size: 36px; }
     .login-box p { color: #8b949e; margin-bottom: 28px; font-size: 14px; }
-    .login-input {
-      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #30363d;
-      background: #0d1117; color: #e6edf3; font-family: 'Cairo'; font-size: 15px;
-      margin-bottom: 12px; outline: none; transition: border 0.2s;
-    }
+    .login-input { width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #30363d; background: #0d1117; color: #e6edf3; font-family: 'Cairo'; font-size: 15px; margin-bottom: 12px; outline: none; transition: border 0.2s; }
     .login-input:focus { border-color: #1f6feb; }
-    .login-btn {
-      width: 100%; padding: 14px; border-radius: 10px; border: none;
-      background: #238636; color: #fff; font-family: 'Cairo'; font-size: 16px;
-      font-weight: 800; cursor: pointer; transition: background 0.2s; margin-top: 8px;
-    }
+    .login-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; background: #238636; color: #fff; font-family: 'Cairo'; font-size: 16px; font-weight: 800; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
     .login-btn:hover { background: #2ea043; }
     .login-btn:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
     .login-error { color: #f85149; font-size: 13px; margin-top: 10px; display: none; }
@@ -40,11 +28,7 @@
     .om-container.active { display: flex; }
     .login-screen.hidden { display: none; }
 
-    .om-topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 24px; background: #161b22; border-bottom: 1px solid #30363d;
-      position: sticky; top: 0; z-index: 100;
-    }
+    .om-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: #161b22; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100; }
     .om-topbar-left { display: flex; align-items: center; gap: 16px; }
     .om-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 900; color: #fff; }
     .om-logo span { font-size: 24px; }
@@ -55,21 +39,12 @@
     @keyframes omPulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,185,80,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(63,185,80,0); } }
     .om-toggle { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
     .om-toggle input { opacity: 0; width: 0; height: 0; }
-    .om-toggle-slider {
-      position: absolute; inset: 0; background: #21262d; border-radius: 12px;
-      border: 1px solid #30363d; transition: 0.2s;
-    }
-    .om-toggle-slider::before {
-      content: ''; position: absolute; width: 18px; height: 18px;
-      border-radius: 50%; background: #8b949e; top: 2px; right: 2px; transition: 0.2s;
-    }
+    .om-toggle-slider { position: absolute; inset: 0; background: #21262d; border-radius: 12px; border: 1px solid #30363d; transition: 0.2s; }
+    .om-toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #8b949e; top: 2px; right: 2px; transition: 0.2s; }
     .om-toggle input:checked + .om-toggle-slider { background: #238636; border-color: #2ea043; }
     .om-toggle input:checked + .om-toggle-slider::before { transform: translateX(-20px); background: #fff; }
 
-    .om-stats-strip {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
-      background: #30363d; border-bottom: 1px solid #30363d;
-    }
+    .om-stats-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: #30363d; border-bottom: 1px solid #30363d; }
     .om-stat-item { background: #161b22; padding: 16px 20px; text-align: center; }
     .om-stat-num { font-size: 32px; font-weight: 900; line-height: 1; }
     .om-stat-label { font-size: 12px; color: #8b949e; margin-top: 4px; font-weight: 600; }
@@ -79,45 +54,27 @@
     .om-stat-item.s-delivered .om-stat-num { color: #8b949e; }
     .om-stat-item.s-revenue .om-stat-num { color: #58a6ff; }
 
-    .om-filters {
-      display: flex; gap: 8px; padding: 14px 24px; background: #0d1117;
-      border-bottom: 1px solid #21262d; overflow-x: auto; flex-shrink: 0;
-    }
-    .om-filter {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 18px; border-radius: 20px; border: 1px solid #30363d;
-      background: #161b22; color: #8b949e; font-family: 'Cairo';
-      font-size: 14px; font-weight: 700; cursor: pointer;
-      transition: 0.15s; white-space: nowrap;
-    }
+    .om-nav { display: flex; gap: 4px; padding: 10px 24px; background: #161b22; border-bottom: 1px solid #30363d; }
+    .om-nav-btn { padding: 10px 20px; border-radius: 8px; border: none; background: transparent; color: #8b949e; font-family: 'Cairo'; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; }
+    .om-nav-btn:hover { background: #21262d; color: #e6edf3; }
+    .om-nav-btn.active { background: #1f6feb; color: #fff; }
+
+    .om-filters { display: flex; gap: 8px; padding: 14px 24px; background: #0d1117; border-bottom: 1px solid #21262d; overflow-x: auto; flex-shrink: 0; }
+    .om-filter { display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 20px; border: 1px solid #30363d; background: #161b22; color: #8b949e; font-family: 'Cairo'; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.15s; white-space: nowrap; }
     .om-filter:hover { border-color: #58a6ff; color: #e6edf3; }
     .om-filter.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
-    .om-filter-count {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 24px; height: 24px; border-radius: 12px; font-size: 12px;
-      font-weight: 900; padding: 0 6px;
-    }
+    .om-filter-count { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border-radius: 12px; font-size: 12px; font-weight: 900; padding: 0 6px; }
     .om-filter.active .om-filter-count { background: rgba(255,255,255,0.2); }
     .om-filter:not(.active) .om-filter-count { background: #21262d; color: #8b949e; }
     .om-filter-pending .om-filter-count { color: #f0883e; }
     .om-filter-active .om-filter-count { color: #a371f7; }
     .om-filter-done .om-filter-count { color: #3fb950; }
 
-    .om-orders-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px; padding: 20px 24px; flex: 1; overflow-y: auto;
-    }
-    .om-card {
-      background: #161b22; border: 1px solid #30363d; border-radius: 12px;
-      overflow: hidden; transition: 0.15s; display: flex; flex-direction: column;
-      animation: omCardIn 0.3s ease-out;
-    }
+    .om-orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; padding: 20px 24px; flex: 1; overflow-y: auto; }
+    .om-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; transition: 0.15s; display: flex; flex-direction: column; animation: omCardIn 0.3s ease-out; }
     @keyframes omCardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .om-card:hover { border-color: #484f58; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-    .om-card-top {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 16px; border-bottom: 1px solid #21262d;
-    }
+    .om-card-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid #21262d; }
     .om-card-order { font-size: 16px; font-weight: 900; color: #fff; }
     .om-card-time { font-size: 13px; color: #8b949e; display: flex; align-items: center; gap: 6px; }
     .om-card-timer { font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -133,12 +90,12 @@
     .om-status-cancelled { background: #f8514922; color: #f85149; }
 
     .om-card-body { padding: 14px 16px; flex: 1; }
-    .om-card-customer { font-size: 14px; font-weight: 700; color: #e6edf3; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .om-card-customer { font-size: 14px; font-weight: 700; color: #e6edf3; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .om-card-phone { font-size: 15px; font-weight: 900; color: #58a6ff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .om-card-phone a { color: #58a6ff; text-decoration: none; font-weight: 900; }
+    .om-card-phone a:hover { text-decoration: underline; }
     .om-card-items { display: flex; flex-direction: column; gap: 6px; }
-    .om-card-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 10px; background: #0d1117; border-radius: 8px; font-size: 13px;
-    }
+    .om-card-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #0d1117; border-radius: 8px; font-size: 13px; }
     .om-card-item-name { color: #e6edf3; font-weight: 600; }
     .om-card-item-qty { color: #8b949e; font-weight: 800; font-size: 12px; }
     .om-card-item-price { color: #58a6ff; font-weight: 700; font-size: 13px; }
@@ -146,12 +103,7 @@
     .om-card-addr { margin-top: 8px; font-size: 12px; color: #8b949e; display: flex; align-items: center; gap: 4px; }
     .om-card-footer { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid #21262d; }
     .om-card-total { font-size: 18px; font-weight: 900; color: #3fb950; margin-right: auto; display: flex; align-items: center; }
-    .om-action-btn {
-      flex: 1; padding: 10px 8px; border-radius: 8px; border: none;
-      font-family: 'Cairo'; font-size: 14px; font-weight: 800;
-      cursor: pointer; transition: 0.15s;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
+    .om-action-btn { flex: 1; padding: 10px 8px; border-radius: 8px; border: none; font-family: 'Cairo'; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .om-action-btn:active { transform: scale(0.96); }
     .om-btn-confirm { background: #238636; color: #fff; }
     .om-btn-confirm:hover { background: #2ea043; }
@@ -164,40 +116,77 @@
     .om-btn-cancel { background: #21262d; color: #f85149; border: 1px solid #f8514933; }
     .om-btn-cancel:hover { background: #f8514922; }
 
-    .om-empty {
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      padding: 80px 20px; text-align: center; color: #8b949e;
-    }
+    .om-empty { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; color: #8b949e; }
     .om-empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
     .om-empty h3 { font-size: 20px; font-weight: 800; color: #e6edf3; margin-bottom: 6px; }
-
     .om-card.pulse-new { animation: omCardPulse 0.6s ease-out; }
-    @keyframes omCardPulse {
-      0% { box-shadow: 0 0 0 0 rgba(240,136,62,0.5); }
-      70% { box-shadow: 0 0 0 12px rgba(240,136,62,0); }
-      100% { box-shadow: 0 0 0 0 rgba(240,136,62,0); }
-    }
+    @keyframes omCardPulse { 0% { box-shadow: 0 0 0 0 rgba(240,136,62,0.5); } 70% { box-shadow: 0 0 0 12px rgba(240,136,62,0); } 100% { box-shadow: 0 0 0 0 rgba(240,136,62,0); } }
 
-    .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #1f6feb; color: #fff; padding: 12px 24px; border-radius: 10px;
-      font-family: 'Cairo'; font-size: 14px; font-weight: 700;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999;
-      animation: toastIn 0.3s ease-out;
-    }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1f6feb; color: #fff; padding: 12px 24px; border-radius: 10px; font-family: 'Cairo'; font-size: 14px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999; animation: toastIn 0.3s ease-out; }
+    .toast.hidden { display: none; }
     @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    /* ===== PRODUCT MANAGEMENT ===== */
+    .pm-section { display: none; padding: 20px 24px; flex: 1; overflow-y: auto; }
+    .pm-section.active { display: block; }
+    .pm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .pm-header h3 { font-size: 20px; font-weight: 900; }
+    .pm-add-btn { padding: 10px 20px; border-radius: 8px; border: none; background: #238636; color: #fff; font-family: 'Cairo'; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .pm-add-btn:hover { background: #2ea043; }
+    .pm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .pm-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 16px; display: flex; gap: 14px; }
+    .pm-card-img { width: 70px; height: 70px; border-radius: 10px; background: #21262d; display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; overflow: hidden; }
+    .pm-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .pm-card-info { flex: 1; min-width: 0; }
+    .pm-card-name { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .pm-card-sub { font-size: 12px; color: #8b949e; margin-bottom: 6px; }
+    .pm-card-price { font-size: 16px; font-weight: 900; color: #3fb950; }
+    .pm-card-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 800; }
+    .pm-badge-on { background: #23863622; color: #3fb950; }
+    .pm-badge-off { background: #f8514922; color: #f85149; }
+    .pm-card-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .pm-act-btn { padding: 6px 12px; border-radius: 6px; border: none; font-family: 'Cairo'; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.15s; }
+    .pm-act-edit { background: #1f6feb22; color: #58a6ff; }
+    .pm-act-edit:hover { background: #1f6feb44; }
+    .pm-act-toggle { background: #f0883e22; color: #f0883e; }
+    .pm-act-toggle:hover { background: #f0883e44; }
+    .pm-act-del { background: #f8514922; color: #f85149; }
+    .pm-act-del:hover { background: #f8514944; }
+
+    .pm-form-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .pm-form-overlay.active { display: flex; }
+    .pm-form { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 24px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; }
+    .pm-form h3 { font-size: 18px; font-weight: 900; margin-bottom: 16px; text-align: center; }
+    .pm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .pm-form-full { margin-bottom: 10px; }
+    .pm-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: #e6edf3; font-family: 'Cairo'; font-size: 14px; outline: none; }
+    .pm-input:focus { border-color: #1f6feb; }
+    .pm-input::placeholder { color: #484f58; }
+    .pm-select { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: #e6edf3; font-family: 'Cairo'; font-size: 14px; outline: none; }
+    .pm-checks { display: flex; gap: 16px; margin: 12px 0; }
+    .pm-checks label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #8b949e; cursor: pointer; }
+    .pm-form-img { text-align: center; margin: 12px 0; }
+    .pm-form-img-preview { width: 120px; height: 120px; border-radius: 12px; border: 2px dashed #30363d; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 48px; overflow: hidden; cursor: pointer; }
+    .pm-form-img-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .pm-form-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .pm-form-actions button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-family: 'Cairo'; font-size: 15px; font-weight: 800; cursor: pointer; }
+    .pm-save { background: #238636; color: #fff; }
+    .pm-save:hover { background: #2ea043; }
+    .pm-cancel { background: #21262d; color: #e6edf3; }
 
     @media (max-width: 768px) {
       .om-stats-strip { grid-template-columns: repeat(3, 1fr); }
       .om-orders-grid { grid-template-columns: 1fr; padding: 12px; }
-      .om-topbar { padding: 10px 16px; }
+      .om-topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
       .om-clock { font-size: 20px; }
+      .om-nav { padding: 8px 16px; overflow-x: auto; }
+      .pm-grid { grid-template-columns: 1fr; }
+      .pm-form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Login Screen -->
   <div class="login-screen" id="login-screen">
     <div class="login-box">
       <h1><span>🍕</span> كويك بيتزا</h1>
@@ -209,11 +198,10 @@
     </div>
   </div>
 
-  <!-- Order Manager -->
   <div class="om-container" id="om-container">
     <div class="om-topbar">
       <div class="om-topbar-left">
-        <div class="om-logo"><span>🍕</span> كويك بيتزا — شاشة الطلبات</div>
+        <div class="om-logo"><span>🍕</span> كويك بيتزا</div>
       </div>
       <div class="om-topbar-center">
         <div class="om-clock" id="om-clock"></div>
@@ -228,28 +216,81 @@
       </div>
     </div>
 
-    <div class="om-stats-strip" id="om-stats"></div>
-
-    <div class="om-filters" id="om-filters">
-      <button class="om-filter active" onclick="filterOrders('all', this)">
-        <span class="om-filter-count" id="om-count-all">0</span> الكل
-      </button>
-      <button class="om-filter om-filter-pending" onclick="filterOrders('pending', this)">
-        <span class="om-filter-count" id="om-count-pending">0</span> جديد
-      </button>
-      <button class="om-filter om-filter-active" onclick="filterOrders('active', this)">
-        <span class="om-filter-count" id="om-count-active">0</span> قيد التنفيذ
-      </button>
-      <button class="om-filter om-filter-done" onclick="filterOrders('delivered', this)">
-        <span class="om-filter-count" id="om-count-delivered">0</span> موصلاة
-      </button>
+    <div class="om-nav">
+      <button class="om-nav-btn active" onclick="switchTab('orders', this)">📦 الطلبات</button>
+      <button class="om-nav-btn" onclick="switchTab('products', this)">🍕 المنتجات</button>
     </div>
 
-    <div class="om-orders-grid" id="om-grid"></div>
-    <div class="om-empty" id="om-empty">
-      <div class="om-empty-icon">📭</div>
-      <h3>مفيش طلبات حالياً</h3>
-      <p>الطلبات الجديدة هتظهر هنا تلقائي</p>
+    <!-- ORDERS TAB -->
+    <div id="tab-orders">
+      <div class="om-stats-strip" id="om-stats"></div>
+      <div class="om-filters" id="om-filters">
+        <button class="om-filter active" onclick="filterOrders('all', this)">
+          <span class="om-filter-count" id="om-count-all">0</span> الكل
+        </button>
+        <button class="om-filter om-filter-pending" onclick="filterOrders('pending', this)">
+          <span class="om-filter-count" id="om-count-pending">0</span> جديد
+        </button>
+        <button class="om-filter om-filter-active" onclick="filterOrders('active', this)">
+          <span class="om-filter-count" id="om-count-active">0</span> قيد التنفيذ
+        </button>
+        <button class="om-filter om-filter-done" onclick="filterOrders('delivered', this)">
+          <span class="om-filter-count" id="om-count-delivered">0</span> موصلاة
+        </button>
+      </div>
+      <div class="om-orders-grid" id="om-grid"></div>
+      <div class="om-empty" id="om-empty">
+        <div class="om-empty-icon">📭</div>
+        <h3>مفيش طلبات حالياً</h3>
+        <p>الطلبات الجديدة هتظهر هنا تلقائي</p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="pm-section" id="tab-products">
+      <div class="pm-header">
+        <h3>🍕 إدارة المنتجات (<span id="pm-count">0</span>)</h3>
+        <button class="pm-add-btn" onclick="openProductForm()">➕ إضافة منتج</button>
+      </div>
+      <div class="pm-grid" id="pm-grid"></div>
+    </div>
+  </div>
+
+  <!-- Product Form Modal -->
+  <div class="pm-form-overlay" id="pm-form-overlay">
+    <div class="pm-form">
+      <h3 id="pm-form-title">➕ إضافة منتج جديد</h3>
+      <input type="hidden" id="pf-id">
+      <input type="hidden" id="pf-existing-image">
+      <div class="pm-form-img">
+        <div class="pm-form-img-preview" id="pm-img-preview" onclick="document.getElementById('pf-image').click()">🍕</div>
+        <input type="file" id="pf-image" accept="image/*" style="display:none" onchange="previewImg(this)">
+      </div>
+      <div class="pm-form-grid">
+        <input class="pm-input" id="pf-name" placeholder="الاسم بالإنجليزي *" required>
+        <input class="pm-input" id="pf-nameAr" placeholder="الاسم بالعربي *" required>
+      </div>
+      <div class="pm-form-grid">
+        <input class="pm-input" id="pf-desc" placeholder="الوصف بالإنجليزي">
+        <input class="pm-input" id="pf-descAr" placeholder="الوصف بالعربي">
+      </div>
+      <div class="pm-form-grid">
+        <input class="pm-input" id="pf-price" type="number" placeholder="السعر *" min="0" required>
+        <select class="pm-select" id="pf-category" required></select>
+      </div>
+      <div class="pm-form-grid">
+        <input class="pm-input" id="pf-prepTime" type="number" placeholder="وقت التحضير (دقيقة)" min="0">
+        <input class="pm-input" id="pf-calories" type="number" placeholder="السعرات" min="0">
+      </div>
+      <div class="pm-checks">
+        <label><input type="checkbox" id="pf-featured"> ⭐ مميز</label>
+        <label><input type="checkbox" id="pf-popular"> 🔥 الأكثر مبيعاً</label>
+        <label><input type="checkbox" id="pf-available" checked> ✅ متاح</label>
+      </div>
+      <div class="pm-form-actions">
+        <button class="pm-save" onclick="saveProduct()">💾 حفظ</button>
+        <button class="pm-cancel" onclick="closeProductForm()">إلغاء</button>
+      </div>
     </div>
   </div>
 
@@ -263,12 +304,16 @@
     let currentFilter = 'all';
     let prevOrders = [];
     let audioCtx = null;
+    let allCategories = [];
+    let allProducts = [];
+    let activeTab = 'orders';
 
-    // Auto-login if token exists
     if (token) showManager();
 
     function getHeaders() {
-      return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+      const h = { 'Content-Type': 'application/json' };
+      if (token) h['Authorization'] = 'Bearer ' + token;
+      return h;
     }
 
     async function apiGet(url) {
@@ -279,6 +324,18 @@
 
     async function apiPut(url, data) {
       const res = await fetch(API + url, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(data) });
+      if (!res.ok) throw new Error('Error');
+      return res.json();
+    }
+
+    async function apiPost(url, data) {
+      const res = await fetch(API + url, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
+      if (!res.ok) throw new Error('Error');
+      return res.json();
+    }
+
+    async function apiDelete(url) {
+      const res = await fetch(API + url, { method: 'DELETE', headers: getHeaders() });
       if (!res.ok) throw new Error('Error');
       return res.json();
     }
@@ -309,6 +366,7 @@
       document.getElementById('om-container').classList.add('active');
       startClock();
       startAutoRefresh();
+      loadCategories();
       loadOrders();
     }
 
@@ -324,7 +382,10 @@
     function startAutoRefresh() {
       if (autoRefresh) clearInterval(autoRefresh);
       if (document.getElementById('om-auto-toggle').checked) {
-        autoRefresh = setInterval(() => loadOrders(), 8000);
+        autoRefresh = setInterval(() => {
+          if (activeTab === 'orders') loadOrders();
+          else if (activeTab === 'products') loadProducts();
+        }, 8000);
       }
     }
 
@@ -353,6 +414,15 @@
       t._t = setTimeout(() => t.classList.add('hidden'), 3000);
     }
 
+    function switchTab(tab, el) {
+      activeTab = tab;
+      document.querySelectorAll('.om-nav-btn').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('tab-orders').style.display = tab === 'orders' ? 'block' : 'none';
+      document.getElementById('tab-products').classList.toggle('active', tab === 'products');
+      if (tab === 'products') loadProducts();
+    }
+
     function filterOrders(filter, el) {
       currentFilter = filter;
       document.querySelectorAll('.om-filter').forEach(f => f.classList.remove('active'));
@@ -365,7 +435,6 @@
         const allOrders = await apiGet('/api/orders/all');
         const orders = allOrders.orders || [];
 
-        // Check for new orders
         const newPending = orders.filter(o => o.status === 'pending').length;
         const oldPending = prevOrders.filter(o => o.status === 'pending').length;
         if (newPending > oldPending && prevOrders.length > 0) playSound();
@@ -377,7 +446,6 @@
         const ready = orders.filter(o => o.status === 'ready');
         const outDelivery = orders.filter(o => o.status === 'out_for_delivery');
         const delivered = orders.filter(o => o.status === 'delivered');
-        const cancelled = orders.filter(o => o.status === 'cancelled');
         const active = [...confirmed, ...preparing, ...ready, ...outDelivery];
         const revenue = delivered.reduce((s, o) => s + o.total, 0);
 
@@ -404,13 +472,10 @@
 
         const grid = document.getElementById('om-grid');
         const empty = document.getElementById('om-empty');
-
         if (filtered.length === 0) {
-          grid.classList.add('hidden');
-          empty.style.display = 'flex';
+          grid.classList.add('hidden'); empty.style.display = 'flex';
         } else {
-          grid.classList.remove('hidden');
-          empty.style.display = 'none';
+          grid.classList.remove('hidden'); empty.style.display = 'none';
           grid.innerHTML = filtered.map(o => orderCard(o)).join('');
         }
       } catch (e) {
@@ -433,6 +498,7 @@
       const mins = Math.floor(elapsed / 60);
       const tc = mins > 30 ? 'timer-danger' : mins > 15 ? 'timer-warning' : '';
       const a = order.deliveryAddress || {};
+      const phone = order.phone || order.user?.phone || '';
 
       return `
         <div class="om-card ${order.status === 'pending' ? 'pulse-new' : ''}">
@@ -449,6 +515,7 @@
           </div>
           <div class="om-card-body">
             <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'}</div>
+            ${phone ? `<div class="om-card-phone">📞 <a href="tel:${phone}">${phone}</a></div>` : ''}
             <div class="om-card-items">
               ${order.items.map(i => `
                 <div class="om-card-item">
@@ -479,6 +546,153 @@
       } catch (e) {
         toast('خطأ في التحديث');
       }
+    }
+
+    // ===== PRODUCTS =====
+    async function loadCategories() {
+      try { allCategories = await apiGet('/api/categories'); } catch (e) {}
+    }
+
+    async function loadProducts() {
+      try {
+        allProducts = await apiGet('/api/products');
+        document.getElementById('pm-count').textContent = allProducts.length;
+        const grid = document.getElementById('pm-grid');
+        grid.innerHTML = allProducts.map(p => `
+          <div class="pm-card">
+            <div class="pm-card-img">${p.image ? `<img src="${p.image}" alt="${p.nameAr}">` : '🍕'}</div>
+            <div class="pm-card-info">
+              <div class="pm-card-name">${p.nameAr}</div>
+              <div class="pm-card-sub">${p.name} • ${p.category?.nameAr || ''}</div>
+              <div class="pm-card-price">${p.price} ج ${p.isAvailable ? '' : '<span class="pm-card-badge pm-badge-off">غير متاح</span>'}</div>
+              <div class="pm-card-actions">
+                <button class="pm-act-btn pm-act-edit" onclick="editProduct('${p._id}')">✏️ تعديل</button>
+                <button class="pm-act-btn pm-act-toggle" onclick="toggleProduct('${p._id}', ${p.isAvailable})">${p.isAvailable ? '🚫' : '✅'}</button>
+                <button class="pm-act-btn pm-act-del" onclick="deleteProduct('${p._id}', '${p.nameAr}')">🗑️</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) { console.error(e); }
+    }
+
+    function openProductForm(product) {
+      const p = product || null;
+      document.getElementById('pf-id').value = p?._id || '';
+      document.getElementById('pf-name').value = p?.name || '';
+      document.getElementById('pf-nameAr').value = p?.nameAr || '';
+      document.getElementById('pf-desc').value = p?.description || '';
+      document.getElementById('pf-descAr').value = p?.descriptionAr || '';
+      document.getElementById('pf-price').value = p?.price || '';
+      document.getElementById('pf-prepTime').value = p?.prepTime || '';
+      document.getElementById('pf-calories').value = p?.calories || '';
+      document.getElementById('pf-featured').checked = p?.isFeatured || false;
+      document.getElementById('pf-popular').checked = p?.isPopular || false;
+      document.getElementById('pf-available').checked = p?.isAvailable !== false;
+      document.getElementById('pf-image').value = '';
+      document.getElementById('pf-existing-image').value = p?.image || '';
+
+      const preview = document.getElementById('pm-img-preview');
+      if (p?.image) { preview.innerHTML = `<img src="${p.image}">`; }
+      else { preview.innerHTML = '🍕'; }
+
+      const sel = document.getElementById('pf-category');
+      sel.innerHTML = '<option value="">اختر القسم</option>' +
+        allCategories.map(c => `<option value="${c._id}" ${p?.category?._id === c._id ? 'selected' : ''}>${c.icon} ${c.nameAr}</option>`).join('');
+
+      document.getElementById('pm-form-title').textContent = p ? '✏️ تعديل المنتج' : '➕ إضافة منتج جديد';
+      document.getElementById('pm-form-overlay').classList.add('active');
+    }
+
+    function closeProductForm() {
+      document.getElementById('pm-form-overlay').classList.remove('active');
+    }
+
+    function editProduct(id) {
+      const p = allProducts.find(x => x._id === id);
+      if (p) openProductForm(p);
+    }
+
+    function previewImg(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('pm-img-preview').innerHTML = `<img src="${e.target.result}">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function saveProduct() {
+      const id = document.getElementById('pf-id').value;
+      const data = {
+        name: document.getElementById('pf-name').value,
+        nameAr: document.getElementById('pf-nameAr').value,
+        description: document.getElementById('pf-desc').value,
+        descriptionAr: document.getElementById('pf-descAr').value,
+        price: Number(document.getElementById('pf-price').value),
+        category: document.getElementById('pf-category').value,
+        prepTime: Number(document.getElementById('pf-prepTime').value) || 0,
+        calories: Number(document.getElementById('pf-calories').value) || 0,
+        isFeatured: document.getElementById('pf-featured').checked,
+        isPopular: document.getElementById('pf-popular').checked,
+        isAvailable: document.getElementById('pf-available').checked
+      };
+
+      if (!data.name || !data.nameAr || !data.price || !data.category) {
+        toast('ملي الحقول المطلوبة');
+        return;
+      }
+
+      try {
+        const fileInput = document.getElementById('pf-image');
+        const existingImage = document.getElementById('pf-existing-image').value;
+
+        if (fileInput.files && fileInput.files[0]) {
+          const formData = new FormData();
+          formData.append('image', fileInput.files[0]);
+          const uploadRes = await fetch(API + '/api/upload', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+          });
+          const uploadData = await uploadRes.json();
+          if (uploadData.url) data.image = uploadData.url;
+        } else if (existingImage) {
+          data.image = existingImage;
+        }
+
+        if (id) {
+          await apiPut('/api/products/' + id, data);
+          toast('تم تعديل المنتج ✅');
+        } else {
+          data.sizes = [{ name: 'Regular', nameAr: 'عادي', price: data.price }];
+          await apiPost('/api/products', data);
+          toast('تم إضافة المنتج ✅');
+        }
+        closeProductForm();
+        loadProducts();
+      } catch (e) {
+        toast('خطأ في الحفظ');
+        console.error(e);
+      }
+    }
+
+    async function toggleProduct(id, currentAvail) {
+      try {
+        await apiPut('/api/products/' + id, { isAvailable: !currentAvail });
+        toast(currentAvail ? 'تم إخفاء المنتج' : 'تم إظهار المنتج');
+        loadProducts();
+      } catch (e) { toast('خطأ'); }
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm(`متأكد تحذف "${name}"؟`)) return;
+      try {
+        await apiDelete('/api/products/' + id);
+        toast('تم الحذف ✅');
+        loadProducts();
+      } catch (e) { toast('خطأ في الحذف'); }
     }
 
     document.getElementById('login-password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });

@@ -1766,6 +1766,8 @@ async function omUpdateStatus(orderId, status) {
 // ===== PWA SERVICE WORKER =====
 let deferredPrompt = null;
 
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then(reg => {
@@ -1774,11 +1776,29 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+if (isStandalone) {
+  const banner = document.getElementById('install-banner');
+  const section = document.getElementById('install-section');
+  if (banner) banner.classList.add('hidden');
+  if (section) section.style.display = 'none';
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   const banner = document.getElementById('install-banner');
+  const section = document.getElementById('install-section');
   if (banner) banner.classList.remove('hidden');
+  if (section) section.style.display = '';
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  const banner = document.getElementById('install-banner');
+  const section = document.getElementById('install-section');
+  if (banner) banner.classList.add('hidden');
+  if (section) section.style.display = 'none';
+  showToast('تم تثبيت التطبيق! ✅');
 });
 
 function installApp() {
