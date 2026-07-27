@@ -320,7 +320,7 @@ function productCard(p) {
     <div class="product-card" onclick="openProductModal('${p._id}')">
       <div class="product-img">
         <div class="product-img-bg"></div>
-        <span class="product-emoji">${emoji}</span>
+        ${p.image ? `<img src="${p.image}" alt="${p.nameAr}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span class="product-emoji">${emoji}</span>`}
         <div class="product-badges">${badges}</div>
         <button class="product-fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${p._id}')">
           ${isFav ? '❤️' : '🤍'}
@@ -371,7 +371,7 @@ function openProductModal(productId) {
     const totalPrice = sizePrice + toppingsTotal;
 
     detail.innerHTML = `
-      <div class="pd-image">${emoji}</div>
+      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${product.nameAr}" style="width:100%;height:100%;object-fit:cover">` : emoji}</div>
       <div class="pd-body">
         <div class="pd-name">${product.nameAr}</div>
         <div class="pd-desc">${product.descriptionAr || product.description}</div>
@@ -507,6 +507,11 @@ function renderCart() {
   contentEl.classList.remove('hidden');
   clearBtn.style.display = 'block';
 
+  const phoneInput = document.getElementById('checkout-phone');
+  if (phoneInput && currentUser?.phone && !phoneInput.value) {
+    phoneInput.value = currentUser.phone;
+  }
+
   const itemsContainer = document.getElementById('cart-items');
   itemsContainer.innerHTML = cartData.items.map(item => {
     const emoji = getProductEmoji(item.product || {});
@@ -630,12 +635,20 @@ async function placeOrder() {
     openAddressModal();
     return;
   }
+  const phoneInput = document.getElementById('checkout-phone');
+  const phone = phoneInput?.value?.trim();
+  if (!phone) {
+    showToast('من فضلك اكتب رقم التليفون');
+    phoneInput?.focus();
+    return;
+  }
   try {
     const specialInstructions = document.getElementById('special-instructions')?.value || '';
     const order = await apiPost('/api/orders', {
       paymentMethod: selectedPayment,
       specialInstructions,
-      deliveryAddress: currentUser.address
+      deliveryAddress: currentUser.address,
+      phone
     });
     cartData = { items: [] };
     updateCartCount();
@@ -1305,7 +1318,7 @@ function adminOrderCard(order) {
       <div class="aoc-body">
         <div class="aoc-customer">
           <span>👤</span> ${order.user?.name || 'غير معروف'}
-          ${order.user?.phone ? `<a href="tel:${order.user.phone}" class="aoc-phone">📞</a>` : ''}
+          ${(order.phone || order.user?.phone) ? `<a href="tel:${order.phone || order.user?.phone}" class="aoc-phone">📞 ${order.phone || order.user?.phone}</a>` : ''}
         </div>
         <div class="aoc-items">
           ${order.items.map(i => `<div class="aoc-item"><span>${i.nameAr || i.name} ×${i.quantity}</span><span>${i.price * i.quantity} ج</span></div>`).join('')}
@@ -1403,9 +1416,10 @@ async function loadAdminProducts() {
     </div>
     <div class="admin-table">
       <table>
-        <thead><tr><th>المنتج</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <thead><tr><th>الصورة</th><th>المنتج</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>إجراءات</th></tr></thead>
         <tbody>
           ${allProducts.map(p => `<tr>
+            <td>${p.image ? `<img src="${p.image}" style="width:40px;height:40px;object-fit:cover;border-radius:6px">` : '<span style="font-size:24px">🍕</span>'}</td>
             <td><strong>${p.nameAr}</strong><br><small style="color:var(--text-muted)">${p.name}</small></td>
             <td>${p.category?.nameAr || 'N/A'}</td>
             <td>${p.price} ج</td>
@@ -1436,6 +1450,9 @@ function openAddProductModal() {
   document.getElementById('pf-featured').checked = false;
   document.getElementById('pf-popular').checked = false;
   document.getElementById('pf-available').checked = true;
+  document.getElementById('pf-image-url').value = '';
+  document.getElementById('pf-image-file').value = '';
+  document.getElementById('pf-image-preview').style.display = 'none';
   document.getElementById('product-form-title').textContent = '➕ إضافة منتج جديد';
   populateCategorySelect();
   document.getElementById('product-form-modal').classList.remove('hidden');
@@ -1457,6 +1474,15 @@ function openEditProductModal(productId) {
   document.getElementById('pf-featured').checked = p.isFeatured;
   document.getElementById('pf-popular').checked = p.isPopular;
   document.getElementById('pf-available').checked = p.isAvailable;
+  document.getElementById('pf-image-file').value = '';
+  if (p.image) {
+    document.getElementById('pf-image-url').value = p.image;
+    document.getElementById('pf-preview-img').src = p.image;
+    document.getElementById('pf-image-preview').style.display = 'block';
+  } else {
+    document.getElementById('pf-image-url').value = '';
+    document.getElementById('pf-image-preview').style.display = 'none';
+  }
   document.getElementById('product-form-title').textContent = '✏️ تعديل المنتج';
   populateCategorySelect(p.category?._id);
   document.getElementById('product-form-modal').classList.remove('hidden');
@@ -1470,6 +1496,17 @@ function populateCategorySelect(selectedId) {
   const sel = document.getElementById('pf-category');
   sel.innerHTML = '<option value="">اختر القسم</option>' +
     allCategories.map(c => `<option value="${c._id}" ${c._id === selectedId ? 'selected' : ''}>${c.icon} ${c.nameAr}</option>`).join('');
+}
+
+function previewProductImage(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('pf-preview-img').src = e.target.result;
+      document.getElementById('pf-image-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 
 async function handleProductForm(e) {
@@ -1491,7 +1528,26 @@ async function handleProductForm(e) {
     isAvailable: document.getElementById('pf-available').checked
   };
 
+  const fileInput = document.getElementById('pf-image-file');
+  const existingImage = document.getElementById('pf-image-url').value;
+
   try {
+    let imageUrl = existingImage;
+
+    if (fileInput.files && fileInput.files[0]) {
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+      const token = localStorage.getItem('qp_token');
+      const uploadRes = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+      });
+      const uploadData = await uploadRes.json();
+      if (uploadData.url) imageUrl = uploadData.url;
+    }
+
+    if (imageUrl) data.image = imageUrl;
     if (id) {
       await apiPut(`/api/products/${id}`, data);
       showToast('تم تعديل المنتج بنجاح ✅');
@@ -1671,7 +1727,7 @@ function omOrderCard(order) {
         <span class="om-card-status ${cfg.cls}">${cfg.label}</span>
       </div>
       <div class="om-card-body">
-        <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'}</div>
+        <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'} ${(order.phone || order.user?.phone) ? `| 📞 ${order.phone || order.user?.phone}` : ''}</div>
         <div class="om-card-items">
           ${order.items.map(i => `
             <div class="om-card-item">

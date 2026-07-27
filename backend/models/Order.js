@@ -37,6 +37,7 @@ const orderSchema = new mongoose.Schema({
     apartment: String,
     location: String
   },
+  phone: { type: String, default: '' },
   estimatedDelivery: Date,
   actualDelivery: Date,
   rating: { type: Number, min: 1, max: 5 },

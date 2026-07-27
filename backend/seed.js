@@ -28,6 +28,16 @@ const seed = async () => {
   await Product.insertMany([
     // === PIZZAS ===
     {
+      name: 'Quick Pizza Special', nameAr: 'بيتزا كويك بيتزا',
+      description: 'The signature Quick Pizza - loaded with mozzarella, pepperoni, mushrooms, olives, and our secret sauce',
+      descriptionAr: 'بيتزا كويك بيتزا الاختصاصية - مليانه موزاريلا، بيبروني، فطر، زيتون، وصوصنا السري',
+      price: 180, image: '',
+      category: catMap['Pizza'], isFeatured: true, isPopular: true,
+      sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 140 }, { name: 'Medium', nameAr: 'متوسطة', price: 180 }, { name: 'Large', nameAr: 'كبيرة', price: 230 }],
+      toppings: [{ name: 'Extra Cheese', nameAr: 'جبنة زيادة', price: 20 }, { name: 'Extra Pepperoni', nameAr: 'بيبروني زيادة', price: 25 }, { name: 'Mushrooms', nameAr: 'فطر', price: 15 }, { name: 'Olives', nameAr: 'زيتون', price: 10 }],
+      calories: 1050, prepTime: 18, tags: ['signature', 'special', 'popular']
+    },
+    {
       name: 'Margherita', nameAr: 'مرجريتا',
       description: 'Classic tomato sauce, mozzarella, fresh basil',
       descriptionAr: 'صلصة طماطم كلاسيكية، موزاريلا، ريحان طازج',

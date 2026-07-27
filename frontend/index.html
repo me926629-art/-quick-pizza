@@ -156,6 +156,16 @@
       <h3 style="text-align:center;margin-bottom:20px;font-weight:800" id="product-form-title">➕ إضافة منتج جديد</h3>
       <form onsubmit="handleProductForm(event)">
         <input type="hidden" id="pf-id">
+        <input type="hidden" id="pf-image-url">
+        <div id="pf-image-preview" style="text-align:center;margin-bottom:12px;display:none">
+          <img id="pf-preview-img" src="" alt="صورة المنتج" style="max-width:200px;max-height:150px;border-radius:12px;border:2px solid var(--border)">
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="check-label" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface-2);border-radius:8px;border:1px dashed var(--border)">
+            🖼️ صورة المنتج (اختياري)
+            <input type="file" id="pf-image-file" accept="image/*" style="display:none" onchange="previewProductImage(this)">
+          </label>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="input-group">
             <span class="input-icon">🏷️</span>
@@ -539,6 +549,13 @@
                 </div>
               </div>
               <!-- Special Instructions -->
+              <div class="cart-card">
+                <h4>📱 رقم التليفون</h4>
+                <div class="input-group">
+                  <span class="input-icon">📞</span>
+                  <input type="tel" id="checkout-phone" placeholder="رقم التليفون عشان نتواصل معاك" required>
+                </div>
+              </div>
               <div class="cart-card">
                 <h4>📝 ملاحظات خاصة</h4>
                 <textarea id="special-instructions" class="cart-textarea" placeholder="مثلاً: بدون بصل، صوص زيادة، بيتزا مشوية..."></textarea>

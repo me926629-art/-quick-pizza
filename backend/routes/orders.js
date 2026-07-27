@@ -50,7 +50,7 @@ router.get('/:id', auth, async (req, res) => {
 
 router.post('/', auth, async (req, res) => {
   try {
-    const { deliveryAddress, paymentMethod, specialInstructions } = req.body;
+    const { deliveryAddress, paymentMethod, specialInstructions, phone } = req.body;
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -80,6 +80,7 @@ router.post('/', auth, async (req, res) => {
       deliveryAddress,
       paymentMethod: paymentMethod || 'cash',
       specialInstructions,
+      phone: phone || req.user.phone || '',
       estimatedDelivery
     });
     await order.save();
