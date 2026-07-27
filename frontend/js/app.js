@@ -1722,16 +1722,32 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function installApp() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(choice => {
-    if (choice.outcome === 'accepted') {
-      showToast('تم تثبيت التطبيق! ✅');
-      const banner = document.getElementById('install-banner');
-      if (banner) banner.classList.add('hidden');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') {
+        showToast('تم تثبيت التطبيق! ✅');
+        const banner = document.getElementById('install-banner');
+        if (banner) banner.classList.add('hidden');
+        const section = document.getElementById('install-section');
+        if (section) section.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+
+    if (isIOS) {
+      showToast('اضflate Share ⬆️ في Safari ← أضف إلى الشاشة الرئيسية');
+      alert('خطوات التثبيت على iPhone:\n\n1. اضغط زر المشاركة ⬆️ أسفل الشاشة\n2. مرر لأسفل واختر "إضافة إلى الشاشة الرئيسية"\n3. اضغط "إضافة" في الأعلى\n\nكده التطبيق هيتحمّل على موبايلك!');
+    } else if (isAndroid) {
+      showToast('افتح قائمة Chrome ← "تثبيت على جهازك"');
+      alert('خطوات التثبيت على Android:\n\n1. اضغط على النقاط الثلاث ⋮ في أعلى يمين Chrome\n2. اختر "تثبيت على جهازك" أو "إضافة إلى الشاشة الرئيسية"\n3. اضغط "تثبيت"\n\nكده التطبيق هيتحمّل على موبايلك!');
+    } else {
+      showToast('افتح الموقع من موبايل Chrome أو Safari');
     }
-    deferredPrompt = null;
-  });
+  }
 }
 
 function dismissInstall() {
