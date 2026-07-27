@@ -1703,6 +1703,52 @@ async function omUpdateStatus(orderId, status) {
   }
 }
 
+// ===== PWA SERVICE WORKER =====
+let deferredPrompt = null;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      console.log('SW registered:', reg.scope);
+    }).catch(err => console.log('SW error:', err));
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.classList.remove('hidden');
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') {
+      showToast('تم تثبيت التطبيق! ✅');
+      const banner = document.getElementById('install-banner');
+      if (banner) banner.classList.add('hidden');
+    }
+    deferredPrompt = null;
+  });
+}
+
+function dismissInstall() {
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.classList.add('hidden');
+}
+
+// ===== OFFLINE DETECTION =====
+window.addEventListener('online', () => {
+  const el = document.getElementById('offline-indicator');
+  if (el) el.classList.remove('show');
+});
+window.addEventListener('offline', () => {
+  const el = document.getElementById('offline-indicator');
+  if (el) el.classList.add('show');
+});
+
 // ===== TOAST =====
 function showToast(message) {
   const toast = document.getElementById('toast');

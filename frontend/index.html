@@ -10,6 +10,9 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-title" content="كويك بيتزا">
 </head>
 <body>
 
@@ -659,6 +662,22 @@
       <small>حسابي</small>
     </button>
   </nav>
+
+  <!-- Offline Indicator -->
+  <div id="offline-indicator" class="offline-indicator">⚠️ أنت غير متصل بالإنترنت</div>
+
+  <!-- Install Banner -->
+  <div id="install-banner" class="install-banner hidden">
+    <div class="install-banner-content">
+      <span class="install-banner-icon">📱</span>
+      <div class="install-banner-text">
+        <strong>ثبّت كويك بيتزا على موبايلك!</strong>
+        <small>اطلب أسرع من التطبيق</small>
+      </div>
+      <button class="install-btn" onclick="installApp()">تثبيت</button>
+      <button class="install-dismiss" onclick="dismissInstall()">✕</button>
+    </div>
+  </div>
 
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
