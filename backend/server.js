@@ -35,6 +35,7 @@ app.use('/api/cart', require('./routes/cart'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/backup', require('./routes/backup'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/notifications', require('./routes/notifications'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('*', (req, res) => {

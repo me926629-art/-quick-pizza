@@ -91,6 +91,7 @@ async function initApp() {
     renderMenuProducts(allProducts);
     if (currentUser) {
       try { await loadCart(); } catch (e) {}
+      initPushNotifications();
     }
     updateLocationUI();
   } catch (error) {
@@ -995,6 +996,7 @@ async function handleLogin(e) {
     closeAuthModal();
     showToast('أهلاً بيك ' + data.user.name + '! 🎉');
     await loadCart();
+    initPushNotifications();
     if (data.user.role === 'admin') { navigateTo('admin'); }
   } catch (e) {
     showToast('بيانات الدخول غلط');
@@ -1016,6 +1018,7 @@ async function handleRegister(e) {
     saveToStorage(data.token, data.user);
     updateAuthUI();
     closeAuthModal();
+    initPushNotifications();
     showToast('تم الحساب بنجاح! 🎉');
   } catch (e) {
     showToast('البريد مسجل بالفعل');
@@ -1036,6 +1039,7 @@ function updateAuthUI() {
     authBtn.innerHTML = '<span>👤</span>';
     mobileAuthLink.querySelector('span:last-child').textContent = 'تسجيل الدخول';
     adminLink.style.display = 'none';
+    document.getElementById('notif-btn').style.display = 'none';
   }
 }
 
@@ -1821,6 +1825,136 @@ window.addEventListener('offline', () => {
   if (el) el.classList.add('show');
 });
 
+// ===== PUSH NOTIFICATIONS =====
+async function initPushNotifications() {
+  if (!currentUser || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  document.getElementById('notif-btn').style.display = 'flex';
+  loadNotifCount();
+
+  const permission = Notification.permission;
+  if (permission === 'default') {
+    setTimeout(() => {
+      if (confirm('عندك إشعارات كويك بيتزا! عايز يتبلغلك لما طلبك يتغير؟')) {
+        requestNotifPermission();
+      }
+    }, 5000);
+  } else if (permission === 'granted') {
+    subscribeToPush();
+  }
+}
+
+async function requestNotifPermission() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      await subscribeToPush();
+      showToast('تم تفعيل الإشعارات! 🔔');
+    }
+  } catch (e) {
+    console.log('Notification permission error:', e);
+  }
+}
+
+async function subscribeToPush() {
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const keyRes = await fetch('/api/notifications/vapid-public-key');
+    const { publicKey } = await keyRes.json();
+
+    const existingSub = await reg.pushManager.getSubscription();
+    if (existingSub) {
+      await saveSubscription(existingSub);
+      return;
+    }
+
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey)
+    });
+    await saveSubscription(sub);
+  } catch (e) {
+    console.log('Push subscribe error:', e);
+  }
+}
+
+async function saveSubscription(sub) {
+  try {
+    await apiPost('/api/notifications/subscribe', { subscription: sub.toJSON() });
+  } catch (e) {
+    console.log('Save subscription error:', e);
+  }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const arr = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) arr[i] = rawData.charCodeAt(i);
+  return arr;
+}
+
+let notifPanelOpen = false;
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  notifPanelOpen = !notifPanelOpen;
+  if (notifPanelOpen) {
+    panel.classList.remove('hidden');
+    loadNotifications();
+  } else {
+    panel.classList.add('hidden');
+  }
+}
+
+async function loadNotifications() {
+  try {
+    const notifs = await apiGet('/api/notifications/user-notifications');
+    const list = document.getElementById('notif-list');
+    if (notifs.length === 0) {
+      list.innerHTML = '<div class="notif-empty">مفيش إشعارات لسه</div>';
+      return;
+    }
+    list.innerHTML = notifs.map(n => `
+      <div class="notif-item ${n.read ? '' : 'unread'}" onclick="readNotif('${n._id}', '${n.url || '/'}')">
+        <div class="notif-item-title">${n.title}</div>
+        <div class="notif-item-body">${n.body}</div>
+        <div class="notif-item-time">${getTimeAgo(n.createdAt)}</div>
+      </div>
+    `).join('');
+  } catch (e) {}
+}
+
+async function loadNotifCount() {
+  try {
+    const { count } = await apiGet('/api/notifications/unread-count');
+    const badge = document.getElementById('notif-count');
+    if (count > 0) {
+      badge.textContent = count;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  } catch (e) {}
+}
+
+async function readNotif(id, url) {
+  try {
+    await apiPut(`/api/notifications/${id}/read`);
+    if (url && url !== '/') window.location.hash = url;
+    toggleNotifPanel();
+    loadNotifCount();
+  } catch (e) {}
+}
+
+async function markAllNotifsRead() {
+  try {
+    await apiPut('/api/notifications/read-all');
+    loadNotifications();
+    loadNotifCount();
+  } catch (e) {}
+}
+
 // ===== TOAST =====
 function showToast(message) {
   const toast = document.getElementById('toast');
@@ -1849,3 +1983,13 @@ async function downloadBackup() {
     showToast('خطأ في الباك أب');
   }
 }
+
+// Close notif panel on outside click
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.getElementById('notif-btn');
+  if (notifPanelOpen && panel && !panel.contains(e.target) && !btn?.contains(e.target)) {
+    notifPanelOpen = false;
+    panel.classList.add('hidden');
+  }
+});

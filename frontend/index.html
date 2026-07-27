@@ -264,6 +264,10 @@
           <span>🛒</span>
           <span class="badge" id="cart-count">0</span>
         </button>
+        <button class="header-icon-btn notif-btn" id="notif-btn" onclick="toggleNotifPanel()" style="display:none">
+          <span>🔔</span>
+          <span class="badge hidden" id="notif-count">0</span>
+        </button>
         <button class="header-icon-btn profile-btn" id="auth-btn" onclick="handleAuthClick()">
           <span>👤</span>
         </button>
@@ -705,6 +709,17 @@
       <small>حسابي</small>
     </button>
   </nav>
+
+  <!-- Notification Panel -->
+  <div id="notif-panel" class="notif-panel hidden">
+    <div class="notif-panel-header">
+      <h3>🔔 الإشعارات</h3>
+      <button class="btn-text" onclick="markAllNotifsRead()">مقروءة الكل</button>
+    </div>
+    <div id="notif-list" class="notif-list">
+      <div class="notif-empty">مفيش إشعارات لسه</div>
+    </div>
+  </div>
 
   <!-- Offline Indicator -->
   <div id="offline-indicator" class="offline-indicator">⚠️ أنت غير متصل بالإنترنت</div>

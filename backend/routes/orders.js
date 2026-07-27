@@ -104,6 +104,30 @@ router.put('/:id/status', adminAuth, async (req, res) => {
       order.actualDelivery = new Date();
       await order.save();
     }
+
+    const statusLabels = {
+      confirmed: '✅ تم تأكيد طلبك',
+      preparing: '👨‍🍳 طلبكقيد التحضير',
+      ready: '📦 طلبك جاهز!',
+      out_for_delivery: '🚗 طلبك في الطريق ليك!',
+      delivered: '🎉 تم توصيل طلبك! بالهنا والشفا',
+      cancelled: '❌ للأسف تم إلغاء طلبك'
+    };
+
+    if (order.user && statusLabels[status]) {
+      try {
+        const { sendPushToUser } = require('../routes/notifications');
+        await sendPushToUser(
+          order.user._id,
+          `كويك بيتزا 🍕`,
+          `${statusLabels[status]} - #${order.orderNumber}`,
+          `/#tracking/${order._id}`
+        );
+      } catch (e) {
+        console.log('Push notification failed:', e.message);
+      }
+    }
+
     res.json(order);
   } catch (error) {
     res.status(500).json({ error: error.message });
