@@ -32,25 +32,11 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
-function safe(doc) {
-  if (!doc || typeof doc !== 'object') return doc;
+function clean(doc) {
   const c = { ...doc };
+  delete c._id;
   delete c.__v;
   return c;
-}
-
-async function upsertMany(Model, docs) {
-  if (!docs || docs.length === 0) return;
-  const errors = [];
-  for (const d of docs) {
-    try {
-      const clean = safe(d);
-      await Model.findByIdAndUpdate(clean._id, clean, { upsert: true, runValidators: false });
-    } catch (e) {
-      errors.push(e.message);
-    }
-  }
-  return errors;
 }
 
 router.post('/restore', adminAuth, async (req, res) => {
@@ -58,46 +44,24 @@ router.post('/restore', adminAuth, async (req, res) => {
     const { data } = req.body;
     if (!data) return res.status(400).json({ error: 'No data provided' });
 
-    const allErrors = [];
+    const restored = [];
 
-    // Upsert everything — no deleteMany, safe even if partial failure
-    const oErr = await upsertMany(Order, data.orders);
-    if (oErr.length) allErrors.push('Orders: ' + oErr.join(', '));
-
-    const wErr = await upsertMany(WeeklyRevenue, data.weeklyRevenue);
-    if (wErr.length) allErrors.push('Revenue: ' + wErr.join(', '));
-
-    const cErr = await upsertMany(Category, data.categories);
-    if (cErr.length) allErrors.push('Categories: ' + cErr.join(', '));
-
-    const pErr = await upsertMany(Product, data.products);
-    if (pErr.length) allErrors.push('Products: ' + pErr.join(', '));
-
-    const cartErr = await upsertMany(Cart, data.carts);
-    if (cartErr.length) allErrors.push('Carts: ' + cartErr.join(', '));
-
-    if (data.users) {
-      for (const u of data.users) {
+    for (const col of ['orders', 'weeklyRevenue', 'categories', 'products', 'carts', 'users']) {
+      if (!data[col] || !data[col].length) continue;
+      const Model = { orders: Order, weeklyRevenue: WeeklyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
+      let count = 0;
+      for (const doc of data[col]) {
         try {
-          const existing = await User.findById(u._id);
-          if (existing) {
-            if (u.name) existing.name = u.name;
-            if (u.email) existing.email = u.email;
-            if (u.phone) existing.phone = u.phone;
-            if (u.address) existing.address = u.address;
-            if (u.role) existing.role = u.role;
-            await existing.save();
-          }
+          await new Model(clean(doc)).save();
+          count++;
         } catch (e) {
-          allErrors.push('User: ' + e.message);
+          console.error('Restore error in ' + col + ':', e.message);
         }
       }
+      restored.push(col + ': ' + count + '/' + data[col].length);
     }
 
-    const msg = allErrors.length
-      ? 'تم الاستعادة مع بعض الأخطاء: ' + allErrors.join(' | ')
-      : 'تم استعادة الباك أب بنجاح ✅';
-    res.json({ success: true, message: msg, errors: allErrors });
+    res.json({ success: true, message: '✅ ' + restored.join(' | ') });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
