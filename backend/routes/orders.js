@@ -48,6 +48,14 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
+const deliveryAreas = {
+  'داخل الأقصر': 0,
+  'القرنه': 70,
+  'الزنيه قبلي': 25,
+  'ارمنت الحيط': 50,
+  'الضبعيه': 30
+};
+
 router.post('/', auth, async (req, res) => {
   try {
     const { deliveryAddress, paymentMethod, specialInstructions, phone } = req.body;
@@ -66,16 +74,14 @@ router.post('/', auth, async (req, res) => {
       specialInstructions: item.specialInstructions
     }));
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const deliveryFee = 15;
-    const tax = Math.round(subtotal * 0.14);
-    const total = subtotal + deliveryFee + tax - cart.couponDiscount;
+    const deliveryFee = deliveryAddress?.deliveryArea ? (deliveryAreas[deliveryAddress.deliveryArea] || 0) : 0;
+    const total = subtotal + deliveryFee;
     const estimatedDelivery = new Date(Date.now() + 45 * 60 * 1000);
     const order = new Order({
       user: req.user._id,
       items,
       subtotal,
       deliveryFee,
-      tax,
       total: Math.max(total, 0),
       deliveryAddress,
       paymentMethod: paymentMethod || 'cash',

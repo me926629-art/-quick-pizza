@@ -115,33 +115,26 @@
       <form onsubmit="saveAddress(event)">
         <div class="input-group">
           <span class="input-icon">🏙️</span>
-          <input type="text" id="addr-city" placeholder="المدينة" required>
+          <input type="text" id="addr-city" placeholder="المدينة" value="الأقصر" required>
         </div>
-        <div class="input-group">
-          <span class="input-icon">🏘️</span>
-          <input type="text" id="addr-district" placeholder="الحي / المنطقة" required>
+        <div class="input-group" style="position:relative">
+          <span class="input-icon">📍</span>
+          <select id="addr-area" class="select-input" required style="padding-right:44px;width:100%">
+            <option value="">اختر المنطقة</option>
+            <option value="داخل الأقصر">داخل الأقصر (توصيل مجاني)</option>
+            <option value="القرنه">القرنه (70 ج.م)</option>
+            <option value="الزنيه قبلي">الزنيه قبلي (25 ج.م)</option>
+            <option value="ارمنت الحيط">ارمنت الحيط (50 ج.م)</option>
+            <option value="الضبعيه">الضبعيه (30 ج.م)</option>
+          </select>
         </div>
         <div class="input-group">
           <span class="input-icon">🛣️</span>
-          <input type="text" id="addr-street" placeholder="الشارع" required>
-        </div>
-        <div class="input-group">
-          <span class="input-icon">🏢</span>
-          <input type="text" id="addr-building" placeholder="رقم المبنى / العمارة" required>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div class="input-group">
-            <span class="input-icon">🚪</span>
-            <input type="text" id="addr-floor" placeholder="الدور">
-          </div>
-          <div class="input-group">
-            <span class="input-icon">🏠</span>
-            <input type="text" id="addr-apartment" placeholder="الشقة">
-          </div>
+          <input type="text" id="addr-street" placeholder="الشارع / اسم المنطقة" required>
         </div>
         <div class="input-group">
           <span class="input-icon">📝</span>
-          <input type="text" id="addr-location" placeholder="وصف أقرب نقطة معلم">
+          <input type="text" id="addr-location" placeholder="وصف قريب (اختياري)">
         </div>
         <button type="submit" class="btn btn-primary btn-block btn-lg">حفظ العنوان</button>
       </form>
@@ -268,11 +261,11 @@
           <span>🔔</span>
           <span class="badge hidden" id="notif-count">0</span>
         </button>
+        <button class="header-icon-btn lang-btn" id="lang-btn" onclick="toggleLang()" title="English">
+          <span>EN</span>
+        </button>
         <button class="header-icon-btn profile-btn" id="auth-btn" onclick="handleAuthClick()">
           <span>👤</span>
-        </button>
-        <button class="header-icon-btn mobile-menu-btn" onclick="toggleMobileMenu()">
-          <span>☰</span>
         </button>
       </div>
     </div>
@@ -335,45 +328,18 @@
 
     <!-- HOME PAGE -->
     <section id="page-home" class="page active">
-      <!-- Hero Slider -->
-      <div class="hero-section">
-        <div class="hero-slider" id="hero-slider">
-          <div class="hero-slide active" data-bg="red">
-            <div class="hero-content">
-              <span class="hero-badge star">كويك بيتزا</span>
-              <h2>أشهى البيتزا في الأقصر</h2>
-              <p>نستخدم أجود المكونات الطازجة لتحضير ألذ البيتزا</p>
-              <button class="btn btn-white" onclick="navigateTo('menu')">اطلب الآن</button>
-            </div>
-            <div class="hero-visual">
-              <div class="hero-emoji-float">🍕</div>
-            </div>
+      <!-- Hero Section -->
+      <div class="home-hero">
+        <div class="home-hero-bg"></div>
+        <div class="home-hero-overlay"></div>
+        <div class="home-hero-content">
+          <div class="home-logo-wrap">
+            <img src="icons/logo.jpeg" alt="كويك بيتزا" class="home-logo">
           </div>
-          <div class="hero-slide" data-bg="blue">
-            <div class="hero-content">
-              <span class="hero-badge star">الأكثر طلباً</span>
-              <h2>تشكيلة مميزة</h2>
-              <p>بيتزا - سندوتشات - مشويات - باستا</p>
-              <button class="btn btn-white" onclick="navigateTo('menu')">اكتشف القائمة</button>
-            </div>
-            <div class="hero-visual">
-              <div class="hero-emoji-float">🍽️</div>
-            </div>
-          </div>
-          <div class="hero-slide" data-bg="green">
-            <div class="hero-content">
-              <span class="hero-badge star">طازج يومياً</span>
-              <h2>فطائر وحلويات</h2>
-              <p>فطائر طازجة معمولة يومياً بأيدي أمهر الشيفات</p>
-              <button class="btn btn-white" onclick="navigateTo('menu')">اطلب الآن</button>
-            </div>
-            <div class="hero-visual">
-              <div class="hero-emoji-float">🫓</div>
-            </div>
-          </div>
+          <h1 class="home-hero-title">لم نجد من ننافسه<br>فنافسنا أنفسنا</h1>
+          <p class="home-hero-subtitle">كويك بيتزا - أسرع توصيل في الأقصر</p>
+          <button class="btn btn-white btn-lg home-hero-btn" onclick="navigateTo('menu')">اطلب الآن</button>
         </div>
-        <div class="hero-dots" id="hero-dots"></div>
-        <div class="hero-progress"><div class="hero-progress-bar" id="hero-progress"></div></div>
       </div>
 
       <!-- Quick Categories -->
@@ -526,11 +492,7 @@
                 </div>
                 <div class="summary-line">
                   <span>رسوم التوصيل</span>
-                  <span id="cart-delivery">15 ج.م</span>
-                </div>
-                <div class="summary-line">
-                  <span>الضريبة (14%)</span>
-                  <span id="cart-tax">0 ج.م</span>
+                  <span id="cart-delivery">0 ج.م</span>
                 </div>
 
                 <div class="summary-total">
@@ -674,26 +636,26 @@
   <nav class="bottom-nav" id="bottom-nav">
     <button class="bnav-item active" onclick="navigateTo('home')" data-page="home">
       <div class="bnav-icon">🏠</div>
-      <small>الرئيسية</small>
+      <small data-i18n="home">الرئيسية</small>
     </button>
     <button class="bnav-item" onclick="navigateTo('menu')" data-page="menu">
       <div class="bnav-icon">📋</div>
-      <small>القائمة</small>
+      <small data-i18n="menu">القائمة</small>
     </button>
     <button class="bnav-item bnav-cart" onclick="navigateTo('cart')" data-page="cart">
       <div class="bnav-icon cart-icon-wrap">
         🛒
         <span class="bnav-badge" id="bottom-cart-count">0</span>
       </div>
-      <small>السلة</small>
+      <small data-i18n="cart">السلة</small>
     </button>
     <button class="bnav-item" onclick="navigateTo('orders')" data-page="orders">
       <div class="bnav-icon">📦</div>
-      <small>طلباتي</small>
+      <small data-i18n="orders">طلباتي</small>
     </button>
     <button class="bnav-item" onclick="handleAuthClick()" data-page="profile">
       <div class="bnav-icon">👤</div>
-      <small>حسابي</small>
+      <small data-i18n="profile">حسابي</small>
     </button>
   </nav>
 

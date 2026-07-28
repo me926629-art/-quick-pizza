@@ -15,8 +15,7 @@ const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   items: [orderItemSchema],
   subtotal: { type: Number, required: true },
-  deliveryFee: { type: Number, default: 15 },
-  tax: { type: Number, required: true },
+  deliveryFee: { type: Number, default: 0 },
   total: { type: Number, required: true },
   status: {
     type: String,
@@ -29,13 +28,11 @@ const orderSchema = new mongoose.Schema({
     default: 'cash'
   },
   deliveryAddress: {
-    street: String,
     city: String,
     district: String,
-    building: String,
-    floor: String,
-    apartment: String,
-    location: String
+    street: String,
+    location: String,
+    deliveryArea: { type: String, default: '' }
   },
   phone: { type: String, default: '' },
   estimatedDelivery: Date,

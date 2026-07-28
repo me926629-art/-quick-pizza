@@ -11,9 +11,85 @@ let selectedPayment = 'cash';
 let heroTimer = null;
 let heroProgressTimer = null;
 
+// ===== I18N =====
+let currentLang = localStorage.getItem('qp_lang') || 'ar';
+const translations = {
+  en: {
+    home: 'Home', menu: 'Menu', cart: 'Cart', orders: 'Orders', profile: 'Profile',
+    login: 'Login', logout: 'Logout', register: 'Register',
+    search: 'Search for pizza, pies, drinks...',
+    addToCart: 'Add to Cart', orderNow: 'Order Now',
+    popular: 'Popular', featured: 'Featured', all: 'All',
+    delivery: 'Delivery Fee', subtotal: 'Subtotal', total: 'Total',
+    phone: 'Phone Number', notes: 'Special Notes', confirmOrder: 'Confirm Order',
+    emptyCart: 'Cart is Empty', browseMenu: 'Browse Menu',
+    noOrders: 'No orders yet', startOrder: 'Start your first order!',
+    pending: 'Pending', confirmed: 'Confirmed', preparing: 'Preparing',
+    ready: 'Ready', outForDelivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled',
+    egp: 'EGP', save: 'Save', close: 'Close',
+    homeHeroTitle: 'We found no one to compete with... so we compete with ourselves',
+    homeHeroSub: 'Quick Pizza - Fastest delivery in Luxor',
+    lang: 'AR', langTitle: 'العربية'
+  },
+  ar: {
+    home: 'الرئيسية', menu: 'القائمة', cart: 'السلة', orders: 'طلباتي', profile: 'حسابي',
+    login: 'تسجيل الدخول', logout: 'تسجيل الخروج', register: 'إنشاء حساب',
+    search: 'ابحث عن بيتزا، فطاير، مشروبات...',
+    addToCart: 'أضف للسلة', orderNow: 'اطلب الآن',
+    popular: 'الأكثر مبيعاً', featured: 'المميزة', all: 'الكل',
+    delivery: 'رسوم التوصيل', subtotal: 'المجموع الفرعي', total: 'الإجمالي',
+    phone: 'رقم التليفون', notes: 'ملاحظات خاصة', confirmOrder: 'تأكيد الطلب',
+    emptyCart: 'السلة فاضية', browseMenu: 'تصفح القائمة',
+    noOrders: 'مفيش طلبات لسه', startOrder: 'ابدأ أول طلب ليك!',
+    pending: 'قيد الانتظار', confirmed: 'تم التأكيد', preparing: 'قيد التحضير',
+    ready: 'جاهز', outForDelivery: 'في الطريق', delivered: 'تم التوصيل', cancelled: 'ملغي',
+    egp: 'ج.م', save: 'حفظ', close: 'إلغاء',
+    homeHeroTitle: 'لم نجد من ننافسه... فنافسنا أنفسنا',
+    homeHeroSub: 'كويك بيتزا - أسرع توصيل في الأقصر',
+    lang: 'EN', langTitle: 'English'
+  }
+};
+
+function t(key) { return translations[currentLang]?.[key] || key; }
+
+function toggleLang() {
+  currentLang = currentLang === 'ar' ? 'en' : 'ar';
+  localStorage.setItem('qp_lang', currentLang);
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  document.getElementById('lang-btn').innerHTML = `<span>${t('lang')}</span>`;
+  document.getElementById('lang-btn').title = t('langTitle');
+  // Re-render current page
+  if (currentPage === 'home') loadHomePage();
+  else if (currentPage === 'menu') {
+    const cat = currentCategory;
+    renderMenuProducts(cat ? allProducts.filter(p => p.category?._id === cat) : allProducts);
+  } else if (currentPage === 'cart') renderCart();
+  else if (currentPage === 'orders') loadOrdersPage();
+  // Update fixed elements
+  updateUILang();
+}
+
+function updateUILang() {
+  document.title = currentLang === 'ar' ? 'كويك بيتزا | Quick Pizza' : 'Quick Pizza | كويك بيتزا';
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.placeholder = t('search');
+  const heroTitle = document.querySelector('.home-hero-title');
+  if (heroTitle) heroTitle.innerHTML = t('homeHeroTitle').replace('...', '<br>');
+  const heroSub = document.querySelector('.home-hero-subtitle');
+  if (heroSub) heroSub.textContent = t('homeHeroSub');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  document.getElementById('lang-btn').innerHTML = `<span>${t('lang')}</span>`;
+  document.getElementById('lang-btn').title = t('langTitle');
   initApp();
   startHeroSlider();
   initScrollHeader();
@@ -112,39 +188,7 @@ function initScrollHeader() {
 
 // ===== HERO SLIDER =====
 function startHeroSlider() {
-  const slides = document.querySelectorAll('.hero-slide');
-  const dotsContainer = document.getElementById('hero-dots');
-  const progressBar = document.getElementById('hero-progress');
-  let current = 0;
-  const INTERVAL = 5000;
-
-  slides.forEach((_, i) => {
-    const dot = document.createElement('div');
-    dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
-    dot.onclick = () => { goTo(i); resetTimer(); };
-    dotsContainer.appendChild(dot);
-  });
-
-  function goTo(idx) {
-    slides[current].classList.remove('active');
-    document.querySelectorAll('.hero-dot')[current].classList.remove('active');
-    current = idx;
-    slides[current].classList.add('active');
-    document.querySelectorAll('.hero-dot')[current].classList.add('active');
-    progressBar.style.animation = 'none';
-    progressBar.offsetHeight;
-    progressBar.style.animation = '';
-  }
-
-  function resetTimer() {
-    progressBar.style.animation = 'none';
-    progressBar.offsetHeight;
-    progressBar.style.animation = '';
-  }
-
-  heroProgressTimer = setInterval(() => {
-    goTo((current + 1) % slides.length);
-  }, INTERVAL);
+  // Single static hero - no slider needed
 }
 
 // ===== NAVIGATION =====
@@ -197,6 +241,7 @@ function navigateTo(page, data) {
 }
 
 function loadHomePage() {
+  updateUILang();
   renderHomeCategories();
   renderFeaturedProducts();
   renderPopularProducts();
@@ -317,11 +362,16 @@ function productCard(p) {
   if (p.isFeatured) badges += '<span class="product-badge featured">⭐ مميز</span>';
   if (p.isPopular) badges += '<span class="product-badge popular">🔥 الأكثر مبيعاً</span>';
 
+  const imgTag = p.image
+    ? `<img src="${p.image}" alt="${p.nameAr}" class="product-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onclick="event.stopPropagation(); openImageZoom('${p.image}')">
+       <span class="product-emoji" style="display:none">${emoji}</span>`
+    : `<span class="product-emoji">${emoji}</span>`;
+
   return `
     <div class="product-card" onclick="openProductModal('${p._id}')">
       <div class="product-img">
         <div class="product-img-bg"></div>
-        ${p.image ? `<img src="${p.image}" alt="${p.nameAr}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : `<span class="product-emoji">${emoji}</span>`}
+        ${imgTag}
         <div class="product-badges">${badges}</div>
         <button class="product-fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${p._id}')">
           ${isFav ? '❤️' : '🤍'}
@@ -337,6 +387,14 @@ function productCard(p) {
       </div>
     </div>
   `;
+}
+
+function openImageZoom(src) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out';
+  overlay.innerHTML = `<img src="${src}" style="max-width:100%;max-height:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);object-fit:contain">`;
+  overlay.onclick = () => overlay.remove();
+  document.body.appendChild(overlay);
 }
 
 // ===== FAVORITES =====
@@ -372,7 +430,7 @@ function openProductModal(productId) {
     const totalPrice = sizePrice + toppingsTotal;
 
     detail.innerHTML = `
-      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${product.nameAr}" style="width:100%;height:100%;object-fit:cover">` : emoji}</div>
+      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${product.nameAr}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in" onclick="event.stopPropagation(); openImageZoom('${product.image}')">` : emoji}</div>
       <div class="pd-body">
         <div class="pd-name">${product.nameAr}</div>
         <div class="pd-desc">${product.descriptionAr || product.description}</div>
@@ -549,7 +607,9 @@ function updateCartAddress() {
   const display = document.getElementById('cart-address-display');
   if (currentUser?.address?.city) {
     const a = currentUser.address;
-    display.textContent = `${a.city}، ${a.district || ''} ${a.street || ''} ${a.building || ''}`;
+    const fee = getDeliveryFee(a.deliveryArea);
+    const feeText = fee > 0 ? ` (توصيل ${fee} ج.م)` : ' (توصيل مجاني)';
+    display.textContent = `${a.city}، ${a.district || a.street || ''} ${feeText}`;
     display.style.color = 'var(--text-primary)';
   }
 }
@@ -591,13 +651,13 @@ async function clearCart() {
 
 function updateCartSummary() {
   const subtotal = cartData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const delivery = 15;
-  const tax = Math.round(subtotal * 0.14);
-  const total = Math.max(subtotal + delivery + tax, 0);
+  const deliveryArea = currentUser?.address?.deliveryArea || '';
+  const delivery = getDeliveryFee(deliveryArea);
+  const total = Math.max(subtotal + delivery, 0);
 
   document.getElementById('cart-subtotal').textContent = subtotal + ' ج.م';
   document.getElementById('cart-delivery').textContent = delivery + ' ج.م';
-  document.getElementById('cart-tax').textContent = tax + ' ج.م';
+  document.getElementById('cart-tax').parentElement.style.display = 'none';
   document.getElementById('cart-total').textContent = total + ' ج.م';
   document.getElementById('order-total-btn').textContent = total + ' ج.م';
 }
@@ -615,10 +675,20 @@ async function placeOrder() {
     openAddressModal();
     return;
   }
+  if (!currentUser?.address?.deliveryArea) {
+    showToast('من فضلك اختر منطقة التوصيل');
+    openAddressModal();
+    return;
+  }
   const phoneInput = document.getElementById('checkout-phone');
   const phone = phoneInput?.value?.trim();
   if (!phone) {
     showToast('من فضلك اكتب رقم التليفون');
+    phoneInput?.focus();
+    return;
+  }
+  if (!/^01\d{9}$/.test(phone)) {
+    showToast('رقم التليفون يجب أن يكون 11 رقم يبدأ بـ 01');
     phoneInput?.focus();
     return;
   }
@@ -630,6 +700,7 @@ async function placeOrder() {
       deliveryAddress: currentUser.address,
       phone
     });
+    document.getElementById('special-instructions').value = '';
     cartData = { items: [] };
     updateCartCount();
     showToast('تم تأكيد الطلب بنجاح! 🎉');
@@ -769,7 +840,8 @@ function renderTrackingPage(order) {
   const secs = diff % 60;
 
   const a = order.deliveryAddress || {};
-  const addrText = [a.city, a.district, a.street, a.building, a.floor ? `دور ${a.floor}` : '', a.apartment ? `شقة ${a.apartment}` : ''].filter(Boolean).join('، ') || 'لم يتم التحديد';
+  const areaName = a.deliveryArea ? (a.district || a.deliveryArea) : '';
+  const addrText = [a.city, areaName, a.street, a.location].filter(Boolean).join('، ') || 'لم يتم التحديد';
 
   let countdownHTML = '';
   if (!isDelivered && !isCancelled && diff > 0) {
@@ -875,7 +947,6 @@ function renderTrackingPage(order) {
         <div style="margin-top:12px">
           <div class="track-summary-line"><span>المجموع الفرعي</span><span>${order.subtotal} ج.م</span></div>
           <div class="track-summary-line"><span>التوصيل</span><span>${order.deliveryFee} ج.م</span></div>
-          <div class="track-summary-line"><span>الضريبة</span><span>${order.tax} ج.م</span></div>
           <div class="track-summary-total"><span>الإجمالي</span><span>${order.total} ج.م</span></div>
         </div>
       </div>
@@ -990,11 +1061,16 @@ async function handleLogin(e) {
 
 async function handleRegister(e) {
   e.preventDefault();
+  const phone = document.getElementById('reg-phone').value.trim();
+  if (!/^01\d{9}$/.test(phone)) {
+    showToast('رقم الموبايل يجب أن يكون 11 رقم يبدأ بـ 01');
+    return;
+  }
   try {
     const data = await apiPost('/api/auth/register', {
       name: document.getElementById('reg-name').value,
       email: document.getElementById('reg-email').value,
-      phone: document.getElementById('reg-phone').value,
+      phone,
       password: document.getElementById('reg-password').value
     });
     saveToStorage(data.token, data.user);
@@ -1034,7 +1110,10 @@ function updateAuthUI() {
 
 function updateLocationUI() {
   const label = document.getElementById('location-label');
-  if (currentUser?.address?.city) {
+  if (currentUser?.address?.deliveryArea) {
+    const fee = getDeliveryFee(currentUser.address.deliveryArea);
+    label.textContent = currentUser.address.deliveryArea + (fee > 0 ? ` (${fee} ج.م)` : '');
+  } else if (currentUser?.address?.city) {
     label.textContent = currentUser.address.city;
   }
 }
@@ -1136,12 +1215,9 @@ function openAddressModal() {
   const modal = document.getElementById('address-modal');
   if (currentUser?.address) {
     const a = currentUser.address;
-    document.getElementById('addr-city').value = a.city || '';
-    document.getElementById('addr-district').value = a.district || '';
+    document.getElementById('addr-city').value = a.city || 'الأقصر';
+    document.getElementById('addr-area').value = a.deliveryArea || '';
     document.getElementById('addr-street').value = a.street || '';
-    document.getElementById('addr-building').value = a.building || '';
-    document.getElementById('addr-floor').value = a.floor || '';
-    document.getElementById('addr-apartment').value = a.apartment || '';
     document.getElementById('addr-location').value = a.location || '';
   }
   modal.classList.remove('hidden');
@@ -1151,16 +1227,20 @@ function closeAddressModal() {
   document.getElementById('address-modal').classList.add('hidden');
 }
 
+function getDeliveryFee(area) {
+  const fees = { 'داخل الأقصر': 0, 'القرنه': 70, 'الزنيه قبلي': 25, 'ارمنت الحيط': 50, 'الضبعيه': 30 };
+  return fees[area] ?? 0;
+}
+
 async function saveAddress(e) {
   e.preventDefault();
+  const area = document.getElementById('addr-area').value;
   const address = {
     city: document.getElementById('addr-city').value,
-    district: document.getElementById('addr-district').value,
+    district: area,
     street: document.getElementById('addr-street').value,
-    building: document.getElementById('addr-building').value,
-    floor: document.getElementById('addr-floor').value,
-    apartment: document.getElementById('addr-apartment').value,
-    location: document.getElementById('addr-location').value
+    location: document.getElementById('addr-location').value,
+    deliveryArea: area
   };
 
   if (currentUser) {
@@ -1172,7 +1252,7 @@ async function saveAddress(e) {
   }
 
   updateLocationUI();
-  if (currentPage === 'cart') updateCartAddress();
+  if (currentPage === 'cart') { updateCartAddress(); updateCartSummary(); }
   closeAddressModal();
   showToast('تم حفظ العنوان ✅');
 }
@@ -1339,7 +1419,7 @@ function adminOrderCard(order) {
         <div class="aoc-items">
           ${order.items.map(i => `<div class="aoc-item"><span>${i.nameAr || i.name} ×${i.quantity}</span><span>${i.price * i.quantity} ج</span></div>`).join('')}
         </div>
-        <div class="aoc-address">📍 ${[a.city, a.district, a.street, a.building].filter(Boolean).join('، ') || 'لم يحدد'}</div>
+        <div class="aoc-address">📍 ${[a.city, a.deliveryArea || a.district, a.street].filter(Boolean).join('، ') || 'لم يحدد'}</div>
         ${order.specialInstructions ? `<div class="aoc-note">📝 ${order.specialInstructions}</div>` : ''}
         ${order.rating ? `<div class="aoc-rating">${'⭐'.repeat(order.rating)} ${order.review ? `"${order.review}"` : ''}</div>` : ''}
       </div>

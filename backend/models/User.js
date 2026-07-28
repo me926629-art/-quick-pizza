@@ -7,13 +7,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 6 },
   phone: { type: String, default: '' },
   address: {
-    street: String,
     city: String,
     district: String,
-    building: String,
-    floor: String,
-    apartment: String,
-    location: { type: String, default: '' }
+    street: String,
+    location: { type: String, default: '' },
+    deliveryArea: { type: String, default: '' }
   },
   role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
   favoriteOrders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
