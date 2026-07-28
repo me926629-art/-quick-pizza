@@ -29,7 +29,18 @@ const translations = {
     egp: 'EGP', save: 'Save', close: 'Close',
     homeHeroTitle: 'We found no one to compete with... so we compete with ourselves',
     homeHeroSub: 'Quick Pizza - Fastest delivery in Luxor',
-    lang: 'AR', langTitle: 'العربية'
+    lang: 'AR', langTitle: 'العربية',
+    categories: 'Categories', browseByCat: 'Browse by category',
+    ourPicks: 'Our picks for you', viewAll: 'View all →',
+    mostOrdered: 'Most ordered',
+    cartTitle: '🛒 Cart', clearAll: 'Clear All',
+    startOrderMsg: 'Add items to start ordering!',
+    paymentMethod: '💳 Payment', cash: '💵 Cash', card: '💳 Card', online: '📱 Online',
+    address: '📍 Delivery Address', change: 'Change',
+    orderSummary: 'Order Summary',     specialNotes: '📝 Special Notes',
+    deliveryAddress: '📍 Delivery Address', placeOrder: 'Confirm Order',
+    newItems: 'New',
+    ordersTitle: '📦 My Orders'
   },
   ar: {
     home: 'الرئيسية', menu: 'القائمة', cart: 'السلة', orders: 'طلباتي', profile: 'حسابي',
@@ -46,7 +57,18 @@ const translations = {
     egp: 'ج.م', save: 'حفظ', close: 'إلغاء',
     homeHeroTitle: 'لم نجد من ننافسه... فنافسنا أنفسنا',
     homeHeroSub: 'كويك بيتزا - أسرع توصيل في الأقصر',
-    lang: 'EN', langTitle: 'English'
+    lang: 'EN', langTitle: 'English',
+    categories: 'الأقسام', browseByCat: 'تصفح حسب القسم',
+    ourPicks: 'اختياراتنا لك', viewAll: 'عرض الكل ←',
+    mostOrdered: 'الأكثر طلباً',
+    cartTitle: '🛒 سلة الطلب', clearAll: 'مسح الكل',
+    startOrderMsg: 'عشان تبدأ تطلب أحلى أكل',
+    paymentMethod: '💳 طريقة الدفع', cash: '💵 كاش', card: '💳 بطاقة', online: '📱 أونلاين',
+    address: '📍 عنوان التوصيل', change: 'تغيير',
+    orderSummary: 'ملخص الطلب',     specialNotes: '📝 ملاحظات خاصة',
+    deliveryAddress: '📍 عنوان التوصيل', placeOrder: 'تأكيد الطلب',
+    newItems: 'جديد',
+    ordersTitle: '📦 طلباتي'
   }
 };
 
@@ -359,8 +381,8 @@ function productCard(p) {
   const isFav = favorites.includes(p._id);
 
   let badges = '';
-  if (p.isFeatured) badges += '<span class="product-badge featured">⭐ مميز</span>';
-  if (p.isPopular) badges += '<span class="product-badge popular">🔥 الأكثر مبيعاً</span>';
+  if (p.isFeatured) badges += `<span class="product-badge featured">⭐ ${t('featured')}</span>`;
+  if (p.isPopular) badges += `<span class="product-badge popular">🔥 ${t('popular')}</span>`;
 
   const imgTag = p.image
     ? `<img src="${p.image}" alt="${p.nameAr}" class="product-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onclick="event.stopPropagation(); openImageZoom('${p.image}')">
@@ -650,16 +672,17 @@ async function clearCart() {
 }
 
 function updateCartSummary() {
-  const subtotal = cartData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryArea = currentUser?.address?.deliveryArea || '';
-  const delivery = getDeliveryFee(deliveryArea);
-  const total = Math.max(subtotal + delivery, 0);
+  try {
+    const subtotal = cartData?.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
+    const deliveryArea = currentUser?.address?.deliveryArea || '';
+    const delivery = getDeliveryFee(deliveryArea);
+    const total = Math.max(subtotal + delivery, 0);
 
-  document.getElementById('cart-subtotal').textContent = subtotal + ' ج.م';
-  document.getElementById('cart-delivery').textContent = delivery + ' ج.م';
-  document.getElementById('cart-tax').parentElement.style.display = 'none';
-  document.getElementById('cart-total').textContent = total + ' ج.م';
-  document.getElementById('order-total-btn').textContent = total + ' ج.م';
+    document.getElementById('cart-subtotal').textContent = subtotal + ' ج.م';
+    document.getElementById('cart-delivery').textContent = delivery + ' ج.م';
+    document.getElementById('cart-total').textContent = total + ' ج.م';
+    document.getElementById('order-total-btn').textContent = total + ' ج.م';
+  } catch (e) {}
 }
 
 function selectPayment(el) {
@@ -777,15 +800,12 @@ function orderCardHTML(order, isActive) {
 
 function getStatusText(status) {
   const map = {
-    pending: '⏳ قيد الانتظار',
-    confirmed: '✅ تم التأكيد',
-    preparing: '👨‍🍳 قيد التحضير',
-    ready: '📦 جاهز',
-    out_for_delivery: '🚗 في الطريق',
-    delivered: '🎉 تم التوصيل',
-    cancelled: '❌ ملغي'
+    pending: t('pending'), confirmed: t('confirmed'), preparing: t('preparing'),
+    ready: t('ready'), out_for_delivery: t('outForDelivery'),
+    delivered: t('delivered'), cancelled: t('cancelled')
   };
-  return map[status] || status;
+  const emojis = { pending: '⏳ ', confirmed: '✅ ', preparing: '👨‍🍳 ', ready: '📦 ', out_for_delivery: '🚗 ', delivered: '🎉 ', cancelled: '❌ ' };
+  return (emojis[status] || '') + (map[status] || status);
 }
 
 let trackingInterval = null;
