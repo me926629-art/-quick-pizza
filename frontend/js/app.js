@@ -997,7 +997,10 @@ async function handleLogin(e) {
     showToast('أهلاً بيك ' + data.user.name + '! 🎉');
     await loadCart();
     initPushNotifications();
-    if (data.user.role === 'admin') { navigateTo('admin'); }
+    if (data.user.role === 'admin') {
+      window.open('/orders.html', '_blank');
+      navigateTo('home');
+    }
   } catch (e) {
     showToast('بيانات الدخول غلط');
   } finally {
@@ -1766,7 +1769,8 @@ async function omUpdateStatus(orderId, status) {
 // ===== PWA SERVICE WORKER =====
 let deferredPrompt = null;
 
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+// ===== PWA SERVICE WORKER =====
+let deferredPrompt = null;
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1776,7 +1780,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-if (isStandalone) {
+function isAppInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true ||
+         localStorage.getItem('qp_app_installed') === 'true';
+}
+
+if (isAppInstalled()) {
   const banner = document.getElementById('install-banner');
   const section = document.getElementById('install-section');
   if (banner) banner.classList.add('hidden');
@@ -1794,6 +1804,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
+  localStorage.setItem('qp_app_installed', 'true');
   const banner = document.getElementById('install-banner');
   const section = document.getElementById('install-section');
   if (banner) banner.classList.add('hidden');
@@ -1831,8 +1842,11 @@ function installApp() {
 }
 
 function dismissInstall() {
+  localStorage.setItem('qp_app_installed', 'true');
   const banner = document.getElementById('install-banner');
+  const section = document.getElementById('install-section');
   if (banner) banner.classList.add('hidden');
+  if (section) section.style.display = 'none';
 }
 
 // ===== OFFLINE DETECTION =====
