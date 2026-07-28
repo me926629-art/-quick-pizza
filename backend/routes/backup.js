@@ -32,12 +32,11 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
-function cleanDoc(doc) {
+function cleanDoc(doc, skipOrderNum) {
   if (!doc || typeof doc !== 'object') return doc;
   const cleaned = { ...doc };
   delete cleaned.__v;
-  delete cleaned.password;
-  if (cleaned.orderNumber && typeof cleaned.orderNumber === 'string') {
+  if (skipOrderNum || (cleaned.orderNumber && typeof cleaned.orderNumber === 'string')) {
     delete cleaned.orderNumber;
   }
   return cleaned;
@@ -48,11 +47,25 @@ router.post('/restore', adminAuth, async (req, res) => {
     const { data } = req.body;
     if (!data) return res.status(400).json({ error: 'No data provided' });
 
-    if (data.users) {
-      for (const u of data.users) {
-        await User.findByIdAndUpdate(u._id, cleanDoc(u), { upsert: true });
+    // 1. Restore orders (this is what users care about most)
+    if (data.orders) {
+      await Order.deleteMany({});
+      for (const o of data.orders) {
+        const doc = cleanDoc(o, true);
+        delete doc.paymentMethod;
+        await new Order(doc).save();
       }
     }
+
+    // 2. Restore weekly revenue
+    if (data.weeklyRevenue && data.weeklyRevenue.length > 0) {
+      await WeeklyRevenue.deleteMany({});
+      for (const w of data.weeklyRevenue) {
+        await new WeeklyRevenue(cleanDoc(w)).save();
+      }
+    }
+
+    // 3. Restore categories & products (menu)
     if (data.categories) {
       await Category.deleteMany({});
       for (const c of data.categories) {
@@ -65,24 +78,28 @@ router.post('/restore', adminAuth, async (req, res) => {
         await new Product(cleanDoc(p)).save();
       }
     }
-    if (data.orders) {
-      await Order.deleteMany({});
-      for (const o of data.orders) {
-        const doc = cleanDoc(o);
-        if (doc.orderNumber && typeof doc.orderNumber === 'string') delete doc.orderNumber;
-        await new Order(doc).save();
-      }
-    }
+
+    // 4. Restore carts
     if (data.carts) {
       await Cart.deleteMany({});
       for (const c of data.carts) {
         await new Cart(cleanDoc(c)).save();
       }
     }
-    if (data.weeklyRevenue) {
-      await WeeklyRevenue.deleteMany({});
-      for (const w of data.weeklyRevenue) {
-        await new WeeklyRevenue(cleanDoc(w)).save();
+
+    // 5. Don't restore users (they already exist in DB, password field is excluded from backup)
+    //    Just update non-sensitive fields if needed
+    if (data.users) {
+      for (const u of data.users) {
+        const existing = await User.findById(u._id);
+        if (existing) {
+          existing.name = u.name || existing.name;
+          existing.email = u.email || existing.email;
+          existing.phone = u.phone || existing.phone;
+          existing.address = u.address || existing.address;
+          existing.role = u.role || existing.role;
+          await existing.save();
+        }
       }
     }
 
