@@ -188,6 +188,28 @@
       .pm-grid { grid-template-columns: 1fr; }
       .pm-form-grid { grid-template-columns: 1fr; }
     }
+
+    .kds-footer {
+      background: #161b22;
+      border-top: 1px solid #30363d;
+      padding: 16px 24px;
+      margin-top: 24px;
+      direction: rtl;
+    }
+    .kds-footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      justify-content: center;
+      font-size: 13px;
+      color: #8b949e;
+    }
+    .kds-footer-copy {
+      text-align: center;
+      font-size: 11px;
+      color: #484f58;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -713,6 +735,23 @@
     }
 
     document.getElementById('login-password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+
+    // Footer contact info
+    function renderFooter() {
+      const footer = document.createElement('footer');
+      footer.className = 'kds-footer';
+      footer.innerHTML = `
+        <div class="kds-footer-inner">
+          <span>📍 الأقصر - شارع التلفزيون</span>
+          <span>📞 2272970 - 2282002</span>
+          <span>📱 01111053251 - 01028700900 - 01281078250</span>
+          <span>🌐 www.quickpizzaluxor.com</span>
+        </div>
+        <div class="kds-footer-copy">© 2026 كويك بيتزا</div>
+      `;
+      document.body.appendChild(footer);
+    }
+    renderFooter();
   </script>
 </body>
 </html>

@@ -1088,7 +1088,7 @@ function showProfileModal() {
       <span>المفضلة</span>
       <span class="profile-menu-arrow">←</span>
     </div>
-    <div class="profile-menu-item" onclick="closeProfileModal()">
+    <div class="profile-menu-item" onclick="showContactInfo()">
       <span class="profile-menu-icon">📞</span>
       <span>تواصل معنا</span>
       <span class="profile-menu-arrow">←</span>
@@ -1105,6 +1105,29 @@ function showProfileModal() {
 
 function closeProfileModal() {
   document.getElementById('profile-modal').classList.add('hidden');
+}
+
+function showContactInfo() {
+  closeProfileModal();
+  const info = `
+    <div style="padding:20px;text-align:center;direction:rtl">
+      <div style="font-size:40px;margin-bottom:12px">📍</div>
+      <h3 style="margin:0 0 16px;font-size:20px;font-weight:800">تواصل مع كويك بيتزا</h3>
+      <div style="background:var(--surface-2);border-radius:12px;padding:16px;margin-bottom:12px;text-align:right">
+        <p style="margin:6px 0"><strong>📍 الفرع:</strong> الأقصر - شارع التلفزيون</p>
+        <p style="margin:6px 0"><strong>📞 تليفون:</strong> 2272970 - 2282002</p>
+        <p style="margin:6px 0"><strong>📱 موبايل:</strong> 01111053251 - 01028700900 - 01281078250</p>
+        <p style="margin:6px 0"><strong>🌐 الموقع:</strong> <a href="https://www.quickpizzaluxor.com" target="_blank" rel="noopener" style="color:var(--primary)">www.quickpizzaluxor.com</a></p>
+      </div>
+      <p style="color:var(--text-muted);font-size:13px">ننتظرك من 10 صباحاً لـ 12 منتصف الليل</p>
+      <button onclick="this.closest('div[style]').remove()" style="margin-top:16px;padding:10px 32px;border:none;border-radius:8px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;cursor:pointer">تم</button>
+    </div>
+  `;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `<div style="background:#fff;border-radius:16px;max-width:380px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,0.3)">${info}</div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
 }
 
 function showFavorites() {

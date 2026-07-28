@@ -121,11 +121,11 @@ input, textarea, select { font-family: inherit; }
 }
 .header-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .logo-icon-wrap {
-  width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  width: 42px; height: 42px;
   border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 8px rgba(211,47,47,0.3);
+  background: #fff; border: 1px solid var(--border); overflow: hidden;
 }
-.logo-emoji { font-size: 24px; }
+.logo-icon-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
 .logo-text h1 { font-size: 18px; font-weight: 900; color: var(--primary); line-height: 1.2; }
 .logo-text span { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; font-weight: 600; }
 .header-actions { display: flex; align-items: center; gap: 6px; }
@@ -1297,3 +1297,73 @@ input, textarea, select { font-family: inherit; }
   right: 4px;
 }
 .notif-btn { position: relative; }
+
+/* ===== FOOTER ===== */
+.site-footer {
+  background: var(--dark);
+  color: #e6edf3;
+  padding: 32px 16px 24px;
+  margin-top: 24px;
+  margin-bottom: 64px;
+  direction: rtl;
+}
+.footer-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.footer-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: #fff;
+}
+.footer-brand strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+}
+.footer-brand small {
+  font-size: 11px;
+  color: #8b949e;
+  letter-spacing: 1px;
+}
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #c9d1d9;
+}
+.footer-icon {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.footer-item a {
+  color: var(--primary-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer-item a:hover { text-decoration: underline; }
+.footer-copy {
+  text-align: center;
+  color: #8b949e;
+  font-size: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #30363d;
+}
