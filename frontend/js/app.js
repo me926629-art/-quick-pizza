@@ -1142,8 +1142,7 @@ async function handleLogin(e) {
     await loadCart();
     initPushNotifications();
     if (data.user.role === 'admin') {
-      window.open('/orders.html', '_blank');
-      navigateTo('home');
+      navigateTo('admin');
     }
   } catch (e) {
     showToast(currentLang === 'en' ? 'Invalid email or password' : 'بيانات الدخول غلط');
@@ -1182,6 +1181,7 @@ function updateAuthUI() {
   const mobileAuthLink = document.getElementById('mobile-auth-link');
   const adminLink = document.getElementById('mobile-admin-link');
   const ordersLink = document.getElementById('mobile-orders-link');
+  const adminHeaderBtn = document.getElementById('admin-header-btn');
   if (currentUser) {
     const initial = currentUser.name?.charAt(0) || '👤';
     authBtn.innerHTML = `<span>${initial}</span>`;
@@ -1189,13 +1189,16 @@ function updateAuthUI() {
     if (currentUser.role === 'admin') {
       adminLink.style.display = 'flex';
       ordersLink.style.display = 'flex';
+      if (adminHeaderBtn) adminHeaderBtn.style.display = 'inline-flex';
     } else {
       adminLink.style.display = 'none';
       ordersLink.style.display = 'none';
+      if (adminHeaderBtn) adminHeaderBtn.style.display = 'none';
     }
   } else {
     authBtn.innerHTML = '<span>👤</span>';
     mobileAuthLink.querySelector('span:last-child').textContent = 'تسجيل الدخول';
+    if (adminHeaderBtn) adminHeaderBtn.style.display = 'none';
     adminLink.style.display = 'none';
     ordersLink.style.display = 'none';
     document.getElementById('notif-btn').style.display = 'none';
