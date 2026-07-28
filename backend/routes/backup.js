@@ -32,13 +32,6 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
-function clean(doc) {
-  const c = { ...doc };
-  delete c._id;
-  delete c.__v;
-  return c;
-}
-
 router.post('/restore', adminAuth, async (req, res) => {
   try {
     const { data } = req.body;
@@ -46,19 +39,25 @@ router.post('/restore', adminAuth, async (req, res) => {
 
     const restored = [];
 
-    for (const col of ['orders', 'weeklyRevenue', 'categories', 'products', 'carts', 'users']) {
+    for (const col of ['categories', 'products', 'orders', 'weeklyRevenue', 'carts', 'users']) {
       if (!data[col] || !data[col].length) continue;
       const Model = { orders: Order, weeklyRevenue: WeeklyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
-      let count = 0;
+      let ok = 0, fail = 0;
       for (const doc of data[col]) {
         try {
-          await new Model(clean(doc)).save();
-          count++;
+          const { _id, __v, ...rest } = doc;
+          if (_id) {
+            await Model.findByIdAndUpdate(_id, rest, { upsert: true, runValidators: false });
+          } else {
+            await new Model(rest).save();
+          }
+          ok++;
         } catch (e) {
-          console.error('Restore error in ' + col + ':', e.message);
+          fail++;
+          console.error('Restore error in ' + col + ':', e.message.slice(0, 80));
         }
       }
-      restored.push(col + ': ' + count + '/' + data[col].length);
+      restored.push(col + ': ' + ok + '/' + (ok + fail));
     }
 
     res.json({ success: true, message: '✅ ' + restored.join(' | ') });
