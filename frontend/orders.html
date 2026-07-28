@@ -503,7 +503,7 @@
       const mins = Math.floor(elapsed / 60);
       const tc = mins > 30 ? 'timer-danger' : mins > 15 ? 'timer-warning' : '';
       const a = order.deliveryAddress || {};
-      const phone = order.phone || order.user?.phone || '';
+      const phone = order.phone || order.user?.phone || 'لم يحدد';
 
       return `
         <div class="om-card ${order.status === 'pending' ? 'pulse-new' : ''}">
@@ -520,7 +520,7 @@
           </div>
           <div class="om-card-body">
             <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'}</div>
-            ${phone ? `<div class="om-card-phone">📞 <a href="tel:${phone}">${phone}</a></div>` : ''}
+            <div class="om-card-phone">📞 ${phone === 'لم يحدد' ? phone : `<a href="tel:${phone}">${phone}</a>`}</div>
             <div class="om-card-items">
               ${order.items.map(i => `
                 <div class="om-card-item">

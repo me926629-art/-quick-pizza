@@ -1724,24 +1724,25 @@ function omOrderCard(order) {
   const elapsed = Math.floor((Date.now() - new Date(order.createdAt)) / 1000);
   const mins = Math.floor(elapsed / 60);
   const timerClass = mins > 30 ? 'timer-danger' : mins > 15 ? 'timer-warning' : '';
-  const a = order.deliveryAddress || {};
-  const isNew = order.status === 'pending';
+      const a = order.deliveryAddress || {};
+      const isNew = order.status === 'pending';
+      const phone = order.phone || order.user?.phone || 'لم يحدد';
 
-  return `
-    <div class="om-card ${isNew ? 'pulse-new' : ''}" id="om-card-${order._id}">
-      <div class="om-card-top">
-        <div>
-          <div class="om-card-order">#${order.orderNumber}</div>
-          <div class="om-card-time">
-            <span class="om-card-timer ${timerClass}">${mins} دقيقة</span>
-            <span>•</span>
-            <span>${new Date(order.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+      return `
+        <div class="om-card ${isNew ? 'pulse-new' : ''}" id="om-card-${order._id}">
+          <div class="om-card-top">
+            <div>
+              <div class="om-card-order">#${order.orderNumber}</div>
+              <div class="om-card-time">
+                <span class="om-card-timer ${timerClass}">${mins} دقيقة</span>
+                <span>•</span>
+                <span>${new Date(order.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            </div>
+            <span class="om-card-status ${cfg.cls}">${cfg.label}</span>
           </div>
-        </div>
-        <span class="om-card-status ${cfg.cls}">${cfg.label}</span>
-      </div>
-      <div class="om-card-body">
-        <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'} ${(order.phone || order.user?.phone) ? `| 📞 ${order.phone || order.user?.phone}` : ''}</div>
+          <div class="om-card-body">
+            <div class="om-card-customer">👤 ${order.user?.name || 'غير معروف'} | 📞 ${phone === 'لم يحدد' ? phone : `<a href="tel:${phone}" style="color:#58a6ff;text-decoration:none">${phone}</a>`}</div>
         <div class="om-card-items">
           ${order.items.map(i => `
             <div class="om-card-item">
@@ -1752,6 +1753,7 @@ function omOrderCard(order) {
           `).join('')}
         </div>
         ${order.specialInstructions ? `<div class="om-card-note">📝 ${order.specialInstructions}</div>` : ''}
+        ${order.rating ? `<div class="om-card-note" style="border-color:#f59e0b;background:rgba(245,158,11,0.08)">⭐ ${order.rating}/5 ${order.review ? `— "${order.review}"` : ''}</div>` : ''}
         <div class="om-card-addr">📍 ${[a.city, a.district, a.street, a.building].filter(Boolean).join('، ') || 'لم يحدد'}</div>
       </div>
       <div class="om-card-footer">
