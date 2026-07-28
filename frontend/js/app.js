@@ -2198,6 +2198,36 @@ function showToast(message) {
   toast._t = setTimeout(() => toast.classList.add('hidden'), 3000);
 }
 
+// ===== BACKUP / RESTORE =====
+async function restoreBackup() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!confirm(currentLang === 'en' ? 'This will OVERWRITE all current data with backup data. Continue?' : 'هذا سيحل محل كل البيانات الحالية ببيانات الباك أب. هل تريد الاستمرار؟')) return;
+    try {
+      showToast(currentLang === 'en' ? 'Restoring...' : 'جاري الاستعادة...');
+      const text = await file.text();
+      const backup = JSON.parse(text);
+      const token = localStorage.getItem('qp_token');
+      const res = await fetch('/api/backup/restore', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(backup)
+      });
+      if (!res.ok) throw new Error('Restore failed');
+      showToast(currentLang === 'en' ? 'Backup restored ✅' : 'تم الاستعادة ✅');
+      if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
+    } catch (err) {
+      showToast(currentLang === 'en' ? 'Error restoring backup' : 'خطأ في استعادة الباك أب');
+      console.error(err);
+    }
+  };
+  input.click();
+}
+
 // ===== RE-SEED =====
 async function resetAllData() {
   if (!confirm(currentLang === 'en' ? 'Are you sure? This will delete ALL orders and revenue data. This cannot be undone!' : 'متأكد؟ هيتحذف كل الطلبات والإيرادات للأبد!')) return;
