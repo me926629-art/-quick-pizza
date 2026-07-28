@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <script>if('serviceWorker'in navigator)navigator.serviceWorker.getRegistrations().then(r=>r.forEach(s=>s.unregister()))</script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Cairo', sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
