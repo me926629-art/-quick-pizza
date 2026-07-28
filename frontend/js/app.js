@@ -593,40 +593,19 @@ function updateCartSummary() {
   const subtotal = cartData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const delivery = 15;
   const tax = Math.round(subtotal * 0.14);
-  const discount = cartData.couponDiscount || 0;
-  const total = Math.max(subtotal + delivery + tax - discount, 0);
+  const total = Math.max(subtotal + delivery + tax, 0);
 
   document.getElementById('cart-subtotal').textContent = subtotal + ' ج.م';
   document.getElementById('cart-delivery').textContent = delivery + ' ج.م';
   document.getElementById('cart-tax').textContent = tax + ' ج.م';
   document.getElementById('cart-total').textContent = total + ' ج.م';
   document.getElementById('order-total-btn').textContent = total + ' ج.م';
-
-  const discountLine = document.getElementById('discount-line');
-  if (discount > 0) {
-    discountLine.classList.remove('hidden');
-    document.getElementById('cart-discount').textContent = '-' + discount + ' ج.م';
-  } else {
-    discountLine.classList.add('hidden');
-  }
 }
 
 function selectPayment(el) {
   selectedPayment = el.value;
   document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
   el.closest('.payment-option').classList.add('active');
-}
-
-async function applyPromo() {
-  const code = document.getElementById('promo-input').value.trim().toUpperCase();
-  if (!code) return showToast('ادخل كود الخصم');
-  if (code === 'FREEQP') {
-    showToast('تم تطبيق التوصيل المجاني! 🎉');
-  } else if (code === 'QUICK20') {
-    showToast('تم تطبيق خصم 20%!');
-  } else {
-    showToast('كود الخصم غير صالح');
-  }
 }
 
 async function placeOrder() {

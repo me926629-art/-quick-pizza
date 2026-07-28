@@ -16,6 +16,7 @@ const seed = async (force) => {
   }
 
   const cats = await Category.insertMany([
+    { name: 'Pizza', nameAr: 'بيتزا', icon: '🍕', order: 1 },
     { name: 'Savory Pies', nameAr: 'فطائر حادق', icon: '🫓', order: 2 },
     { name: 'Sandwiches', nameAr: 'سندوتشات', icon: '🥪', order: 3 },
     { name: 'Panini', nameAr: 'بانيني', icon: '🥖', order: 4 },
@@ -377,8 +378,12 @@ const seed = async (force) => {
     p.isPopular = p.isFeatured = false;
   }
 
-  await Product.insertMany(products);
-  console.log(`Seeded ${products.length} products`);
+  const validProducts = products.filter(p => p.category);
+  if (validProducts.length < products.length) {
+    console.log(`Skipped ${products.length - validProducts.length} products with missing category`);
+  }
+  await Product.insertMany(validProducts);
+  console.log(`Seeded ${validProducts.length} products`);
 
   const admin = await User.findOne({ email: 'admin@quickpizza.com' });
   if (!admin) {
