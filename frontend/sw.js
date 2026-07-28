@@ -77,7 +77,7 @@ self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
   const title = data.title || 'كويك بيتزا 🍕';
   const body = data.body || 'في تحديث جديد!';
-  const icon = '/icons/icon-192.png';
+  const icon = '/icons/logo.jpeg';
 
   event.waitUntil(
     self.registration.showNotification(title, { body, icon, badge: icon, vibrate: [200, 100, 200] })
