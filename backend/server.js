@@ -67,7 +67,9 @@ app.post('/api/seed', async (req, res) => {
     const token = authHeader.split(' ')[1];
     const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    const User = require('./models/User');
+    const user = await User.findById(decoded.userId);
+    if (!user || user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
     
     console.log('Manual re-seed triggered by admin...');
     const seed = require('./seed');
