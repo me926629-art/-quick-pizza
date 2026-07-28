@@ -2206,7 +2206,7 @@ async function restoreBackup() {
   input.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!confirm(currentLang === 'en' ? 'This will OVERWRITE all current data with backup data. Continue?' : 'هذا سيحل محل كل البيانات الحالية ببيانات الباك أب. هل تريد الاستمرار؟')) return;
+    if (!confirm(currentLang === 'en' ? 'This will restore data from backup. Continue?' : 'سيتم إضافة بيانات الباك أب. هل تريد الاستمرار؟')) return;
     try {
       showToast(currentLang === 'en' ? 'Restoring...' : 'جاري الاستعادة...');
       const text = await file.text();
@@ -2217,8 +2217,9 @@ async function restoreBackup() {
         headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify(backup)
       });
-      if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error || 'Restore failed'); }
-      showToast(currentLang === 'en' ? 'Backup restored ✅' : 'تم الاستعادة ✅');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Restore failed');
+      showToast(currentLang === 'en' ? 'Restore complete ✅' : 'تم الاستعادة ✅');
       if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
     } catch (err) {
       showToast(currentLang === 'en' ? 'Error: ' + err.message : 'خطأ: ' + err.message);
@@ -2226,40 +2227,6 @@ async function restoreBackup() {
     }
   };
   input.click();
-}
-
-// ===== RE-SEED =====
-async function resetAllData() {
-  if (!confirm(currentLang === 'en' ? 'Are you sure? This will delete ALL orders and revenue data. This cannot be undone!' : 'متأكد؟ هيتحذف كل الطلبات والإيرادات للأبد!')) return;
-  if (!confirm(currentLang === 'en' ? 'Really? All orders, all revenue history will be gone.' : 'بجد؟ كل الطلبات والإيرادات هتروح خلاص.')) return;
-  try {
-    showToast(currentLang === 'en' ? 'Resetting...' : 'جاري التصفير...');
-    const token = localStorage.getItem('qp_token');
-    const res = await fetch('/api/orders/reset-all', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
-    if (!res.ok) throw new Error('Reset failed');
-    showToast(currentLang === 'en' ? 'All data reset ✅' : 'تم التصفير ✅');
-    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
-  } catch (e) {
-    showToast(currentLang === 'en' ? 'Error resetting' : 'خطأ في التصفير');
-    console.error(e);
-  }
-}
-
-async function reSeedMenu() {
-  if (!confirm('متأكد تعيد بذر المنيو؟ هيتحذف كل المنتجات والتصنيفات الموجودة ويتضاف 200+ منتج جديد.')) return;
-  try {
-    showToast('جاري إعادة بذر المنيو...');
-    const token = localStorage.getItem('qp_token');
-    const res = await fetch('/api/seed', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
-    if (!res.ok) throw new Error('Seed failed');
-    const data = await res.json();
-    showToast('تم إعادة البذر ✅');
-    if (typeof loadCategories === 'function') loadCategories();
-    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
-  } catch (e) {
-    showToast('خطأ في إعادة البذر');
-    console.error(e);
-  }
 }
 
 // ===== BACKUP =====

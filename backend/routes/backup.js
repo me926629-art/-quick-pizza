@@ -32,14 +32,25 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
-function cleanDoc(doc, skipOrderNum) {
+function safe(doc) {
   if (!doc || typeof doc !== 'object') return doc;
-  const cleaned = { ...doc };
-  delete cleaned.__v;
-  if (skipOrderNum || (cleaned.orderNumber && typeof cleaned.orderNumber === 'string')) {
-    delete cleaned.orderNumber;
+  const c = { ...doc };
+  delete c.__v;
+  return c;
+}
+
+async function upsertMany(Model, docs) {
+  if (!docs || docs.length === 0) return;
+  const errors = [];
+  for (const d of docs) {
+    try {
+      const clean = safe(d);
+      await Model.findByIdAndUpdate(clean._id, clean, { upsert: true, runValidators: false });
+    } catch (e) {
+      errors.push(e.message);
+    }
   }
-  return cleaned;
+  return errors;
 }
 
 router.post('/restore', adminAuth, async (req, res) => {
@@ -47,63 +58,46 @@ router.post('/restore', adminAuth, async (req, res) => {
     const { data } = req.body;
     if (!data) return res.status(400).json({ error: 'No data provided' });
 
-    // 1. Restore orders (this is what users care about most)
-    if (data.orders) {
-      await Order.deleteMany({});
-      for (const o of data.orders) {
-        const doc = cleanDoc(o, true);
-        delete doc.paymentMethod;
-        await new Order(doc).save();
-      }
-    }
+    const allErrors = [];
 
-    // 2. Restore weekly revenue
-    if (data.weeklyRevenue && data.weeklyRevenue.length > 0) {
-      await WeeklyRevenue.deleteMany({});
-      for (const w of data.weeklyRevenue) {
-        await new WeeklyRevenue(cleanDoc(w)).save();
-      }
-    }
+    // Upsert everything — no deleteMany, safe even if partial failure
+    const oErr = await upsertMany(Order, data.orders);
+    if (oErr.length) allErrors.push('Orders: ' + oErr.join(', '));
 
-    // 3. Restore categories & products (menu)
-    if (data.categories) {
-      await Category.deleteMany({});
-      for (const c of data.categories) {
-        await new Category(cleanDoc(c)).save();
-      }
-    }
-    if (data.products) {
-      await Product.deleteMany({});
-      for (const p of data.products) {
-        await new Product(cleanDoc(p)).save();
-      }
-    }
+    const wErr = await upsertMany(WeeklyRevenue, data.weeklyRevenue);
+    if (wErr.length) allErrors.push('Revenue: ' + wErr.join(', '));
 
-    // 4. Restore carts
-    if (data.carts) {
-      await Cart.deleteMany({});
-      for (const c of data.carts) {
-        await new Cart(cleanDoc(c)).save();
-      }
-    }
+    const cErr = await upsertMany(Category, data.categories);
+    if (cErr.length) allErrors.push('Categories: ' + cErr.join(', '));
 
-    // 5. Don't restore users (they already exist in DB, password field is excluded from backup)
-    //    Just update non-sensitive fields if needed
+    const pErr = await upsertMany(Product, data.products);
+    if (pErr.length) allErrors.push('Products: ' + pErr.join(', '));
+
+    const cartErr = await upsertMany(Cart, data.carts);
+    if (cartErr.length) allErrors.push('Carts: ' + cartErr.join(', '));
+
     if (data.users) {
       for (const u of data.users) {
-        const existing = await User.findById(u._id);
-        if (existing) {
-          existing.name = u.name || existing.name;
-          existing.email = u.email || existing.email;
-          existing.phone = u.phone || existing.phone;
-          existing.address = u.address || existing.address;
-          existing.role = u.role || existing.role;
-          await existing.save();
+        try {
+          const existing = await User.findById(u._id);
+          if (existing) {
+            if (u.name) existing.name = u.name;
+            if (u.email) existing.email = u.email;
+            if (u.phone) existing.phone = u.phone;
+            if (u.address) existing.address = u.address;
+            if (u.role) existing.role = u.role;
+            await existing.save();
+          }
+        } catch (e) {
+          allErrors.push('User: ' + e.message);
         }
       }
     }
 
-    res.json({ success: true, message: 'تم استعادة الباك أب بنجاح ✅' });
+    const msg = allErrors.length
+      ? 'تم الاستعادة مع بعض الأخطاء: ' + allErrors.join(' | ')
+      : 'تم استعادة الباك أب بنجاح ✅';
+    res.json({ success: true, message: msg, errors: allErrors });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
