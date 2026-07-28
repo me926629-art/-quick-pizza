@@ -2,7 +2,45 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
+const WeeklyRevenue = require('../models/WeeklyRevenue');
 const { auth, adminAuth } = require('../middleware/auth');
+
+function getOrderDayStart() {
+  const now = new Date();
+  const egyptOffset = 2 * 60 * 60 * 1000;
+  const egyptTime = new Date(now.getTime() + egyptOffset);
+  const egyptHours = egyptTime.getUTCHours();
+  const egyptDayStart = new Date(egyptTime);
+  if (egyptHours < 7) egyptDayStart.setUTCDate(egyptDayStart.getUTCDate() - 1);
+  egyptDayStart.setUTCHours(7, 0, 0, 0);
+  return new Date(egyptDayStart.getTime() - egyptOffset);
+}
+
+function getWeekStart() {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? 6 : day - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diff);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+async function getOrCreateWeeklyRevenue() {
+  const weekStart = getWeekStart();
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  let wr = await WeeklyRevenue.findOne({ isCurrent: true });
+  if (!wr || wr.weekStart < weekStart) {
+    if (wr) {
+      wr.isCurrent = false;
+      await wr.save();
+    }
+    wr = new WeeklyRevenue({ weekStart, weekEnd, totalRevenue: 0, totalOrders: 0, isCurrent: true });
+    await wr.save();
+  }
+  return wr;
+}
 
 router.get('/', auth, async (req, res) => {
   try {
@@ -77,7 +115,8 @@ router.post('/', auth, async (req, res) => {
     const deliveryFee = deliveryAddress?.deliveryArea ? (deliveryAreas[deliveryAddress.deliveryArea] || 0) : 0;
     const total = subtotal + deliveryFee;
     const estimatedDelivery = new Date(Date.now() + 45 * 60 * 1000);
-    const orderCount = await Order.countDocuments();
+    const orderDayStart = getOrderDayStart();
+    const dailyCount = await Order.countDocuments({ createdAt: { $gte: orderDayStart } });
     const order = new Order({
       user: req.user._id,
       items,
@@ -85,12 +124,16 @@ router.post('/', auth, async (req, res) => {
       deliveryFee,
       total: Math.max(total, 0),
       deliveryAddress,
-      orderNumber: orderCount + 1,
+      orderNumber: dailyCount + 1,
       specialInstructions,
       phone: phone || req.user.phone || '',
       estimatedDelivery
     });
     await order.save();
+    const wr = await getOrCreateWeeklyRevenue();
+    wr.totalRevenue += Math.max(total, 0);
+    wr.totalOrders += 1;
+    await wr.save();
     cart.items = [];
     cart.couponCode = null;
     cart.couponDiscount = 0;
@@ -174,6 +217,24 @@ router.delete('/:id', auth, async (req, res) => {
     order.status = 'cancelled';
     await order.save();
     res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/revenue/current', adminAuth, async (req, res) => {
+  try {
+    const wr = await getOrCreateWeeklyRevenue();
+    res.json(wr);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/revenue/history', adminAuth, async (req, res) => {
+  try {
+    const history = await WeeklyRevenue.find({ isCurrent: false }).sort('-weekStart').limit(52);
+    res.json(history);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

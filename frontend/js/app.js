@@ -1379,7 +1379,10 @@ function stopAdminAutoRefresh() {
 
 async function loadAdminDashboard() {
   try {
-    const allOrders = await apiGet('/api/orders/all');
+    const [allOrders, weeklyRev] = await Promise.all([
+      apiGet('/api/orders/all'),
+      apiGet('/api/orders/revenue/current').catch(() => null)
+    ]);
     const orders = allOrders.orders || [];
     const now = new Date();
     document.getElementById('admin-updated-at').textContent = 'آخر تحديث: ' + now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -1399,6 +1402,9 @@ async function loadAdminDashboard() {
       todayRevenue: todayOrders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0),
       totalRevenue: orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0)
     };
+
+    const weeklyTotal = weeklyRev?.totalRevenue || 0;
+    const weeklyOrders = weeklyRev?.totalOrders || 0;
 
     document.getElementById('admin-content').innerHTML = `
       <div class="admin-stats">
@@ -1426,6 +1432,11 @@ async function loadAdminDashboard() {
           <div class="stat-icon">💰</div>
           <div class="stat-value">${stats.totalRevenue} ج</div>
           <div class="stat-label">إجمالي الإيرادات</div>
+        </div>
+        <div class="stat-card" style="border:2px solid var(--primary)">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value">${weeklyTotal} ج</div>
+          <div class="stat-label">إيرادات الأسبوع (${weeklyOrders} طلب)</div>
         </div>
         <div class="stat-card" style="border-right:4px solid var(--danger)">
           <div class="stat-icon">❌</div>
@@ -1972,30 +1983,32 @@ function isAppInstalled() {
          localStorage.getItem('qp_app_installed') === 'true';
 }
 
-if (isAppInstalled()) {
+function updateInstallUI() {
+  const installed = isAppInstalled();
   const banner = document.getElementById('install-banner');
   const section = document.getElementById('install-section');
-  if (banner) banner.classList.add('hidden');
-  if (section) section.style.display = 'none';
+  if (installed) {
+    if (banner) banner.classList.add('hidden');
+    if (section) section.style.display = 'none';
+  } else {
+    if (banner) banner.classList.remove('hidden');
+    if (section) section.style.display = '';
+  }
 }
+
+updateInstallUI();
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  const banner = document.getElementById('install-banner');
-  const section = document.getElementById('install-section');
-  if (banner) banner.classList.remove('hidden');
-  if (section) section.style.display = '';
+  updateInstallUI();
 });
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
   localStorage.setItem('qp_app_installed', 'true');
-  const banner = document.getElementById('install-banner');
-  const section = document.getElementById('install-section');
-  if (banner) banner.classList.add('hidden');
-  if (section) section.style.display = 'none';
-  showToast('تم تثبيت التطبيق! ✅');
+  updateInstallUI();
+  showToast(currentLang === 'en' ? 'App installed! ✅' : 'تم تثبيت التطبيق! ✅');
 });
 
 function installApp() {
@@ -2003,11 +2016,9 @@ function installApp() {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(choice => {
       if (choice.outcome === 'accepted') {
-        showToast('تم تثبيت التطبيق! ✅');
-        const banner = document.getElementById('install-banner');
-        if (banner) banner.classList.add('hidden');
-        const section = document.getElementById('install-section');
-        if (section) section.style.display = 'none';
+        showToast(currentLang === 'en' ? 'App installed! ✅' : 'تم تثبيت التطبيق! ✅');
+        deferredPrompt = null;
+        updateInstallUI();
       }
       deferredPrompt = null;
     });
