@@ -1778,12 +1778,13 @@ async function omUpdateStatus(orderId, status) {
 // ===== PWA SERVICE WORKER =====
 let deferredPrompt = null;
 
-// ===== PWA SERVICE WORKER =====
-let deferredPrompt = null;
-
 if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
+    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(reg => {
+      reg.update();
       console.log('SW registered:', reg.scope);
     }).catch(err => console.log('SW error:', err));
   });
