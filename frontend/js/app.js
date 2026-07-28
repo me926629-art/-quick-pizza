@@ -2217,11 +2217,11 @@ async function restoreBackup() {
         headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify(backup)
       });
-      if (!res.ok) throw new Error('Restore failed');
+      if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error || 'Restore failed'); }
       showToast(currentLang === 'en' ? 'Backup restored ✅' : 'تم الاستعادة ✅');
       if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
     } catch (err) {
-      showToast(currentLang === 'en' ? 'Error restoring backup' : 'خطأ في استعادة الباك أب');
+      showToast(currentLang === 'en' ? 'Error: ' + err.message : 'خطأ: ' + err.message);
       console.error(err);
     }
   };

@@ -32,6 +32,17 @@ router.get('/', adminAuth, async (req, res) => {
   }
 });
 
+function cleanDoc(doc) {
+  if (!doc || typeof doc !== 'object') return doc;
+  const cleaned = { ...doc };
+  delete cleaned.__v;
+  delete cleaned.password;
+  if (cleaned.orderNumber && typeof cleaned.orderNumber === 'string') {
+    delete cleaned.orderNumber;
+  }
+  return cleaned;
+}
+
 router.post('/restore', adminAuth, async (req, res) => {
   try {
     const { data } = req.body;
@@ -39,37 +50,39 @@ router.post('/restore', adminAuth, async (req, res) => {
 
     if (data.users) {
       for (const u of data.users) {
-        await User.findByIdAndUpdate(u._id, u, { upsert: true });
+        await User.findByIdAndUpdate(u._id, cleanDoc(u), { upsert: true });
       }
     }
     if (data.categories) {
       await Category.deleteMany({});
       for (const c of data.categories) {
-        await new Category(c).save();
+        await new Category(cleanDoc(c)).save();
       }
     }
     if (data.products) {
       await Product.deleteMany({});
       for (const p of data.products) {
-        await new Product(p).save();
+        await new Product(cleanDoc(p)).save();
       }
     }
     if (data.orders) {
       await Order.deleteMany({});
       for (const o of data.orders) {
-        await new Order(o).save();
+        const doc = cleanDoc(o);
+        if (doc.orderNumber && typeof doc.orderNumber === 'string') delete doc.orderNumber;
+        await new Order(doc).save();
       }
     }
     if (data.carts) {
       await Cart.deleteMany({});
       for (const c of data.carts) {
-        await new Cart(c).save();
+        await new Cart(cleanDoc(c)).save();
       }
     }
     if (data.weeklyRevenue) {
       await WeeklyRevenue.deleteMany({});
       for (const w of data.weeklyRevenue) {
-        await new WeeklyRevenue(w).save();
+        await new WeeklyRevenue(cleanDoc(w)).save();
       }
     }
 
