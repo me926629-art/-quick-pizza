@@ -21,10 +21,7 @@
   <div id="splash-screen" class="splash-screen">
     <div class="splash-content">
       <div class="splash-logo-wrap">
-        <div class="splash-pizza-wrap">
-          <img src="icons/logo.jpeg" alt="كويك بيتزا" style="width:100px;height:100px;border-radius:20px;object-fit:cover;position:relative;z-index:2">
-        </div>
-      </div>
+        <img src="icons/logo.jpeg" alt="كويك بيتزا" class="splash-logo-img">
       </div>
       <h1 class="splash-title">كويك بيتزا</h1>
       <p class="splash-subtitle">QUICK PIZZA</p>
@@ -45,52 +42,52 @@
       <div id="login-form" class="auth-form">
         <div class="auth-header">
           <div class="auth-avatar">👋</div>
-          <h2>أهلاً بيك تاني!</h2>
-          <p>سجل دخولك عشان تكمل طلبك</p>
+          <h2 data-i18n="welcomeBack">أهلاً بيك تاني!</h2>
+          <p data-i18n="loginToContinue">سجل دخولك عشان تكمل طلبك</p>
         </div>
         <form onsubmit="handleLogin(event)">
           <div class="input-group">
             <span class="input-icon">📧</span>
-            <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
+            <input type="email" id="login-email" data-i18n-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
           </div>
           <div class="input-group">
             <span class="input-icon">🔒</span>
-            <input type="password" id="login-password" placeholder="كلمة المرور" required>
+            <input type="password" id="login-password" data-i18n-placeholder="passwordPlaceholder" placeholder="كلمة المرور" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn">تسجيل الدخول</button>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-btn" data-i18n="login">تسجيل الدخول</button>
         </form>
         <div class="auth-footer">
-          <p>مش عندك حساب؟ <a onclick="showRegister()">سجل الآن</a></p>
+          <p><span data-i18n="noAccount">مش عندك حساب؟</span> <a onclick="showRegister()" data-i18n="registerNow">سجل الآن</a></p>
         </div>
       </div>
 
       <div id="register-form" class="auth-form hidden">
         <div class="auth-header">
           <div class="auth-avatar">🎉</div>
-          <h2>اعمل حساب جديد</h2>
-          <p>ابدأ تطلب من كويك بيتزا</p>
+          <h2 data-i18n="createAccount">اعمل حساب جديد</h2>
+          <p data-i18n="startOrdering">ابدأ تطلب من كويك بيتزا</p>
         </div>
         <form onsubmit="handleRegister(event)">
           <div class="input-group">
             <span class="input-icon">👤</span>
-            <input type="text" id="reg-name" placeholder="الاسم الكامل" required>
+            <input type="text" id="reg-name" data-i18n-placeholder="fullNamePlaceholder" placeholder="الاسم الكامل" required>
           </div>
           <div class="input-group">
             <span class="input-icon">📧</span>
-            <input type="email" id="reg-email" placeholder="البريد الإلكتروني" required>
+            <input type="email" id="reg-email" data-i18n-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
           </div>
           <div class="input-group">
             <span class="input-icon">📱</span>
-            <input type="tel" id="reg-phone" placeholder="رقم الموبايل" required>
+            <input type="tel" id="reg-phone" data-i18n-placeholder="phonePlaceholder" placeholder="رقم الموبايل" required>
           </div>
           <div class="input-group">
             <span class="input-icon">🔒</span>
-            <input type="password" id="reg-password" placeholder="كلمة المرور (6 أحرف على الأقل)" required minlength="6">
+            <input type="password" id="reg-password" data-i18n-placeholder="passwordMinPlaceholder" placeholder="كلمة المرور (6 أحرف على الأقل)" required minlength="6">
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg">إنشاء حساب</button>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" data-i18n="register">إنشاء حساب</button>
         </form>
         <div class="auth-footer">
-          <p>عندك حساب؟ <a onclick="showLogin()">سجل دخول</a></p>
+          <p><span data-i18n="haveAccount">عندك حساب؟</span> <a onclick="showLogin()" data-i18n="loginNow">سجل دخول</a></p>
         </div>
       </div>
     </div>
@@ -251,7 +248,7 @@
         </div>
         <button class="header-icon-btn location-btn" onclick="openAddressModal()">
           <span>📍</span>
-          <span class="location-label" id="location-label">اختر العنوان</span>
+          <span class="location-label" id="location-label" data-i18n="selectAddress">اختر العنوان</span>
         </button>
         <button class="header-icon-btn cart-btn" onclick="navigateTo('cart')" id="cart-header-btn">
           <span>🛒</span>
@@ -295,26 +292,26 @@
       </div>
       <nav class="mobile-nav-list">
         <a class="mobile-nav-item" onclick="navigateTo('home'); toggleMobileMenu()">
-          <span class="mnav-icon">🏠</span><span>الرئيسية</span>
+          <span class="mnav-icon">🏠</span><span data-i18n="home">الرئيسية</span>
         </a>
         <a class="mobile-nav-item" onclick="navigateTo('menu'); toggleMobileMenu()">
-          <span class="mnav-icon">📋</span><span>القائمة</span>
+          <span class="mnav-icon">📋</span><span data-i18n="menu">القائمة</span>
         </a>
         <a class="mobile-nav-item" onclick="navigateTo('cart'); toggleMobileMenu()">
-          <span class="mnav-icon">🛒</span><span>سلة الطلب</span>
+          <span class="mnav-icon">🛒</span><span data-i18n="cart">سلة الطلب</span>
         </a>
         <a class="mobile-nav-item" onclick="navigateTo('orders'); toggleMobileMenu()">
-          <span class="mnav-icon">📦</span><span>طلباتي</span>
+          <span class="mnav-icon">📦</span><span data-i18n="orders">طلباتي</span>
         </a>
         <a class="mobile-nav-item" id="mobile-admin-link" onclick="navigateTo('admin'); toggleMobileMenu()" style="display:none">
-          <span class="mnav-icon">⚙️</span><span>لوحة التحكم</span>
+          <span class="mnav-icon">⚙️</span><span data-i18n="adminPanel">لوحة التحكم</span>
         </a>
         <a class="mobile-nav-item" id="mobile-orders-link" onclick="window.open('/orders.html', '_blank'); toggleMobileMenu()" style="display:none">
-          <span class="mnav-icon">🖥️</span><span>شاشة الطلبات</span>
+          <span class="mnav-icon">🖥️</span><span>Orders Screen</span>
         </a>
         <div class="mobile-nav-divider"></div>
         <a class="mobile-nav-item" id="mobile-auth-link" onclick="handleAuthClick(); toggleMobileMenu()">
-          <span class="mnav-icon">👤</span><span>تسجيل الدخول</span>
+          <span class="mnav-icon">👤</span><span data-i18n="login">تسجيل الدخول</span>
         </a>
       </nav>
       <div class="mobile-menu-footer">

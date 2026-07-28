@@ -37,10 +37,50 @@ const translations = {
     startOrderMsg: 'Add items to start ordering!',
     paymentMethod: '💳 Payment', cash: '💵 Cash', card: '💳 Card', online: '📱 Online',
     address: '📍 Delivery Address', change: 'Change',
-    orderSummary: 'Order Summary',     specialNotes: '📝 Special Notes',
+    orderSummary: 'Order Summary', specialNotes: '📝 Special Notes',
     deliveryAddress: '📍 Delivery Address', placeOrder: 'Confirm Order',
-    newItems: 'New',
-    ordersTitle: '📦 My Orders'
+    newItems: 'New', ordersTitle: '📦 My Orders',
+    activeOrders: '🔔 Active Orders', pastOrders: '📦 Past Orders',
+    tracking: 'Order Tracking', details: 'Order Details', paymentMethodLabel: '💳 Payment Method',
+    chooseSize: 'Choose Size', addons: 'Optional Add-ons',
+    qty: 'Qty', size: 'Size', toppings: 'Toppings', noProducts: 'No products found',
+    trySearch: 'Try searching for something else',
+    saveAddress: 'Save Address', selectAddress: 'Select delivery address',
+    free: 'Free', mins: 'min', estTime: 'Estimated remaining time',
+    rateOrder: 'Rate your experience', howWasFood: 'How was the food?',
+    submitRating: 'Submit Rating', yourRating: 'Your Rating',
+    phoneHint: 'Phone number so we can contact you',
+    notesHint: 'e.g. No onions, extra sauce...',
+    areaPrompt: 'Choose your area', city: 'City', street: 'Street',
+    landmark: 'Landmark (optional)', area: 'Area',
+    addToFav: 'Added to favorites', removeFav: 'Removed from favorites',
+    addedToCart: 'Added to cart',
+    activeNow: 'Active', filterAll: 'All',
+    noOrdersYet: 'No orders yet',
+    addNote: 'Add a note...',
+    saveBtn: 'Save', cancelBtn: 'Cancel',
+    orderReceived: 'Order received',
+    orderConfirmed: 'Order confirmed',
+    beingPrepared: 'Being prepared',
+    orderReady: 'Order ready',
+    outForDel: 'Out for delivery',
+    deliveredMsg: 'Enjoy your meal!',
+    orderNum: 'Order #',
+    totalAmount: 'Total',
+    adminPanel: 'Dashboard',
+    welcomeBack: 'Welcome back!',
+    loginToContinue: 'Login to continue your order',
+    emailPlaceholder: 'Email',
+    passwordPlaceholder: 'Password',
+    noAccount: "Don't have an account?",
+    registerNow: 'Register now',
+    createAccount: 'Create account',
+    startOrdering: 'Start ordering from Quick Pizza',
+    fullNamePlaceholder: 'Full name',
+    phonePlaceholder: 'Phone number',
+    passwordMinPlaceholder: 'Password (6+ characters)',
+    haveAccount: 'Already have an account?',
+    loginNow: 'Login now'
   },
   ar: {
     home: 'الرئيسية', menu: 'القائمة', cart: 'السلة', orders: 'طلباتي', profile: 'حسابي',
@@ -65,14 +105,56 @@ const translations = {
     startOrderMsg: 'عشان تبدأ تطلب أحلى أكل',
     paymentMethod: '💳 طريقة الدفع', cash: '💵 كاش', card: '💳 بطاقة', online: '📱 أونلاين',
     address: '📍 عنوان التوصيل', change: 'تغيير',
-    orderSummary: 'ملخص الطلب',     specialNotes: '📝 ملاحظات خاصة',
+    orderSummary: 'ملخص الطلب', specialNotes: '📝 ملاحظات خاصة',
     deliveryAddress: '📍 عنوان التوصيل', placeOrder: 'تأكيد الطلب',
-    newItems: 'جديد',
-    ordersTitle: '📦 طلباتي'
+    newItems: 'جديد', ordersTitle: '📦 طلباتي',
+    activeOrders: '🔔 طلبات جارية', pastOrders: '📦 طلبات سابقة',
+    tracking: 'تتبع الطلب', details: 'تفاصيل الطلب', paymentMethodLabel: '💳 طريقة الدفع',
+    chooseSize: 'اختر الحجم', addons: 'إضافات اختيارية',
+    qty: 'الكمية', size: 'الحجم', toppings: 'الإضافات', noProducts: 'مفيش منتجات',
+    trySearch: 'جرّب تبحث عن حاجة تانية',
+    saveAddress: 'حفظ العنوان', selectAddress: 'اختر عنوان التوصيل',
+    free: 'مجاني', mins: 'دقيقة', estTime: 'الوقت المتبقي التقريبي',
+    rateOrder: 'قيّم تجربتك', howWasFood: 'كيف كان الأكل؟',
+    submitRating: 'إرسال التقييم', yourRating: 'تقييمك',
+    phoneHint: 'رقم التليفون عشان نتواصل معاك',
+    notesHint: 'مثلاً: بدون بصل، صوص زيادة، بيتزا مشوية...',
+    areaPrompt: 'اختر المنطقة', city: 'المدينة', street: 'الشارع',
+    landmark: 'وصف قريب (اختياري)', area: 'المنطقة',
+    addToFav: 'تمت الإضافة للمفضلة ❤️', removeFav: 'تمت الإزالة من المفضلة',
+    addedToCart: 'تمت الإضافة للسلة ✅',
+    activeNow: 'جارية', filterAll: 'الكل',
+    noOrdersYet: 'مفيش طلبات لسه',
+    addNote: 'أضف ملاحظة...',
+    saveBtn: 'حفظ', cancelBtn: 'إلغاء',
+    orderReceived: 'تم استلام الطلب',
+    orderConfirmed: 'تم تأكيد الطلب',
+    beingPrepared: 'جاري التحضير',
+    orderReady: 'الطلب جاهز',
+    outForDel: 'في الطريق ليك',
+    deliveredMsg: 'بالهنا والشفا!',
+    orderNum: 'طلب #',
+    totalAmount: 'الإجمالي',
+    adminPanel: 'لوحة التحكم',
+    welcomeBack: 'أهلاً بيك تاني!',
+    loginToContinue: 'سجل دخولك عشان تكمل طلبك',
+    emailPlaceholder: 'البريد الإلكتروني',
+    passwordPlaceholder: 'كلمة المرور',
+    noAccount: 'مش عندك حساب؟',
+    registerNow: 'سجل الآن',
+    createAccount: 'اعمل حساب جديد',
+    startOrdering: 'ابدأ تطلب من كويك بيتزا',
+    fullNamePlaceholder: 'الاسم الكامل',
+    phonePlaceholder: 'رقم الموبايل',
+    passwordMinPlaceholder: 'كلمة المرور (6 أحرف على الأقل)',
+    haveAccount: 'عندك حساب؟',
+    loginNow: 'سجل دخول'
   }
 };
 
 function t(key) { return translations[currentLang]?.[key] || key; }
+function ln(item) { if (!item) return ''; return currentLang === 'en' ? (item.name || item.nameAr || '') : (item.nameAr || item.name || ''); }
+function ld(item) { if (!item) return ''; return currentLang === 'en' ? (item.description || item.descriptionAr || '') : (item.descriptionAr || item.description || ''); }
 
 function toggleLang() {
   currentLang = currentLang === 'ar' ? 'en' : 'ar';
@@ -102,6 +184,9 @@ function updateUILang() {
   if (heroSub) heroSub.textContent = t('homeHeroSub');
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
   });
 }
 
@@ -303,7 +388,7 @@ function renderHomeCategories() {
   c.innerHTML = allCategories.map(cat => `
     <div class="category-pill" onclick="navigateTo('menu', '${cat._id}')">
       <span class="category-pill-icon">${cat.icon}</span>
-      <div class="category-pill-name">${cat.nameAr}</div>
+      <div class="category-pill-name">${ln(cat)}</div>
     </div>
   `).join('');
 }
@@ -316,7 +401,7 @@ function renderMenuSidebar() {
     </div>
     ${allCategories.map(cat => `
       <div class="menu-sidebar-item" onclick="filterByCategory('${cat._id}', this)">
-        <span class="menu-sidebar-icon">${cat.icon}</span><span>${cat.nameAr}</span>
+        <span class="menu-sidebar-icon">${cat.icon}</span><span>${ln(cat)}</span>
       </div>
     `).join('')}
   `;
@@ -334,7 +419,7 @@ function filterByCategory(catId, el) {
   }
   const filtered = catId ? allProducts.filter(p => p.category?._id === catId) : allProducts;
   const cat = allCategories.find(c => c._id === catId);
-  document.getElementById('menu-title').textContent = cat ? cat.nameAr : 'القائمة';
+  document.getElementById('menu-title').textContent = cat ? ln(cat) : (currentLang === 'en' ? 'Menu' : 'القائمة');
   renderMenuProducts(filtered);
 }
 
@@ -369,7 +454,7 @@ function renderPopularProducts() {
 function renderMenuProducts(products) {
   const c = document.getElementById('menu-products');
   if (products.length === 0) {
-    c.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-emoji">🔍</div><h3>مفيش منتجات</h3><p>جرّب تبحث عن حاجة تانية</p></div>';
+    c.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-emoji">🔍</div><h3>${t('noProducts')}</h3><p>${t('trySearch')}</p></div>`;
     return;
   }
   c.innerHTML = products.map(p => productCard(p)).join('');
@@ -385,7 +470,7 @@ function productCard(p) {
   if (p.isPopular) badges += `<span class="product-badge popular">🔥 ${t('popular')}</span>`;
 
   const imgTag = p.image
-    ? `<img src="${p.image}" alt="${p.nameAr}" class="product-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onclick="event.stopPropagation(); openImageZoom('${p.image}')">
+    ? `<img src="${p.image}" alt="${ln(p)}" class="product-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onclick="event.stopPropagation(); openImageZoom('${p.image}')">
        <span class="product-emoji" style="display:none">${emoji}</span>`
     : `<span class="product-emoji">${emoji}</span>`;
 
@@ -400,8 +485,8 @@ function productCard(p) {
         </button>
       </div>
       <div class="product-body">
-        <div class="product-name">${p.nameAr}</div>
-        <div class="product-desc">${p.descriptionAr || p.description}</div>
+        <div class="product-name">${ln(p)}</div>
+        <div class="product-desc">${ld(p)}</div>
         <div class="product-meta">
           <div class="product-price">${basePrice} <small>جنيه</small></div>
           <button class="product-add-btn" onclick="event.stopPropagation(); quickAdd('${p._id}')">+</button>
@@ -451,44 +536,45 @@ function openProductModal(productId) {
     const toppingsTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
     const totalPrice = sizePrice + toppingsTotal;
 
+    const c = currentLang === 'en' ? { cal: 'cal', min: 'min', hot: '🔥 Hot', chooseSize: t('chooseSize'), addons: t('addons'), addToCart: t('addToCart'), egp: t('egp') } : { cal: 'سعرة', min: 'دقيقة', hot: '🌶️ ', chooseSize: t('chooseSize'), addons: t('addons'), addToCart: t('addToCart'), egp: t('egp') };
     detail.innerHTML = `
-      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${product.nameAr}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in" onclick="event.stopPropagation(); openImageZoom('${product.image}')">` : emoji}</div>
+      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${ln(product)}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in" onclick="event.stopPropagation(); openImageZoom('${product.image}')">` : emoji}</div>
       <div class="pd-body">
-        <div class="pd-name">${product.nameAr}</div>
-        <div class="pd-desc">${product.descriptionAr || product.description}</div>
+        <div class="pd-name">${ln(product)}</div>
+        <div class="pd-desc">${ld(product)}</div>
         <div class="pd-meta">
-          ${product.calories ? `<div class="pd-meta-item">🔥 ${product.calories} سعرة</div>` : ''}
-          ${product.prepTime ? `<div class="pd-meta-item">⏱️ ${product.prepTime} دقيقة</div>` : ''}
-          ${product.spicyLevel > 0 ? `<div class="pd-meta-item">🌶️ ${'حار'.repeat(product.spicyLevel)}</div>` : ''}
+          ${product.calories ? `<div class="pd-meta-item">🔥 ${product.calories} ${c.cal}</div>` : ''}
+          ${product.prepTime ? `<div class="pd-meta-item">⏱️ ${product.prepTime} ${c.min}</div>` : ''}
+          ${product.spicyLevel > 0 ? `<div class="pd-meta-item">${'🌶️ '.repeat(product.spicyLevel)}${currentLang === 'en' ? 'Hot' : 'حار'}</div>` : ''}
         </div>
         ${product.sizes && product.sizes.length > 0 ? `
-          <div class="pd-section-title">اختر الحجم</div>
+          <div class="pd-section-title">${c.chooseSize}</div>
           <div class="pd-sizes">
             ${product.sizes.map(s => `
               <button class="pd-size-btn ${selectedSize && selectedSize.name === s.name ? 'active' : ''}"
                 onclick="window._selectSize('${s.name}')">
-                ${s.nameAr}
-                <span class="pd-size-price">${s.price} ج.م</span>
+                ${ln(s)}
+                <span class="pd-size-price">${s.price} ${c.egp}</span>
               </button>
             `).join('')}
           </div>
         ` : ''}
         ${product.toppings && product.toppings.length > 0 ? `
-          <div class="pd-section-title">إضافات اختيارية</div>
+          <div class="pd-section-title">${c.addons}</div>
           <div class="pd-toppings">
             ${product.toppings.map(t => `
               <label class="pd-topping">
                 <input type="checkbox" ${selectedToppings.find(st => st.name === t.name) ? 'checked' : ''}
                   onchange="window._toggleTopping('${t.name}')">
-                <span class="pd-topping-label">${t.nameAr}</span>
-                <span class="pd-topping-price">+${t.price} ج.م</span>
+                <span class="pd-topping-label">${ln(t)}</span>
+                <span class="pd-topping-price">+${t.price} ${c.egp}</span>
               </label>
             `).join('')}
           </div>
         ` : ''}
         <div class="pd-footer">
-          <div class="pd-total-price">${totalPrice} <small>جنيه</small></div>
-          <button class="btn btn-primary btn-lg pd-add-btn" onclick="window._addToCartFromModal()">أضف للسلة 🛒</button>
+          <div class="pd-total-price">${totalPrice} <small>${c.egp}</small></div>
+          <button class="btn btn-primary btn-lg pd-add-btn" onclick="window._addToCartFromModal()">${c.addToCart} 🛒</button>
         </div>
       </div>
     `;
@@ -517,9 +603,9 @@ function openProductModal(productId) {
     try {
       await addToCart(productId, 1, selectedSize?.name || '', selectedToppings.map(t => t.name), price);
       closeProductModal();
-      showToast('تمت الإضافة للسلة ✅');
+      showToast(t('addedToCart'));
     } catch (e) {
-      showToast('خطأ في الإضافة');
+      showToast(currentLang === 'en' ? 'Error adding to cart' : 'خطأ في الإضافة');
     }
   };
 
@@ -551,9 +637,9 @@ async function quickAdd(productId) {
   const size = product.sizes?.[0]?.name || '';
   try {
     await addToCart(productId, 1, size, [], price);
-    showToast('تمت الإضافة للسلة ✅');
+    showToast(t('addedToCart'));
   } catch (e) {
-    showToast('خطأ في الإضافة');
+    showToast(currentLang === 'en' ? 'Error adding to cart' : 'خطأ في الإضافة');
   }
 }
 
@@ -601,7 +687,7 @@ function renderCart() {
         <div class="cart-item-img">${emoji}</div>
         <div class="cart-item-info">
           <div class="cart-item-top">
-            <div class="cart-item-name">${item.product?.nameAr || item.nameAr || 'منتج'}</div>
+            <div class="cart-item-name">${ln(item.product || item)}</div>
             <button class="cart-item-remove" onclick="removeCartItem('${item._id}')">✕</button>
           </div>
           <div class="cart-item-meta">
@@ -630,7 +716,7 @@ function updateCartAddress() {
   if (currentUser?.address?.city) {
     const a = currentUser.address;
     const fee = getDeliveryFee(a.deliveryArea);
-    const feeText = fee > 0 ? ` (توصيل ${fee} ج.م)` : ' (توصيل مجاني)';
+    const feeText = fee > 0 ? ` (${t('delivery')} ${fee} ${t('egp')})` : ` (${t('free')})`;
     display.textContent = `${a.city}، ${a.district || a.street || ''} ${feeText}`;
     display.style.color = 'var(--text-primary)';
   }
@@ -643,7 +729,7 @@ async function updateCartItem(itemId, quantity) {
     updateCartCount();
     renderCart();
   } catch (e) {
-    showToast('خطأ في التحديث');
+    showToast(currentLang === 'en' ? 'Error updating' : 'خطأ في التحديث');
   }
 }
 
@@ -652,22 +738,22 @@ async function removeCartItem(itemId) {
     cartData = await apiDelete(`/api/cart/remove/${itemId}`);
     updateCartCount();
     renderCart();
-    showToast('تم الحذف من السلة');
+    showToast(currentLang === 'en' ? 'Removed from cart' : 'تم الحذف من السلة');
   } catch (e) {
-    showToast('خطأ في الحذف');
+    showToast(currentLang === 'en' ? 'Error removing' : 'خطأ في الحذف');
   }
 }
 
 async function clearCart() {
-  if (!confirm('مسح كل حاجة من السلة؟')) return;
+  if (!confirm(currentLang === 'en' ? 'Clear everything from cart?' : 'مسح كل حاجة من السلة؟')) return;
   try {
     await apiDelete('/api/cart/clear');
     cartData = { items: [] };
     updateCartCount();
     renderCart();
-    showToast('تم مسح السلة');
+    showToast(currentLang === 'en' ? 'Cart cleared' : 'تم مسح السلة');
   } catch (e) {
-    showToast('خطأ');
+    showToast(currentLang === 'en' ? 'Error' : 'خطأ');
   }
 }
 
@@ -678,10 +764,10 @@ function updateCartSummary() {
     const delivery = getDeliveryFee(deliveryArea);
     const total = Math.max(subtotal + delivery, 0);
 
-    document.getElementById('cart-subtotal').textContent = subtotal + ' ج.م';
-    document.getElementById('cart-delivery').textContent = delivery + ' ج.م';
-    document.getElementById('cart-total').textContent = total + ' ج.م';
-    document.getElementById('order-total-btn').textContent = total + ' ج.م';
+    document.getElementById('cart-subtotal').textContent = subtotal + ' ' + t('egp');
+    document.getElementById('cart-delivery').textContent = delivery + ' ' + t('egp');
+    document.getElementById('cart-total').textContent = total + ' ' + t('egp');
+    document.getElementById('order-total-btn').textContent = total + ' ' + t('egp');
   } catch (e) {}
 }
 
@@ -692,26 +778,26 @@ function selectPayment(el) {
 }
 
 async function placeOrder() {
-  if (!cartData || cartData.items.length === 0) return showToast('السلة فاضية');
+  if (!cartData || cartData.items.length === 0) return showToast(currentLang === 'en' ? 'Cart is empty' : 'السلة فاضية');
   if (!currentUser?.address?.city) {
-    showToast('من فضلك حدد عنوان التوصيل أولاً');
+    showToast(currentLang === 'en' ? 'Please add delivery address first' : 'من فضلك حدد عنوان التوصيل أولاً');
     openAddressModal();
     return;
   }
   if (!currentUser?.address?.deliveryArea) {
-    showToast('من فضلك اختر منطقة التوصيل');
+    showToast(currentLang === 'en' ? 'Please choose delivery area' : 'من فضلك اختر منطقة التوصيل');
     openAddressModal();
     return;
   }
   const phoneInput = document.getElementById('checkout-phone');
   const phone = phoneInput?.value?.trim();
   if (!phone) {
-    showToast('من فضلك اكتب رقم التليفون');
+    showToast(currentLang === 'en' ? 'Please enter phone number' : 'من فضلك اكتب رقم التليفون');
     phoneInput?.focus();
     return;
   }
   if (!/^01\d{9}$/.test(phone)) {
-    showToast('رقم التليفون يجب أن يكون 11 رقم يبدأ بـ 01');
+    showToast(currentLang === 'en' ? 'Phone must be 11 digits starting with 01' : 'رقم التليفون يجب أن يكون 11 رقم يبدأ بـ 01');
     phoneInput?.focus();
     return;
   }
@@ -726,10 +812,10 @@ async function placeOrder() {
     document.getElementById('special-instructions').value = '';
     cartData = { items: [] };
     updateCartCount();
-    showToast('تم تأكيد الطلب بنجاح! 🎉');
+    showToast(currentLang === 'en' ? 'Order confirmed! 🎉' : 'تم تأكيد الطلب بنجاح! 🎉');
     navigateTo('tracking', order._id);
   } catch (e) {
-    showToast(e.message || 'خطأ في تأكيد الطلب');
+    showToast(e.message || (currentLang === 'en' ? 'Error confirming order' : 'خطأ في تأكيد الطلب'));
   }
 }
 
@@ -766,34 +852,35 @@ async function loadOrdersPage() {
     const pastOrders = orders.filter(o => !activeStatuses.includes(o.status));
 
     if (activeOrders.length > 0) {
-      listEl.innerHTML += `<div style="margin-bottom:8px"><h3 style="font-size:16px;font-weight:800;color:var(--primary)">🔔 طلبات جارية <span class="live-dot"></span></h3></div>`;
+      listEl.innerHTML += `<div style="margin-bottom:8px"><h3 style="font-size:16px;font-weight:800;color:var(--primary)">${t('activeOrders')} <span class="live-dot"></span></h3></div>`;
       listEl.innerHTML += activeOrders.map(order => orderCardHTML(order, true)).join('');
     }
     if (pastOrders.length > 0) {
-      listEl.innerHTML += `<div style="margin-top:20px;margin-bottom:8px"><h3 style="font-size:16px;font-weight:800;color:var(--text-muted)">📦 طلبات سابقة</h3></div>`;
+      listEl.innerHTML += `<div style="margin-top:20px;margin-bottom:8px"><h3 style="font-size:16px;font-weight:800;color:var(--text-muted)">${t('pastOrders')}</h3></div>`;
       listEl.innerHTML += pastOrders.map(order => orderCardHTML(order, false)).join('');
     }
   } catch (e) {
-    showToast('خطأ في تحميل الطلبات');
+    showToast(currentLang === 'en' ? 'Error loading orders' : 'خطأ في تحميل الطلبات');
   }
 }
 
 function orderCardHTML(order, isActive) {
   const statusEmoji = { pending: '⏳', confirmed: '✅', preparing: '👨‍🍳', ready: '📦', out_for_delivery: '🚗', delivered: '🎉', cancelled: '❌' };
+  const locale = currentLang === 'en' ? 'en-US' : 'ar-EG';
   return `
     <div class="order-card" onclick="navigateTo('tracking', '${order._id}')" ${isActive ? 'style="border-color:var(--primary);border-width:2px"' : ''}>
       <div class="order-header">
-        <span class="order-number">${statusEmoji[order.status] || ''} #${order.orderNumber}</span>
+        <span class="order-number">${statusEmoji[order.status] || ''} ${t('orderNum')}${order.orderNumber}</span>
         <span class="order-status ${order.status}">${getStatusText(order.status)}</span>
       </div>
       <div class="order-items-text">
-        ${order.items.map(i => `${i.nameAr || i.name} ×${i.quantity}`).join(' • ')}
+        ${order.items.map(i => `${ln(i)} ×${i.quantity}`).join(' • ')}
       </div>
       <div class="order-footer">
-        <span class="order-date">${new Date(order.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' })} ${new Date(order.createdAt).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
-        <span class="order-total">${order.total} ج.م</span>
+        <span class="order-date">${new Date(order.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })} ${new Date(order.createdAt).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</span>
+        <span class="order-total">${order.total} ${t('egp')}</span>
       </div>
-      ${isActive ? '<div style="margin-top:10px"><button class="btn btn-primary btn-sm btn-block" onclick="event.stopPropagation(); navigateTo(\'tracking\', \'' + order._id + '\')">تتبع الطلب</button></div>' : ''}
+      ${isActive ? `<div style="margin-top:10px"><button class="btn btn-primary btn-sm btn-block" onclick="event.stopPropagation(); navigateTo('tracking', '${order._id}')">${t('tracking')}</button></div>` : ''}
     </div>
   `;
 }
@@ -833,18 +920,18 @@ async function loadTrackingPage(orderId) {
       }, 10000);
     }
   } catch (e) {
-    showToast('خطأ في تحميل تتبع الطلب');
+    showToast(currentLang === 'en' ? 'Error loading order tracking' : 'خطأ في تحميل تتبع الطلب');
   }
 }
 
 function renderTrackingPage(order) {
   const steps = [
-    { key: 'pending', icon: '⏳', title: 'تم استلام الطلب', desc: 'طلبك في قائمة الانتظار', time: order.createdAt },
-    { key: 'confirmed', icon: '✅', title: 'تم تأكيد الطلب', desc: 'المطعم أكد على طلبك' },
-    { key: 'preparing', icon: '👨‍🍳', title: 'جاري التحضير', desc: 'الفريق بيحضر طلبك' },
-    { key: 'ready', icon: '📦', title: 'الطلب جاهز', desc: 'طلبك جاهز يستلمه الدلفري' },
-    { key: 'out_for_delivery', icon: '🚗', title: 'في الطريق ليك', desc: 'الدلفري في طريقلك' },
-    { key: 'delivered', icon: '🎉', title: 'تم التوصيل', desc: 'بالهنا والشفا!' }
+    { key: 'pending', icon: '⏳', title: t('orderReceived'), desc: t('pending'), time: order.createdAt },
+    { key: 'confirmed', icon: '✅', title: t('orderConfirmed'), desc: t('confirmed') },
+    { key: 'preparing', icon: '👨‍🍳', title: t('beingPrepared'), desc: t('preparing') },
+    { key: 'ready', icon: '📦', title: t('orderReady'), desc: t('ready') },
+    { key: 'out_for_delivery', icon: '🚗', title: t('outForDel'), desc: t('outForDelivery') },
+    { key: 'delivered', icon: '🎉', title: t('delivered'), desc: t('deliveredMsg') }
   ];
   const statusOrder = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
   const currentIdx = statusOrder.indexOf(order.status);
@@ -852,25 +939,26 @@ function renderTrackingPage(order) {
   const isCancelled = order.status === 'cancelled';
 
   const statusEmoji = isCancelled ? '❌' : isDelivered ? '🎉' : steps[currentIdx]?.icon || '⏳';
-  const statusText = isCancelled ? 'تم إلغاء الطلب' : isDelivered ? 'تم التوصيل بنجاح!' : steps[currentIdx]?.title || '';
+  const statusText = isCancelled ? t('cancelled') : isDelivered ? t('delivered') : steps[currentIdx]?.title || '';
   const eta = order.estimatedDelivery ? new Date(order.estimatedDelivery) : null;
   const now = new Date();
   const diff = eta ? Math.max(0, Math.floor((eta - now) / 1000)) : 0;
   const mins = Math.floor(diff / 60);
   const secs = diff % 60;
+  const locale = currentLang === 'en' ? 'en-US' : 'ar-EG';
 
   const a = order.deliveryAddress || {};
   const areaName = a.deliveryArea ? (a.district || a.deliveryArea) : '';
-  const addrText = [a.city, areaName, a.street, a.location].filter(Boolean).join('، ') || 'لم يتم التحديد';
+  const addrText = [a.city, areaName, a.street, a.location].filter(Boolean).join(currentLang === 'en' ? ', ' : '، ') || (currentLang === 'en' ? 'Not set' : 'لم يتم التحديد');
 
   let countdownHTML = '';
   if (!isDelivered && !isCancelled && diff > 0) {
     countdownHTML = `
       <div class="track-countdown-wrap">
-        <div class="track-countdown-label">الوقت المتبقي التقريبي</div>
+        <div class="track-countdown-label">${t('estTime')}</div>
         <div class="track-countdown">
-          <div class="track-cd-box"><div class="track-cd-num" id="cd-min">${mins}</div><div class="track-cd-label">دقيقة</div></div>
-          <div class="track-cd-box"><div class="track-cd-num" id="cd-sec">${String(secs).padStart(2, '0')}</div><div class="track-cd-label">ثانية</div></div>
+          <div class="track-cd-box"><div class="track-cd-num" id="cd-min">${mins}</div><div class="track-cd-label">${t('mins')}</div></div>
+          <div class="track-cd-box"><div class="track-cd-num" id="cd-sec">${String(secs).padStart(2, '0')}</div><div class="track-cd-label">${currentLang === 'en' ? 'sec' : 'ثانية'}</div></div>
         </div>
       </div>
     `;
@@ -878,23 +966,23 @@ function renderTrackingPage(order) {
 
   const heroHTML = isDelivered ? `
     <div class="track-delivered-banner">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ رجوع للطلبات</div>
+      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
       <div class="track-hero-emoji">🎉</div>
-      <div class="track-hero-order">تم التوصيل بنجاح!</div>
-      <div class="track-hero-status" style="opacity:0.8;margin-top:6px">بالهنا والشفا</div>
+      <div class="track-hero-order">${t('delivered')}</div>
+      <div class="track-hero-status" style="opacity:0.8;margin-top:6px">${t('deliveredMsg')}</div>
     </div>
   ` : isCancelled ? `
     <div class="track-hero" style="background:linear-gradient(135deg,#616161,#424242)">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ رجوع للطلبات</div>
+      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
       <div class="track-hero-emoji">❌</div>
-      <div class="track-hero-order">تم إلغاء الطلب</div>
+      <div class="track-hero-order">${t('cancelled')}</div>
     </div>
   ` : `
     <div class="track-hero">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ رجوع للطلبات</div>
+      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
       <div class="track-hero-status">${statusText} <span class="live-dot"></span></div>
       <div class="track-hero-emoji">${statusEmoji}</div>
-      <div class="track-hero-order">طلب #${order.orderNumber}</div>
+      <div class="track-hero-order">${t('orderNum')}${order.orderNumber}</div>
       ${countdownHTML}
     </div>
   `;
@@ -905,7 +993,7 @@ function renderTrackingPage(order) {
       <div class="step-text">
         <h4>${step.title}</h4>
         <p>${step.desc}</p>
-        ${step.time ? `<div class="step-time">${new Date(step.time).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</div>` : ''}
+        ${step.time ? `<div class="step-time">${new Date(step.time).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}</div>` : ''}
       </div>
     </div>
   `).join('');
@@ -914,25 +1002,25 @@ function renderTrackingPage(order) {
     <div class="track-item">
       <div class="track-item-emoji">${getProductEmoji(item.product || {})}</div>
       <div class="track-item-info">
-        <div class="track-item-name">${item.nameAr || item.name}</div>
+        <div class="track-item-name">${ln(item)}</div>
         <div class="track-item-meta">
-          الكمية: ${item.quantity}
-          ${item.size ? ` • الحجم: ${item.size}` : ''}
+          ${t('qty')}: ${item.quantity}
+          ${item.size ? ` • ${t('size')}: ${item.size}` : ''}
           ${item.toppings?.length ? ` • ${item.toppings.join(', ')}` : ''}
         </div>
       </div>
-      <div class="track-item-price">${item.price * item.quantity} ج.م</div>
+      <div class="track-item-price">${item.price * item.quantity} ${t('egp')}</div>
     </div>
   `).join('');
 
-  const paymentText = { cash: '💵 كاش', card: '💳 بطاقة', online: '📱 أونلاين' };
+  const paymentText = currentLang === 'en' ? { cash: '💵 Cash', card: '💳 Card', online: '📱 Online' } : { cash: '💵 كاش', card: '💳 بطاقة', online: '📱 أونلاين' };
 
   let ratingHTML = '';
   if (isDelivered && !order.rating) {
     ratingHTML = `
       <div class="track-rating-card" id="rating-card">
-        <div class="track-detail-title" style="justify-content:center">⭐ قيّم تجربتك</div>
-        <h3>كيف كان الأكل؟</h3>
+        <div class="track-detail-title" style="justify-content:center">⭐ ${t('rateOrder')}</div>
+        <h3>${t('howWasFood')}</h3>
         <div class="track-rating-stars" id="rating-stars">
           <div class="track-star" data-v="1" onclick="setRating(1)">⭐</div>
           <div class="track-star" data-v="2" onclick="setRating(2)">⭐</div>
@@ -940,14 +1028,14 @@ function renderTrackingPage(order) {
           <div class="track-star" data-v="4" onclick="setRating(4)">⭐</div>
           <div class="track-star" data-v="5" onclick="setRating(5)">⭐</div>
         </div>
-        <textarea class="track-rating-input" id="rating-text" placeholder="اكتب رأيك... (اختياري)"></textarea>
-        <button class="btn btn-primary btn-lg" onclick="submitRating('${order._id}')">إرسال التقييم</button>
+        <textarea class="track-rating-input" id="rating-text" placeholder="${currentLang === 'en' ? 'Write your review... (optional)' : 'اكتب رأيك... (اختياري)'}"></textarea>
+        <button class="btn btn-primary btn-lg" onclick="submitRating('${order._id}')">${t('submitRating')}</button>
       </div>
     `;
   } else if (isDelivered && order.rating) {
     ratingHTML = `
       <div class="track-rating-card">
-        <h3>تقييمك</h3>
+        <h3>${t('yourRating')}</h3>
         <div style="font-size:28px;margin:10px 0">${'⭐'.repeat(order.rating)}</div>
         ${order.review ? `<p style="color:var(--text-muted);font-size:14px">"${order.review}"</p>` : ''}
       </div>
@@ -957,25 +1045,25 @@ function renderTrackingPage(order) {
   document.getElementById('tracking-content').innerHTML = `
     ${heroHTML}
     <div class="track-steps-card">
-      <div class="track-steps-title">تتبع الطلب</div>
+      <div class="track-steps-title">${t('tracking')}</div>
       ${stepsHTML}
     </div>
     <div class="track-detail-grid">
       <div class="track-detail-card full">
-        <div class="track-detail-title">📋 تفاصيل الطلب</div>
+        <div class="track-detail-title">📋 ${t('details')}</div>
         ${itemsHTML}
         <div style="margin-top:12px">
-          <div class="track-summary-line"><span>المجموع الفرعي</span><span>${order.subtotal} ج.م</span></div>
-          <div class="track-summary-line"><span>التوصيل</span><span>${order.deliveryFee} ج.م</span></div>
-          <div class="track-summary-total"><span>الإجمالي</span><span>${order.total} ج.م</span></div>
+          <div class="track-summary-line"><span>${t('subtotal')}</span><span>${order.subtotal} ${t('egp')}</span></div>
+          <div class="track-summary-line"><span>${t('delivery')}</span><span>${order.deliveryFee} ${t('egp')}</span></div>
+          <div class="track-summary-total"><span>${t('total')}</span><span>${order.total} ${t('egp')}</span></div>
         </div>
       </div>
       <div class="track-detail-card">
-        <div class="track-detail-title">📍 عنوان التوصيل</div>
+        <div class="track-detail-title">📍 ${t('deliveryAddress')}</div>
         <div class="track-addr-text">${addrText}</div>
       </div>
       <div class="track-detail-card">
-        <div class="track-detail-title">💳 طريقة الدفع</div>
+        <div class="track-detail-title">💳 ${t('paymentMethodLabel')}</div>
         <div style="font-size:15px;font-weight:700">${paymentText[order.paymentMethod] || order.paymentMethod}</div>
         ${order.specialInstructions ? `<div style="margin-top:8px;font-size:13px;color:var(--text-muted)">📝 ${order.specialInstructions}</div>` : ''}
       </div>
@@ -1014,15 +1102,15 @@ function setRating(val) {
 }
 
 async function submitRating(orderId) {
-  if (currentRating === 0) return showToast('اختار تقييم أولاً');
+  if (currentRating === 0) return showToast(currentLang === 'en' ? 'Choose a rating first' : 'اختار تقييم أولاً');
   try {
     const review = document.getElementById('rating-text')?.value || '';
     await apiPost(`/api/orders/${orderId}/rate`, { rating: currentRating, review });
-    showToast('شكراً على تقييمك! ⭐');
+    showToast(currentLang === 'en' ? 'Thanks for rating! ⭐' : 'شكراً على تقييمك! ⭐');
     const order = await apiGet(`/api/orders/${orderId}`);
     renderTrackingPage(order);
   } catch (e) {
-    showToast('خطأ في إرسال التقييم');
+    showToast(currentLang === 'en' ? 'Error submitting rating' : 'خطأ في إرسال التقييم');
   }
 }
 
@@ -1054,7 +1142,7 @@ function showRegister() {
 async function handleLogin(e) {
   e.preventDefault();
   const btn = document.getElementById('login-btn');
-  btn.textContent = 'جاري تسجيل الدخول...';
+  btn.textContent = currentLang === 'en' ? 'Logging in...' : 'جاري تسجيل الدخول...';
   btn.disabled = true;
   try {
     const data = await apiPost('/api/auth/login', {
@@ -1064,7 +1152,7 @@ async function handleLogin(e) {
     saveToStorage(data.token, data.user);
     updateAuthUI();
     closeAuthModal();
-    showToast('أهلاً بيك ' + data.user.name + '! 🎉');
+    showToast((currentLang === 'en' ? 'Welcome ' : 'أهلاً بيك ') + data.user.name + '! 🎉');
     await loadCart();
     initPushNotifications();
     if (data.user.role === 'admin') {
@@ -1072,9 +1160,9 @@ async function handleLogin(e) {
       navigateTo('home');
     }
   } catch (e) {
-    showToast('بيانات الدخول غلط');
+    showToast(currentLang === 'en' ? 'Invalid email or password' : 'بيانات الدخول غلط');
   } finally {
-    btn.textContent = 'تسجيل الدخول';
+    btn.textContent = currentLang === 'en' ? 'Login' : 'تسجيل الدخول';
     btn.disabled = false;
   }
 }
@@ -1083,7 +1171,7 @@ async function handleRegister(e) {
   e.preventDefault();
   const phone = document.getElementById('reg-phone').value.trim();
   if (!/^01\d{9}$/.test(phone)) {
-    showToast('رقم الموبايل يجب أن يكون 11 رقم يبدأ بـ 01');
+    showToast(currentLang === 'en' ? 'Phone must be 11 digits starting with 01' : 'رقم الموبايل يجب أن يكون 11 رقم يبدأ بـ 01');
     return;
   }
   try {
@@ -1097,9 +1185,9 @@ async function handleRegister(e) {
     updateAuthUI();
     closeAuthModal();
     initPushNotifications();
-    showToast('تم الحساب بنجاح! 🎉');
+    showToast(currentLang === 'en' ? 'Account created! 🎉' : 'تم الحساب بنجاح! 🎉');
   } catch (e) {
-    showToast('البريد مسجل بالفعل');
+    showToast(currentLang === 'en' ? 'Email already registered' : 'البريد مسجل بالفعل');
   }
 }
 
@@ -1132,7 +1220,7 @@ function updateLocationUI() {
   const label = document.getElementById('location-label');
   if (currentUser?.address?.deliveryArea) {
     const fee = getDeliveryFee(currentUser.address.deliveryArea);
-    label.textContent = currentUser.address.deliveryArea + (fee > 0 ? ` (${fee} ج.م)` : '');
+    label.textContent = currentUser.address.deliveryArea + (fee > 0 ? ` (${fee} ${t('egp')})` : '');
   } else if (currentUser?.address?.city) {
     label.textContent = currentUser.address.city;
   }
@@ -1212,21 +1300,21 @@ function showFavorites() {
   closeProfileModal();
   navigateTo('menu');
   if (favorites.length === 0) {
-    showToast('مفيش منتجات في المفضلة');
+    showToast(currentLang === 'en' ? 'No favorite products' : 'مفيش منتجات في المفضلة');
     return;
   }
   const favProducts = allProducts.filter(p => favorites.includes(p._id));
-  document.getElementById('menu-title').textContent = 'المفضلة ❤️';
+  document.getElementById('menu-title').textContent = (currentLang === 'en' ? 'Favorites ❤️' : 'المفضلة ❤️');
   document.getElementById('menu-products').innerHTML = favProducts.map(p => productCard(p)).join('');
 }
 
 function handleLogout() {
-  if (confirm('هل تريد تسجيل الخروج؟')) {
+  if (confirm(currentLang === 'en' ? 'Are you sure you want to logout?' : 'هل تريد تسجيل الخروج؟')) {
     clearStorage();
     updateAuthUI();
     closeProfileModal();
     navigateTo('home');
-    showToast('تم تسجيل الخروج');
+    showToast(currentLang === 'en' ? 'Logged out' : 'تم تسجيل الخروج');
   }
 }
 
@@ -1274,7 +1362,7 @@ async function saveAddress(e) {
   updateLocationUI();
   if (currentPage === 'cart') { updateCartAddress(); updateCartSummary(); }
   closeAddressModal();
-  showToast('تم حفظ العنوان ✅');
+  showToast(currentLang === 'en' ? 'Address saved ✅' : 'تم حفظ العنوان ✅');
 }
 
 // ===== MOBILE MENU =====
