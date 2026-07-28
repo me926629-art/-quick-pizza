@@ -79,7 +79,9 @@ const translations = {
     phonePlaceholder: 'Phone number',
     passwordMinPlaceholder: 'Password (6+ characters)',
     haveAccount: 'Already have an account?',
-    loginNow: 'Login now'
+    loginNow: 'Login now',
+    footerBrand: 'Quick Pizza',
+    copyright: '© 2026 Quick Pizza - All Rights Reserved'
   },
   ar: {
     home: 'الرئيسية', menu: 'القائمة', cart: 'السلة', orders: 'طلباتي', profile: 'حسابي',
@@ -147,7 +149,9 @@ const translations = {
     phonePlaceholder: 'رقم الموبايل',
     passwordMinPlaceholder: 'كلمة المرور (6 أحرف على الأقل)',
     haveAccount: 'عندك حساب؟',
-    loginNow: 'سجل دخول'
+    loginNow: 'سجل دخول',
+    footerBrand: 'كويك بيتزا',
+    copyright: '© 2026 كويك بيتزا - جميع الحقوق محفوظة'
   }
 };
 
@@ -487,7 +491,7 @@ function productCard(p) {
         <div class="product-name">${ln(p)}</div>
         <div class="product-desc">${ld(p)}</div>
         <div class="product-meta">
-          <div class="product-price">${basePrice} <small>جنيه</small></div>
+          <div class="product-price">${basePrice} <small>${t('egp')}</small></div>
           <button class="product-add-btn" onclick="event.stopPropagation(); quickAdd('${p._id}')">+</button>
         </div>
       </div>
@@ -690,8 +694,8 @@ function renderCart() {
             <button class="cart-item-remove" onclick="removeCartItem('${item._id}')">✕</button>
           </div>
           <div class="cart-item-meta">
-            ${item.size ? 'الحجم: ' + item.size : ''}
-            ${item.toppings?.length ? ' • الإضافات: ' + item.toppings.join(', ') : ''}
+            ${item.size ? t('size') + ': ' + (currentLang === 'ar' ? ({ Small: 'صغير', Medium: 'وسط', Large: 'كبير', Slice: 'شريحة' }[item.size] || item.size) : item.size) : ''}
+            ${item.toppings?.length ? ' • ' + t('addons') + ': ' + item.toppings.join(', ') : ''}
           </div>
           <div class="cart-item-bottom">
             <div class="qty-control">
@@ -699,7 +703,7 @@ function renderCart() {
               <span class="qty-value">${item.quantity}</span>
               <button class="qty-btn" onclick="updateCartItem('${item._id}', ${item.quantity + 1})">+</button>
             </div>
-            <div class="cart-item-price">${item.price * item.quantity} ج.م</div>
+            <div class="cart-item-price">${item.price * item.quantity} ${t('egp')}</div>
           </div>
         </div>
       </div>
