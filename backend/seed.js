@@ -366,9 +366,12 @@ const seed = async (force) => {
   ];
 
   for (const p of products) {
+    if (!p.name) p.name = p.nameAr;
+    if (!p.description) p.description = p.descriptionAr || '';
     if (!p.sizes) {
-      p.price = p.price;
       p.sizes = [{ name: 'Regular', nameAr: 'عادي', price: p.price }];
+    } else if (!p.price) {
+      p.price = p.sizes.reduce((min, s) => Math.min(min, s.price), Infinity);
     }
     p.isAvailable = true;
     p.isPopular = p.isFeatured = false;
