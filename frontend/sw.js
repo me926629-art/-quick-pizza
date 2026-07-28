@@ -1,7 +1,8 @@
-const CACHE_NAME = 'quick-pizza-v1';
+const CACHE_NAME = 'quick-pizza-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/orders.html',
   '/css/style.css',
   '/js/app.js',
   '/manifest.json',
@@ -35,6 +36,22 @@ self.addEventListener('fetch', (event) => {
           headers: { 'Content-Type': 'application/json' }
         });
       })
+    );
+    return;
+  }
+
+  // HTML pages: network-first
+  if (event.request.destination === 'document' || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => {
+          return cached || new Response('Offline', { status: 503 });
+        }))
     );
     return;
   }
