@@ -43,6 +43,12 @@ router.post('/restore', adminAuth, async (req, res) => {
       if (!data[col] || !data[col].length) continue;
       const Model = { orders: Order, dailyRevenue: DailyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
       let ok = 0, fail = 0;
+
+      // For categories & products: replace entirely (delete old, insert backup)
+      if (col === 'categories' || col === 'products') {
+        await Model.deleteMany({});
+      }
+
       for (const doc of data[col]) {
         try {
           const { _id, __v, ...rest } = doc;
