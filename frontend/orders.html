@@ -531,6 +531,7 @@
               `).join('')}
             </div>
             ${order.specialInstructions ? `<div class="om-card-note">📝 ${order.specialInstructions}</div>` : ''}
+            ${order.rating ? `<div class="om-card-note" style="border-color:#f59e0b;background:rgba(245,158,11,0.08)">⭐ ${order.rating}/5 ${order.review ? `— "${order.review}"` : ''}</div>` : ''}
             <div class="om-card-addr">📍 ${[a.city, a.district, a.street, a.building].filter(Boolean).join('، ') || ''}</div>
           </div>
           <div class="om-card-footer">
