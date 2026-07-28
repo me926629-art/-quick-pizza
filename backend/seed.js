@@ -37,11 +37,11 @@ const seed = async (force) => {
 
   const products = [
     // ===== 1. Pizza =====
-    { nameAr: 'بيتزا دجاج تشيدر (سوسيس)', descriptionAr: 'سوسيس - جبنة تشيدر - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 135 }, { name: 'Medium', nameAr: 'متوسطة', price: 180 }, { name: 'Large', nameAr: 'كبيرة', price: 200 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
-    { nameAr: 'بيتزا مارجريتا', descriptionAr: 'جبنة موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 145 }, { name: 'Medium', nameAr: 'متوسطة', price: 185 }, { name: 'Large', nameAr: 'كبيرة', price: 210 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
-    { nameAr: 'بيتزا مشكل جبن', descriptionAr: 'موتزاريلا - رومي - شيدر - جودة - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 145 }, { name: 'Medium', nameAr: 'متوسطة', price: 185 }, { name: 'Large', nameAr: 'كبيرة', price: 210 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
-    { nameAr: 'بيتزا كيري', descriptionAr: 'كيري - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 195 }, { name: 'Large', nameAr: 'كبيرة', price: 240 }, { name: 'Slice', nameAr: 'شريحة', price: 55 }] },
-    { nameAr: 'بيتزا فراخ', descriptionAr: 'صدور فراخ متبلة - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 210 }, { name: 'Large', nameAr: 'كبيرة', price: 250 }, { name: 'Slice', nameAr: 'شريحة', price: 55 }] },
+    { nameAr: 'بيتزا دجاج تشيدر (سوسيس)', descriptionAr: 'سوسيس - جبنة تشيدر - موتزاريلا - فلفل رومي - طماطم - زيتون', isFeatured: true, category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 135 }, { name: 'Medium', nameAr: 'متوسطة', price: 180 }, { name: 'Large', nameAr: 'كبيرة', price: 200 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
+    { nameAr: 'بيتزا مارجريتا', descriptionAr: 'جبنة موتزاريلا - فلفل رومي - طماطم - زيتون', isPopular: true, category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 145 }, { name: 'Medium', nameAr: 'متوسطة', price: 185 }, { name: 'Large', nameAr: 'كبيرة', price: 210 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
+    { nameAr: 'بيتزا مشكل جبن', descriptionAr: 'موتزاريلا - رومي - شيدر - جودة - فلفل رومي - طماطم - زيتون', isPopular: true, category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 145 }, { name: 'Medium', nameAr: 'متوسطة', price: 185 }, { name: 'Large', nameAr: 'كبيرة', price: 210 }, { name: 'Slice', nameAr: 'شريحة', price: 50 }] },
+    { nameAr: 'بيتزا كيري', descriptionAr: 'كيري - موتزاريلا - فلفل رومي - طماطم - زيتون', isFeatured: true, category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 195 }, { name: 'Large', nameAr: 'كبيرة', price: 240 }, { name: 'Slice', nameAr: 'شريحة', price: 55 }] },
+    { nameAr: 'بيتزا فراخ', descriptionAr: 'صدور فراخ متبلة - موتزاريلا - فلفل رومي - طماطم - زيتون', isPopular: true, category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 210 }, { name: 'Large', nameAr: 'كبيرة', price: 250 }, { name: 'Slice', nameAr: 'شريحة', price: 55 }] },
     { nameAr: 'بيتزا فراخ على مشكل جبن', descriptionAr: 'صدور فراخ متبلة - شيدر - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 220 }, { name: 'Large', nameAr: 'كبيرة', price: 270 }, { name: 'Slice', nameAr: 'شريحة', price: 60 }] },
     { nameAr: 'بيتزا شاورما فراخ', descriptionAr: 'شاورما فراخ - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 165 }, { name: 'Medium', nameAr: 'متوسطة', price: 220 }, { name: 'Large', nameAr: 'كبيرة', price: 270 }, { name: 'Slice', nameAr: 'شريحة', price: 60 }] },
     { nameAr: 'بيتزا شاورما فراخ على مشكل جبن', descriptionAr: 'شاورما فراخ - موتزاريلا - جبن رومي - جبن شيدر - فلفل رومي - طماطم - زيتون', category: cm['Pizza'], sizes: [{ name: 'Small', nameAr: 'صغيرة', price: 175 }, { name: 'Medium', nameAr: 'متوسطة', price: 225 }, { name: 'Large', nameAr: 'كبيرة', price: 275 }, { name: 'Slice', nameAr: 'شريحة', price: 60 }] },
@@ -100,7 +100,7 @@ const seed = async (force) => {
     { nameAr: 'فطيرة شاورما لحمة على مشكل جبن', descriptionAr: 'شاورما لحمة - جبن رومي - جبن شيدر - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 220 }, { name: 'Large', nameAr: 'كبيرة', price: 260 }] },
     { nameAr: 'فطيرة مكس باربيكيو', descriptionAr: 'سوسيس - لحمة مفرومة - صوص باربيكيو - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 225 }, { name: 'Large', nameAr: 'كبيرة', price: 265 }] },
     { nameAr: 'فطيرة سوبر سوبريم', descriptionAr: 'لحم مفروم - سجق - بسطرمة - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 225 }, { name: 'Large', nameAr: 'كبيرة', price: 265 }] },
-    { nameAr: 'فطيرة كويك', descriptionAr: 'سجق بلدي - بسطرمة - كيري - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 230 }, { name: 'Large', nameAr: 'كبيرة', price: 280 }] },
+    { nameAr: 'فطيرة كويك', descriptionAr: 'سجق بلدي - بسطرمة - كيري - موتزاريلا - فلفل رومي - طماطم - زيتون', isFeatured: true, category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 230 }, { name: 'Large', nameAr: 'كبيرة', price: 280 }] },
     { nameAr: 'فطيرة سجق بلدي', descriptionAr: 'سجق بلدي - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 205 }, { name: 'Large', nameAr: 'كبيرة', price: 245 }] },
     { nameAr: 'فطيرة سجق كيري', descriptionAr: 'سجق بلدي - كيري - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 235 }, { name: 'Large', nameAr: 'كبيرة', price: 285 }] },
     { nameAr: 'فطيرة سوسيس أو هوت دوج', descriptionAr: 'سوسيس أو هوت دوج - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 215 }, { name: 'Large', nameAr: 'كبيرة', price: 280 }] },
@@ -118,8 +118,8 @@ const seed = async (force) => {
     { nameAr: 'فطيرة سبانخ', descriptionAr: 'سبانخ - موتزاريلا - فلفل رومي - طماطم - زيتون', category: cm['Savory Pies'], sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 190 }, { name: 'Large', nameAr: 'كبيرة', price: 225 }] },
 
     // ===== 3. Sandwiches =====
-    { nameAr: 'ساندوتش برجر لحم أو فراخ سادة', descriptionAr: 'لحمة أو فراخ - بصل - طماطم - خس - خيار مخلل - خلطة كويك العجيبة', price: 135, category: cm['Sandwiches'] },
-    { nameAr: 'ساندوتش برجر لحم أو فراخ بالجبنة', descriptionAr: 'لحمة أو فراخ - بصل - طماطم - خس - خيار مخلل - جبنة شيدر - خلطة كويك العجيبة', price: 140, category: cm['Sandwiches'] },
+    { nameAr: 'ساندوتش برجر لحم أو فراخ سادة', descriptionAr: 'لحمة أو فراخ - بصل - طماطم - خس - خيار مخلل - خلطة كويك العجيبة', isPopular: true, price: 135, category: cm['Sandwiches'] },
+    { nameAr: 'ساندوتش برجر لحم أو فراخ بالجبنة', descriptionAr: 'لحمة أو فراخ - بصل - طماطم - خس - خيار مخلل - جبنة شيدر - خلطة كويك العجيبة', isFeatured: true, price: 140, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش برجر لحمة أو فراخ دبل بالجبنة', descriptionAr: 'دبل لحم أو دبل فراخ', price: 170, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش فاهيتا لحمة', descriptionAr: 'لحمة - فلفل أحمر واصفر - مشروم - فاهيتا - مايونيز - توابل كويك السحرية - جبنا - زيتون', price: 155, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش كفتة لبناني', descriptionAr: 'كفتة مشوية - معجون طحينة - تحويجة كويك السحرية - خيار مخلل - خس - كابوتشا', price: 130, category: cm['Sandwiches'] },
@@ -131,7 +131,7 @@ const seed = async (force) => {
     { nameAr: 'ساندوتش طرب عيش بلدي', descriptionAr: 'طرب - صوص طحينة - طماطم', price: 100, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش حواوشي لحمة بلدي', descriptionAr: 'لحمة مفروم أو سجق - وابل - كويك السحرية + مخلل+بطاطس', price: 100, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش بوم فريت', price: 100, category: cm['Sandwiches'] },
-    { nameAr: 'ساندوتش شاورما فراخ (عيش باجت أو سوري)', descriptionAr: 'فراخ - طماطم - فلفل - بهارات - ثومية - كاتشب - خلطة كويك العجيبة', price: 160, category: cm['Sandwiches'] },
+    { nameAr: 'ساندوتش شاورما فراخ (عيش باجت أو سوري)', descriptionAr: 'فراخ - طماطم - فلفل - بهارات - ثومية - كاتشب - خلطة كويك العجيبة', isPopular: true, price: 160, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش فراخ بانيه', descriptionAr: 'صدور فراخ - مايونيز - خلطة كويك السحرية - خيار مخلل - خس كابوتشا', price: 160, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش فاهيتا فراخ', descriptionAr: 'فراخ صوص باربيكيو - بصل - موتزاريلا - زيتون - مايونيز - توابل كويك الحارة أو العادية', price: 160, category: cm['Sandwiches'] },
     { nameAr: 'ساندوتش كوردن بلو', descriptionAr: 'صدور فراخ - جبنة شيدر - سلامي وشيدر ورومي مدخن - خيار - مايونيز - موتزاريلا - بهارات كويك', price: 170, category: cm['Sandwiches'] },
@@ -152,7 +152,7 @@ const seed = async (force) => {
     { nameAr: 'بانيني روزبيف', descriptionAr: 'لحمة - صوص البانيني - زعتر - بصل - جرجير', price: 180, category: cm['Panini'] },
 
     // ===== 5. Grill & BBQ =====
-    { nameAr: 'شيش كباب', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 365, category: cm['Grill & BBQ'] },
+    { nameAr: 'شيش كباب', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', isPopular: true, price: 365, category: cm['Grill & BBQ'] },
     { nameAr: 'شيش كفتة', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 315, category: cm['Grill & BBQ'] },
     { nameAr: 'كباب وكفتة مكس', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 365, category: cm['Grill & BBQ'] },
     { nameAr: 'ريش مشوي على الفحم', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 365, category: cm['Grill & BBQ'] },
@@ -161,7 +161,7 @@ const seed = async (force) => {
     { nameAr: 'كبدة بلدي مشوي على الفحم', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 360, category: cm['Grill & BBQ'] },
     { nameAr: 'حمام محشي فريك أو أرز', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 320, category: cm['Grill & BBQ'] },
     { nameAr: 'فراخ مكسيكي', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 320, category: cm['Grill & BBQ'] },
-    { nameAr: 'ربع فراخ على الفحم', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 180, category: cm['Grill & BBQ'] },
+    { nameAr: 'ربع فراخ على الفحم', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', isPopular: true, price: 180, category: cm['Grill & BBQ'] },
     { nameAr: 'نصف فراخ على الفحم', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 300, category: cm['Grill & BBQ'] },
     { nameAr: 'نصف فراخ على الفحم سادة', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 290, category: cm['Grill & BBQ'] },
     { nameAr: 'فرخة كاملة مشوية', descriptionAr: 'شاملة: شوربة، أرز، سلطة طحينة، وخضراء، عيش', price: 395, category: cm['Grill & BBQ'] },
@@ -225,7 +225,7 @@ const seed = async (force) => {
     { nameAr: 'كريب موتزاريلا', descriptionAr: 'موتزاريلا - فلفل - طماطم - زيتون - مايونيز - كاتشب', price: 130, category: cm['Savory Crepes'] },
     { nameAr: 'كريب رومي', descriptionAr: 'شيدر - رومي - فلفل - طماطم - زيتون - كاتشب', price: 140, category: cm['Savory Crepes'] },
     { nameAr: 'كريب مشكل جبن', descriptionAr: 'موتزاريلا - رومي - فلفل - طماطم - زيتون - كاتشب', price: 145, category: cm['Savory Crepes'] },
-    { nameAr: 'كريب فراخ', descriptionAr: 'فراخ - موتزاريلا - فلفل - طماطم - زيتون - كاتشب', price: 155, category: cm['Savory Crepes'] },
+    { nameAr: 'كريب فراخ', descriptionAr: 'فراخ - موتزاريلا - فلفل - طماطم - زيتون - كاتشب', isPopular: true, price: 155, category: cm['Savory Crepes'] },
     { nameAr: 'كريب فراخ على مشكل جبن', descriptionAr: 'شاورما فراخ - موتزاريلا - جبن رومي - شيدر - فلفل - زيتون - مايونيز - كاتشب', price: 165, category: cm['Savory Crepes'] },
     { nameAr: 'كريب شاورما فراخ', descriptionAr: 'شاورما فراخ - موتزاريلا - فلفل رومي - طماطم - زيتون - مايونيز - كاتشب', price: 165, category: cm['Savory Crepes'] },
     { nameAr: 'كريب شاورما فراخ على مشكل جبن', descriptionAr: 'شاورما فراخ - موتزاريلا - سوسيس - فلفل رومي - طماطم - زيتون - مايونيز - كاتشب', price: 170, category: cm['Savory Crepes'] },
@@ -278,7 +278,7 @@ const seed = async (force) => {
     { nameAr: 'كالزوني بطاطس', descriptionAr: 'بطاطس - موتزاريلا - فلفل رومي - طماطم - زيتون - صوص كويك اللذيذ', price: 175, category: cm['Calzone'] },
 
     // ===== 10. Italian Pasta =====
-    { nameAr: 'نجرسكو فراخ', descriptionAr: 'فراخ - فلفل - طماطم - زيتون - مشروم - بصل - أرز - صوص أبيض - مكرونة سوسيت', price: 145, category: cm['Italian Pasta'] },
+    { nameAr: 'نجرسكو فراخ', descriptionAr: 'فراخ - فلفل - طماطم - زيتون - مشروم - بصل - أرز - صوص أبيض - مكرونة سوسيت', isPopular: true, price: 145, category: cm['Italian Pasta'] },
     { nameAr: 'نجرسكو لحمة مفرومة', descriptionAr: 'لحمة مفرومة - فلفل - طماطم - زيتون - صوص أبيض - مكرونة', price: 175, category: cm['Italian Pasta'] },
     { nameAr: 'نجرسكو سجق', descriptionAr: 'سجق بلدي - مفروم - فلفل - طماطم - صوص أبيض - مكرونة', price: 175, category: cm['Italian Pasta'] },
     { nameAr: 'نجرسكو كويك', descriptionAr: 'لحم - فراخ - سجق - بسطرمة - هوت دوج - موتزاريلا - مكرونة سوسيت', price: 165, category: cm['Italian Pasta'] },
@@ -296,7 +296,7 @@ const seed = async (force) => {
     { nameAr: 'اسباجتي تونة', descriptionAr: 'تونة - فلفل - زيتون - طماطم - صوص أحمر', price: 155, category: cm['Italian Pasta'] },
     { nameAr: 'اسباجتي كبدة', descriptionAr: 'كبده - فلفل - طماطم - زيتون - صوص أحمر - بصل', price: 160, category: cm['Italian Pasta'] },
     { nameAr: 'بستا سي فود', descriptionAr: 'مكرونة سوسيت - جمبري - كاليماري - كريمة لباني', price: 155, category: cm['Italian Pasta'] },
-    { nameAr: 'تشكن الفريدو', descriptionAr: 'مكرونة سوسيت - فراخ - مشروم - كريمة لباني', price: 220, category: cm['Italian Pasta'] },
+    { nameAr: 'تشكن الفريدو', descriptionAr: 'مكرونة سوسيت - فراخ - مشروم - كريمة لباني', isFeatured: true, price: 220, category: cm['Italian Pasta'] },
     { nameAr: 'جمبري الفريدو', descriptionAr: 'مكرونة سوسيت - جمبري - مشروم - كريمة لباني', price: 245, category: cm['Italian Pasta'] },
     { nameAr: 'مكرونة كاربونارا', descriptionAr: 'اسباجتي - مغمسات - دجاج - صوص أبيض - موتزاريلا - شيدر - كريمة لباني', price: 155, category: cm['Italian Pasta'] },
 
@@ -317,12 +317,12 @@ const seed = async (force) => {
     { nameAr: 'فطيرة بغاشة', descriptionAr: 'جوز هند - سكر - عسل - سمن بلدي', sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 125 }, { name: 'Large', nameAr: 'كبيرة', price: 145 }], category: cm['Sweet Pies'] },
     { nameAr: 'إمبيرو نوتيلا بالموز', descriptionAr: 'موز - نوتيلا - كريمة - سمن بلدي', sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 175 }, { name: 'Large', nameAr: 'كبيرة', price: 205 }], category: cm['Sweet Pies'] },
     { nameAr: 'فطيرة نوتيلا', descriptionAr: 'نوتيلا - كريمة - سمن بلدي', sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 175 }, { name: 'Large', nameAr: 'كبيرة', price: 205 }], category: cm['Sweet Pies'] },
-    { nameAr: 'فطيرة اللوتس', descriptionAr: 'كريمة اللوتس - بسكويت اللوتس - مجروش بسكويت اللوتس - كريمة', sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 205 }, { name: 'Large', nameAr: 'كبيرة', price: 245 }], category: cm['Sweet Pies'] },
+    { nameAr: 'فطيرة اللوتس', descriptionAr: 'كريمة اللوتس - بسكويت اللوتس - مجروش بسكويت اللوتس - كريمة', isFeatured: true, sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 205 }, { name: 'Large', nameAr: 'كبيرة', price: 245 }], category: cm['Sweet Pies'] },
     { nameAr: 'فطيرة مشلتت بالسمن الفلاحي', sizes: [{ name: 'Medium', nameAr: 'متوسطة', price: 145 }, { name: 'Large', nameAr: 'كبيرة', price: 175 }], category: cm['Sweet Pies'] },
     { nameAr: 'أم علي بالمكسرات', price: 145, category: cm['Sweet Pies'] },
 
     // ===== 12. Sweet Crepes =====
-    { nameAr: 'كريب نوتيلا إيطالي', price: 145, category: cm['Sweet Crepes'] },
+    { nameAr: 'كريب نوتيلا إيطالي', isPopular: true, price: 145, category: cm['Sweet Crepes'] },
     { nameAr: 'كريب نوتيلا بالموز', price: 150, category: cm['Sweet Crepes'] },
     { nameAr: 'عسل نحل / مربى / قشطة', price: 70, category: cm['Sweet Crepes'] },
     { nameAr: 'شيكولاتة / مكسرات / فواكه / موز', price: 70, category: cm['Sweet Crepes'] },
@@ -342,7 +342,7 @@ const seed = async (force) => {
     { nameAr: 'سلطة يوناني', price: 80, category: cm['Salads & Appetizers'] },
     { nameAr: 'حلقات بصل', price: 100, category: cm['Salads & Appetizers'] },
     { nameAr: 'بطاطس بالجبنة', price: 100, category: cm['Salads & Appetizers'] },
-    { nameAr: 'بطاطس محمرة', price: 70, category: cm['Salads & Appetizers'] },
+    { nameAr: 'بطاطس محمرة', isPopular: true, price: 70, category: cm['Salads & Appetizers'] },
     { nameAr: 'أصابع جبنة', price: 135, category: cm['Salads & Appetizers'] },
     { nameAr: 'مخلل', price: 25, category: cm['Salads & Appetizers'] },
 
@@ -356,7 +356,7 @@ const seed = async (force) => {
     { nameAr: 'قهوة تركي', price: 45, category: cm['Beverages'] },
     { nameAr: 'قهوة فرنسي', price: 45, category: cm['Beverages'] },
     { nameAr: 'شاي (نكهات مختلفة)', price: 30, category: cm['Beverages'] },
-    { nameAr: 'كولا كانز', price: 30, category: cm['Beverages'] },
+    { nameAr: 'كولا كانز', isPopular: true, price: 30, category: cm['Beverages'] },
     { nameAr: 'بيريل', price: 35, category: cm['Beverages'] },
     { nameAr: 'فيروز', price: 35, category: cm['Beverages'] },
     { nameAr: 'شويبس', price: 35, category: cm['Beverages'] },
@@ -375,7 +375,8 @@ const seed = async (force) => {
       p.price = p.sizes.reduce((min, s) => Math.min(min, s.price), Infinity);
     }
     p.isAvailable = true;
-    p.isPopular = p.isFeatured = false;
+    if (p.isPopular === undefined) p.isPopular = false;
+    if (p.isFeatured === undefined) p.isFeatured = false;
   }
 
   const validProducts = products.filter(p => p.category);
