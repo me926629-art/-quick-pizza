@@ -5,23 +5,23 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
-const WeeklyRevenue = require('../models/WeeklyRevenue');
+const DailyRevenue = require('../models/DailyRevenue');
 const { adminAuth } = require('../middleware/auth');
 
 router.get('/', adminAuth, async (req, res) => {
   try {
-    const [users, products, categories, orders, carts, weeklyRevenue] = await Promise.all([
+    const [users, products, categories, orders, carts, dailyRevenue] = await Promise.all([
       User.find().select('-password'),
       Product.find(),
       Category.find(),
       Order.find(),
       Cart.find(),
-      WeeklyRevenue.find()
+      DailyRevenue.find()
     ]);
 
     const backup = {
       date: new Date().toISOString(),
-      data: { users, products, categories, orders, carts, weeklyRevenue }
+      data: { users, products, categories, orders, carts, dailyRevenue }
     };
 
     res.setHeader('Content-Disposition', `attachment; filename=backup-${Date.now()}.json`);
@@ -39,9 +39,9 @@ router.post('/restore', adminAuth, async (req, res) => {
 
     const restored = [];
 
-    for (const col of ['categories', 'products', 'orders', 'weeklyRevenue', 'carts', 'users']) {
+    for (const col of ['categories', 'products', 'orders', 'dailyRevenue', 'carts', 'users']) {
       if (!data[col] || !data[col].length) continue;
-      const Model = { orders: Order, weeklyRevenue: WeeklyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
+      const Model = { orders: Order, dailyRevenue: DailyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
       let ok = 0, fail = 0;
       for (const doc of data[col]) {
         try {

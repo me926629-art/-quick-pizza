@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
-const WeeklyRevenue = require('../models/WeeklyRevenue');
+const DailyRevenue = require('../models/DailyRevenue');
 const { auth, adminAuth } = require('../middleware/auth');
 
 function getOrderDayStart() {
@@ -11,35 +11,33 @@ function getOrderDayStart() {
   const egyptTime = new Date(now.getTime() + egyptOffset);
   const egyptHours = egyptTime.getUTCHours();
   const egyptDayStart = new Date(egyptTime);
-  if (egyptHours < 7) egyptDayStart.setUTCDate(egyptDayStart.getUTCDate() - 1);
-  egyptDayStart.setUTCHours(7, 0, 0, 0);
+  if (egyptHours < 6) egyptDayStart.setUTCDate(egyptDayStart.getUTCDate() - 1);
+  egyptDayStart.setUTCHours(6, 0, 0, 0);
   return new Date(egyptDayStart.getTime() - egyptOffset);
 }
 
-function getWeekStart() {
+function getDateStr() {
   const now = new Date();
-  const day = now.getDay();
-  const diff = day === 0 ? 6 : day - 1;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
+  const egyptOffset = 2 * 60 * 60 * 1000;
+  const egyptTime = new Date(now.getTime() + egyptOffset);
+  const h = egyptTime.getUTCHours();
+  const d = new Date(egyptTime);
+  if (h < 6) d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
 }
 
-async function getOrCreateWeeklyRevenue() {
-  const weekStart = getWeekStart();
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 7);
-  let wr = await WeeklyRevenue.findOne({ isCurrent: true });
-  if (!wr || wr.weekStart < weekStart) {
-    if (wr) {
-      wr.isCurrent = false;
-      await wr.save();
+async function getOrCreateDailyRevenue() {
+  const dateStr = getDateStr();
+  let dr = await DailyRevenue.findOne({ isToday: true });
+  if (!dr || dr.date !== dateStr) {
+    if (dr) {
+      dr.isToday = false;
+      await dr.save();
     }
-    wr = new WeeklyRevenue({ weekStart, weekEnd, totalRevenue: 0, totalOrders: 0, isCurrent: true });
-    await wr.save();
+    dr = new DailyRevenue({ date: dateStr, totalRevenue: 0, totalOrders: 0, isToday: true });
+    await dr.save();
   }
-  return wr;
+  return dr;
 }
 
 router.get('/', auth, async (req, res) => {
@@ -130,10 +128,10 @@ router.post('/', auth, async (req, res) => {
       estimatedDelivery
     });
     await order.save();
-    const wr = await getOrCreateWeeklyRevenue();
-    wr.totalRevenue += Math.max(total, 0);
-    wr.totalOrders += 1;
-    await wr.save();
+    const dr = await getOrCreateDailyRevenue();
+    dr.totalRevenue += Math.max(total, 0);
+    dr.totalOrders += 1;
+    await dr.save();
     cart.items = [];
     cart.couponCode = null;
     cart.couponDiscount = 0;
@@ -157,7 +155,7 @@ router.put('/:id/status', adminAuth, async (req, res) => {
 
     const statusLabels = {
       confirmed: '✅ تم تأكيد طلبك',
-      preparing: '👨‍🍳 طلبكقيد التحضير',
+      preparing: '👨‍🍳 طلبك قيد التحضير',
       ready: '📦 طلبك جاهز!',
       out_for_delivery: '🚗 طلبك في الطريق ليك!',
       delivered: '🎉 تم توصيل طلبك! بالهنا والشفا',
@@ -224,8 +222,8 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.get('/revenue/current', adminAuth, async (req, res) => {
   try {
-    const wr = await getOrCreateWeeklyRevenue();
-    res.json(wr);
+    const dr = await getOrCreateDailyRevenue();
+    res.json(dr);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -233,7 +231,7 @@ router.get('/revenue/current', adminAuth, async (req, res) => {
 
 router.get('/revenue/history', adminAuth, async (req, res) => {
   try {
-    const history = await WeeklyRevenue.find({ isCurrent: false }).sort('-weekStart').limit(52);
+    const history = await DailyRevenue.find({ isToday: false }).sort('-date').limit(30);
     res.json(history);
   } catch (error) {
     res.status(500).json({ error: error.message });

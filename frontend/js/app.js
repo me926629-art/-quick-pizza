@@ -1382,7 +1382,7 @@ function stopAdminAutoRefresh() {
 
 async function loadAdminDashboard() {
   try {
-    const [allOrders, weeklyRev] = await Promise.all([
+    const [allOrders, dailyRev] = await Promise.all([
       apiGet('/api/orders/all'),
       apiGet('/api/orders/revenue/current').catch(() => null)
     ]);
@@ -1406,8 +1406,8 @@ async function loadAdminDashboard() {
       totalRevenue: orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0)
     };
 
-    const weeklyTotal = weeklyRev?.totalRevenue || 0;
-    const weeklyOrders = weeklyRev?.totalOrders || 0;
+    const dailyTotal = dailyRev?.totalRevenue || 0;
+    const dailyOrders = dailyRev?.totalOrders || 0;
 
     document.getElementById('admin-content').innerHTML = `
       <div class="admin-stats">
@@ -1438,8 +1438,8 @@ async function loadAdminDashboard() {
         </div>
         <div class="stat-card" style="border:2px solid var(--primary)">
           <div class="stat-icon">📊</div>
-          <div class="stat-value">${weeklyTotal} ج</div>
-          <div class="stat-label">إيرادات الأسبوع (${weeklyOrders} طلب)</div>
+          <div class="stat-value">${dailyTotal} ج</div>
+          <div class="stat-label">إيرادات اليوم (${dailyOrders} طلب)</div>
         </div>
         <div class="stat-card" style="border-right:4px solid var(--danger)">
           <div class="stat-icon">❌</div>
