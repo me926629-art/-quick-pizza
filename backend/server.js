@@ -34,11 +34,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
   .then(async () => {
     console.log('MongoDB connected');
     const Category = require('./models/Category');
-    const count = await Category.countDocuments();
-    if (count === 0) {
-      console.log('Empty database detected, running seed...');
+    const Product = require('./models/Product');
+    const catCount = await Category.countDocuments();
+    const prodCount = await Product.countDocuments();
+    if (catCount === 0 || prodCount === 0) {
+      console.log(`Empty ${catCount === 0 ? 'categories' : 'products'} detected, running seed...`);
       const seed = require('./seed');
-      await seed();
+      await seed(true); // force = true → upsert instead of insert
     }
   })
   .catch(err => console.error('MongoDB error:', err));
@@ -55,6 +57,25 @@ app.use('/api/notifications', require('./routes/notifications'));
 // Health check for uptime monitoring
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Manual re-seed endpoint (admin only)
+app.post('/api/seed', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'No token' });
+    const token = authHeader.split(' ')[1];
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+    
+    console.log('Manual re-seed triggered by admin...');
+    const seed = require('./seed');
+    await seed(true);
+    res.json({ success: true, message: 'تم إعادة البذر بنجاح' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

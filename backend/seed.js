@@ -4,15 +4,18 @@ const Product = require('./models/Product');
 const User = require('./models/User');
 require('dotenv').config();
 
-const seed = async () => {
-  await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_pizza');
-  console.log('Connected to MongoDB');
+const seed = async (force) => {
+  const needsConnect = mongoose.connection.readyState === 0;
+  if (needsConnect) await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_pizza');
+  if (needsConnect) console.log('Connected to MongoDB');
 
-  await Product.deleteMany({});
-  await Category.deleteMany({});
+  if (force) {
+    console.log('Force mode: clearing existing categories and products...');
+    await Product.deleteMany({});
+    await Category.deleteMany({});
+  }
 
   const cats = await Category.insertMany([
-    { name: 'Pizza', nameAr: 'بيتزا', icon: '🍕', order: 1 },
     { name: 'Savory Pies', nameAr: 'فطائر حادق', icon: '🫓', order: 2 },
     { name: 'Sandwiches', nameAr: 'سندوتشات', icon: '🥪', order: 3 },
     { name: 'Panini', nameAr: 'بانيني', icon: '🥖', order: 4 },
@@ -380,7 +383,7 @@ const seed = async () => {
     console.log('Admin created: admin@quickpizza.com / admin123');
   }
 
-  await mongoose.connection.close();
+  if (needsConnect) await mongoose.connection.close();
 };
 
 if (require.main === module) seed().then(() => process.exit());

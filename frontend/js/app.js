@@ -2031,6 +2031,24 @@ function showToast(message) {
   toast._t = setTimeout(() => toast.classList.add('hidden'), 3000);
 }
 
+// ===== RE-SEED =====
+async function reSeedMenu() {
+  if (!confirm('متأكد تعيد بذر المنيو؟ هيتحذف كل المنتجات والتصنيفات الموجودة ويتضاف 200+ منتج جديد.')) return;
+  try {
+    showToast('جاري إعادة بذر المنيو...');
+    const token = localStorage.getItem('qp_token');
+    const res = await fetch('/api/seed', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Seed failed');
+    const data = await res.json();
+    showToast('تم إعادة البذر ✅');
+    if (typeof loadCategories === 'function') loadCategories();
+    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
+  } catch (e) {
+    showToast('خطأ في إعادة البذر');
+    console.error(e);
+  }
+}
+
 // ===== BACKUP =====
 async function downloadBackup() {
   try {
