@@ -2196,6 +2196,22 @@ function showToast(message) {
 }
 
 // ===== RE-SEED =====
+async function resetAllData() {
+  if (!confirm(currentLang === 'en' ? 'Are you sure? This will delete ALL orders and revenue data. This cannot be undone!' : 'متأكد؟ هيتحذف كل الطلبات والإيرادات للأبد!')) return;
+  if (!confirm(currentLang === 'en' ? 'Really? All orders, all revenue history will be gone.' : 'بجد؟ كل الطلبات والإيرادات هتروح خلاص.')) return;
+  try {
+    showToast(currentLang === 'en' ? 'Resetting...' : 'جاري التصفير...');
+    const token = localStorage.getItem('qp_token');
+    const res = await fetch('/api/orders/reset-all', { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Reset failed');
+    showToast(currentLang === 'en' ? 'All data reset ✅' : 'تم التصفير ✅');
+    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
+  } catch (e) {
+    showToast(currentLang === 'en' ? 'Error resetting' : 'خطأ في التصفير');
+    console.error(e);
+  }
+}
+
 async function reSeedMenu() {
   if (!confirm('متأكد تعيد بذر المنيو؟ هيتحذف كل المنتجات والتصنيفات الموجودة ويتضاف 200+ منتج جديد.')) return;
   try {

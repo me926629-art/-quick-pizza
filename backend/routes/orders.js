@@ -240,4 +240,22 @@ router.get('/revenue/history', adminAuth, async (req, res) => {
   }
 });
 
+router.delete('/reset-all', adminAuth, async (req, res) => {
+  try {
+    await Order.deleteMany({});
+    await WeeklyRevenue.deleteMany({});
+    const wr = new WeeklyRevenue({
+      weekStart: getWeekStart(),
+      weekEnd: new Date(getWeekStart().getTime() + 7 * 24 * 60 * 60 * 1000),
+      totalRevenue: 0,
+      totalOrders: 0,
+      isCurrent: true
+    });
+    await wr.save();
+    res.json({ success: true, message: 'تم تصفير كل الطلبات والإيرادات' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
