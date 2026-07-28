@@ -1032,16 +1032,23 @@ function updateAuthUI() {
   const authBtn = document.getElementById('auth-btn');
   const mobileAuthLink = document.getElementById('mobile-auth-link');
   const adminLink = document.getElementById('mobile-admin-link');
+  const ordersLink = document.getElementById('mobile-orders-link');
   if (currentUser) {
     const initial = currentUser.name?.charAt(0) || '👤';
     authBtn.innerHTML = `<span>${initial}</span>`;
     mobileAuthLink.querySelector('span:last-child').textContent = 'تسجيل الخروج';
-    if (currentUser.role === 'admin') adminLink.style.display = 'flex';
-    else adminLink.style.display = 'none';
+    if (currentUser.role === 'admin') {
+      adminLink.style.display = 'flex';
+      ordersLink.style.display = 'flex';
+    } else {
+      adminLink.style.display = 'none';
+      ordersLink.style.display = 'none';
+    }
   } else {
     authBtn.innerHTML = '<span>👤</span>';
     mobileAuthLink.querySelector('span:last-child').textContent = 'تسجيل الدخول';
     adminLink.style.display = 'none';
+    ordersLink.style.display = 'none';
     document.getElementById('notif-btn').style.display = 'none';
   }
 }
