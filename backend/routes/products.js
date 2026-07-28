@@ -53,6 +53,15 @@ router.put('/:id', adminAuth, async (req, res) => {
   }
 });
 
+router.delete('/', adminAuth, async (req, res) => {
+  try {
+    await Product.deleteMany({});
+    res.json({ message: 'All products deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.delete('/:id', adminAuth, async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
