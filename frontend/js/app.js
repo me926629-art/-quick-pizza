@@ -7,7 +7,6 @@ let allCategories = [];
 let currentPage = 'home';
 let currentCategory = null;
 let favorites = JSON.parse(localStorage.getItem('qp_favorites') || '[]');
-let selectedPayment = 'cash';
 let heroTimer = null;
 let heroProgressTimer = null;
 
@@ -771,12 +770,6 @@ function updateCartSummary() {
   } catch (e) {}
 }
 
-function selectPayment(el) {
-  selectedPayment = el.value;
-  document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
-  el.closest('.payment-option').classList.add('active');
-}
-
 async function placeOrder() {
   if (!cartData || cartData.items.length === 0) return showToast(currentLang === 'en' ? 'Cart is empty' : 'السلة فاضية');
   if (!currentUser?.address?.city) {
@@ -804,7 +797,6 @@ async function placeOrder() {
   try {
     const specialInstructions = document.getElementById('special-instructions')?.value || '';
     const order = await apiPost('/api/orders', {
-      paymentMethod: selectedPayment,
       specialInstructions,
       deliveryAddress: currentUser.address,
       phone
@@ -1013,8 +1005,6 @@ function renderTrackingPage(order) {
     </div>
   `).join('');
 
-  const paymentText = currentLang === 'en' ? { cash: '💵 Cash', card: '💳 Card', online: '📱 Online' } : { cash: '💵 كاش', card: '💳 بطاقة', online: '📱 أونلاين' };
-
   let ratingHTML = '';
   if (isDelivered && !order.rating) {
     ratingHTML = `
@@ -1061,11 +1051,7 @@ function renderTrackingPage(order) {
       <div class="track-detail-card">
         <div class="track-detail-title">📍 ${t('deliveryAddress')}</div>
         <div class="track-addr-text">${addrText}</div>
-      </div>
-      <div class="track-detail-card">
-        <div class="track-detail-title">💳 ${t('paymentMethodLabel')}</div>
-        <div style="font-size:15px;font-weight:700">${paymentText[order.paymentMethod] || order.paymentMethod}</div>
-        ${order.specialInstructions ? `<div style="margin-top:8px;font-size:13px;color:var(--text-muted)">📝 ${order.specialInstructions}</div>` : ''}
+        ${order.specialInstructions ? `<div style="margin-top:10px;font-size:13px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:10px">📝 ${order.specialInstructions}</div>` : ''}
       </div>
     </div>
     ${ratingHTML}

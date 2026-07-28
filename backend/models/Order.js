@@ -22,11 +22,6 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled'],
     default: 'pending'
   },
-  paymentMethod: {
-    type: String,
-    enum: ['cash', 'card', 'online'],
-    default: 'cash'
-  },
   deliveryAddress: {
     city: String,
     district: String,
@@ -40,14 +35,7 @@ const orderSchema = new mongoose.Schema({
   rating: { type: Number, min: 1, max: 5 },
   review: String,
   specialInstructions: String,
-  orderNumber: { type: String, unique: true }
+  orderNumber: { type: Number }
 }, { timestamps: true });
-
-orderSchema.pre('save', function(next) {
-  if (!this.orderNumber) {
-    this.orderNumber = 'QP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 4).toUpperCase();
-  }
-  next();
-});
 
 module.exports = mongoose.model('Order', orderSchema);

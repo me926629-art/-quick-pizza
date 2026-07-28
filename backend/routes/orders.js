@@ -58,7 +58,7 @@ const deliveryAreas = {
 
 router.post('/', auth, async (req, res) => {
   try {
-    const { deliveryAddress, paymentMethod, specialInstructions, phone } = req.body;
+    const { deliveryAddress, specialInstructions, phone } = req.body;
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
@@ -77,6 +77,7 @@ router.post('/', auth, async (req, res) => {
     const deliveryFee = deliveryAddress?.deliveryArea ? (deliveryAreas[deliveryAddress.deliveryArea] || 0) : 0;
     const total = subtotal + deliveryFee;
     const estimatedDelivery = new Date(Date.now() + 45 * 60 * 1000);
+    const orderCount = await Order.countDocuments();
     const order = new Order({
       user: req.user._id,
       items,
@@ -84,7 +85,7 @@ router.post('/', auth, async (req, res) => {
       deliveryFee,
       total: Math.max(total, 0),
       deliveryAddress,
-      paymentMethod: paymentMethod || 'cash',
+      orderNumber: orderCount + 1,
       specialInstructions,
       phone: phone || req.user.phone || '',
       estimatedDelivery
