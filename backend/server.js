@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // Serve static files and no-cache for HTML
 app.use(express.static(path.join(__dirname, '../frontend'), {
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html') || filePath.endsWith('.htm')) {
+    if (filePath.endsWith('.html') || filePath.endsWith('.htm') || filePath.endsWith('.js') || filePath.endsWith('.css')) {
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       res.set('Pragma', 'no-cache');
       res.set('Expires', '0');
