@@ -2255,24 +2255,6 @@ async function restoreBackup() {
   input.click();
 }
 
-// ===== RESET MENU TO DEFAULT =====
-async function resetMenu() {
-  if (!confirm(currentLang === 'en' ? 'Reset menu to default? This will DELETE all current products & categories.' : 'إعادة المنيو للإعدادات الأساسية؟ هيتحذف كل المنتجات والتصنيفات الحالية.')) return;
-  try {
-    showToast(currentLang === 'en' ? 'Resetting menu...' : 'جاري إعادة المنيو...');
-    const token = localStorage.getItem('qp_token');
-    const res = await fetch('/api/seed', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token } });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Reset failed');
-    showToast(currentLang === 'en' ? 'Menu restored ✅' : 'تم استعادة المنيو ✅');
-    if (typeof loadCategories === 'function') loadCategories();
-    if (typeof loadAdminDashboard === 'function') loadAdminDashboard();
-  } catch (e) {
-    showToast(currentLang === 'en' ? 'Error: ' + e.message : 'خطأ: ' + e.message);
-    console.error(e);
-  }
-}
-
 // ===== BACKUP =====
 async function downloadBackup() {
   try {
