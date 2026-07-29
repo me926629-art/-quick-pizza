@@ -401,7 +401,8 @@ function handleSearch(value) {
 function renderHomeCategories() {
   const c = document.getElementById('home-categories');
   c.innerHTML = allCategories.map(cat => `
-    <div class="category-pill" onclick="navigateTo('menu', '${cat._id}')">
+    <div class="category-pill" onclick="navigateTo('menu', '${cat._id}')" style="background-image:url('${cat.image || ''}')">
+      <div class="category-pill-overlay"></div>
       <span class="category-pill-icon">${cat.icon}</span>
       <div class="category-pill-name">${ln(cat)}</div>
     </div>
