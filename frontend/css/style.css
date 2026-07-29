@@ -231,8 +231,16 @@ input, textarea, select { font-family: inherit; }
 .home-hero-btn { padding: 12px 40px; font-size: 16px; font-weight: 800; border-radius: var(--radius-full); }
 
 /* ===== CATEGORIES ===== */
-.categories-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.categories-wrapper { display: flex; align-items: center; gap: 6px; position: relative; }
+.categories-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; flex: 1; }
 .categories-row::-webkit-scrollbar { display: none; }
+.cat-scroll-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12); cursor: pointer; font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  color: var(--text-secondary); transition: all 0.2s; z-index: 2;
+}
+.cat-scroll-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(198,40,40,0.3); }
 .category-pill {
   min-width: 100px; min-height: 130px;
   border-radius: 14px; padding: 16px 12px; text-align: center;

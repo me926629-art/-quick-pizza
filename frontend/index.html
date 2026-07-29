@@ -364,7 +364,11 @@
             <p class="section-subtitle" data-i18n="browseByCat">تصفح حسب القسم</p>
           </div>
         </div>
-        <div class="categories-row" id="home-categories"></div>
+        <div class="categories-wrapper">
+          <button class="cat-scroll-btn cat-scroll-left" onclick="scrollCategories(-1)">‹</button>
+          <div class="categories-row" id="home-categories"></div>
+          <button class="cat-scroll-btn cat-scroll-right" onclick="scrollCategories(1)">›</button>
+        </div>
       </section>
 
       <!-- Featured Products -->

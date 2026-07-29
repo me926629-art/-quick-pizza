@@ -398,6 +398,13 @@ function handleSearch(value) {
 }
 
 // ===== CATEGORIES =====
+function scrollCategories(dir) {
+  const row = document.getElementById('home-categories');
+  if (!row) return;
+  const scrollAmount = row.clientWidth * 0.6;
+  row.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+}
+
 function renderHomeCategories() {
   const c = document.getElementById('home-categories');
   c.innerHTML = allCategories.map(cat => `
