@@ -61,13 +61,25 @@
 html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 body {
   font-family: 'Cairo', system-ui, -apple-system, sans-serif;
-  background: var(--surface-2);
+  background: #f5f5f0;
+  background-image: url('/uploads/bg.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--text-primary);
   overflow-x: hidden;
   direction: rtl;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  z-index: -1;
+  pointer-events: none;
 }
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; cursor: pointer; }

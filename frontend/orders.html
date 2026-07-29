@@ -38,6 +38,12 @@
     .om-topbar-right { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #8b949e; }
     .om-logout-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid #f8514933; background: #f8514922; color: #f85149; font-family: 'Cairo'; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.15s; white-space: nowrap; }
     .om-logout-btn:hover { background: #f8514944; border-color: #f85149; }
+    .om-notif-btn { position: relative; padding: 8px 12px; border-radius: 8px; border: 1px solid #30363d; background: #161b22; color: #8b949e; font-size: 16px; cursor: pointer; transition: 0.15s; }
+    .om-notif-btn:hover { border-color: #f0883e; background: #f0883e22; }
+    .om-sound-btn { padding: 8px 10px; border-radius: 8px; border: 1px solid #30363d; background: #161b22; color: #8b949e; font-size: 14px; cursor: pointer; transition: 0.15s; }
+    .om-sound-btn:hover { border-color: #8b949e; background: #21262d; }
+    .om-notif-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; border-radius: 9px; background: #f0883e; color: #fff; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; padding: 0 4px; display: none; }
+    .om-notif-badge.show { display: flex; }
     .om-live-dot { width: 10px; height: 10px; border-radius: 50%; background: #3fb950; animation: omPulse 2s ease-in-out infinite; }
     @keyframes omPulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(63,185,80,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(63,185,80,0); } }
     .om-toggle { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
@@ -128,6 +134,22 @@
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1f6feb; color: #fff; padding: 12px 24px; border-radius: 10px; font-family: 'Cairo'; font-size: 14px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 9999; animation: toastIn 0.3s ease-out; }
     .toast.hidden { display: none; }
     @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    .notif-banner {
+      position: sticky; top: 0; z-index: 300;
+      background: linear-gradient(135deg, #f0883e, #e65100);
+      color: #fff; text-align: center; padding: 14px 20px;
+      font-size: 16px; font-weight: 800; cursor: pointer;
+      transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 20px rgba(240,136,62,0.4);
+      display: none;
+    }
+    .notif-banner.show { transform: translateY(0); display: block; animation: notifBounce 0.5s ease-out; }
+    @keyframes notifBounce {
+      0% { transform: translateY(-100%); }
+      60% { transform: translateY(4px); }
+      100% { transform: translateY(0); }
+    }
 
     /* ===== PRODUCT MANAGEMENT ===== */
     .pm-section { display: none; padding: 20px 24px; flex: 1; overflow-y: auto; }
@@ -236,10 +258,14 @@
       <div class="om-topbar-right">
         <div class="om-live-dot"></div>
         <span>مباشر</span>
-        <label class="om-toggle">
+        <label class="om-toggle" title="تحديث تلقائي">
           <input type="checkbox" id="om-auto-toggle" checked onchange="toggleAuto()">
           <span class="om-toggle-slider"></span>
         </label>
+        <button class="om-sound-btn" id="om-sound-btn" onclick="toggleSound()" title="الصوت">🔊</button>
+        <button class="om-notif-btn" id="om-notif-btn" onclick="clearNotifBadge(); filterOrders('pending', document.querySelector('.om-filter-pending'))" title="الطلبات الجديدة">
+          🔔 <span class="om-notif-badge" id="om-notif-badge">0</span>
+        </button>
         <button class="om-logout-btn" onclick="logout()">🚪 خروج</button>
       </div>
     </div>
@@ -324,6 +350,7 @@
   </div>
 
   <div class="toast hidden" id="toast"></div>
+  <div id="notif-banner" class="notif-banner" onclick="filterOrders('pending', document.querySelector('.om-filter-pending'))"></div>
 
   <script>
     const API = '';
@@ -336,6 +363,10 @@
     let allCategories = [];
     let allProducts = [];
     let activeTab = 'orders';
+    let prevTitle = document.title;
+    let titleFlashInterval = null;
+    let notifBannerTimeout = null;
+    let soundEnabled = true;
 
     // No auto-login - always require login
 
@@ -396,6 +427,7 @@
       startAutoRefresh();
       loadCategories();
       loadOrders();
+      requestNotifPermission();
     }
 
     function startClock() {
@@ -422,17 +454,82 @@
       else { clearInterval(autoRefresh); autoRefresh = null; }
     }
 
+    function requestNotifPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
     function playSound() {
+      if (!soundEnabled) return;
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.frequency.value = 800; o.type = 'sine';
-        g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        o.start(); o.stop(audioCtx.currentTime + 0.3);
+        const notes = [660, 880, 1100];
+        notes.forEach((freq, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g); g.connect(audioCtx.destination);
+          o.frequency.value = freq; o.type = 'sine';
+          const t = audioCtx.currentTime + i * 0.12;
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+          o.start(t); o.stop(t + 0.15);
+        });
       } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('om-sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function showBrowserNotification(title, body) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        const n = new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'new-order', silent: true });
+        setTimeout(() => n.close(), 6000);
+      } catch (e) {}
+    }
+
+    function flashTitle(on) {
+      if (titleFlashInterval) { clearInterval(titleFlashInterval); titleFlashInterval = null; }
+      if (on) {
+        titleFlashInterval = setInterval(() => {
+          document.title = document.title === prevTitle ? '🔔 طلب جديد!' : prevTitle;
+        }, 1000);
+      } else {
+        document.title = prevTitle;
+      }
+    }
+
+    function showNotifBanner(count) {
+      clearTimeout(notifBannerTimeout);
+      const banner = document.getElementById('notif-banner');
+      if (!banner) return;
+      if (count > 0) {
+        banner.innerHTML = `🔔 <strong>${count}</strong> طلب ${count > 1 ? 'جديد' : 'جديد'} واصل! اضغط للمشاهدة`;
+        banner.classList.add('show');
+        notifBannerTimeout = setTimeout(() => banner.classList.remove('show'), 10000);
+      } else {
+        banner.classList.remove('show');
+      }
+    }
+
+    function updateNotifBadge(count) {
+      const badge = document.getElementById('om-notif-badge');
+      if (!badge) return;
+      if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.add('show');
+      } else {
+        badge.classList.remove('show');
+      }
+    }
+
+    function clearNotifBadge() {
+      updateNotifBadge(0);
+      flashTitle(false);
+      showNotifBanner(0);
     }
 
     function toast(msg) {
@@ -465,7 +562,18 @@
 
         const newPending = orders.filter(o => o.status === 'pending').length;
         const oldPending = prevOrders.filter(o => o.status === 'pending').length;
-        if (newPending > oldPending && prevOrders.length > 0) playSound();
+        const newOrdersArr = prevOrders.length > 0 ? orders.filter(o => o.status === 'pending' && !prevOrders.some(p => p._id === o._id)) : [];
+        if (newOrdersArr.length > 0) {
+          playSound();
+          showBrowserNotification('🍕 طلب جديد!', `طلب #${newOrdersArr[0].orderNumber} من ${newOrdersArr[0].user?.name || 'عميل'}`);
+          showNotifBanner(newOrdersArr.length);
+          updateNotifBadge(newOrdersArr.length);
+          flashTitle(true);
+          setTimeout(() => flashTitle(false), 8000);
+        } else if (newPending === 0) {
+          showNotifBanner(0);
+          updateNotifBadge(0);
+        }
         prevOrders = [...orders];
 
         const pending = orders.filter(o => o.status === 'pending');
