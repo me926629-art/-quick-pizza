@@ -35,10 +35,17 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
     console.log('MongoDB connected');
     // Drop stale unique index on orderNumber (daily reset makes it invalid)
     try {
-      const Order = require('./models/Order');
-      await Order.collection.dropIndex('orderNumber_1');
-      console.log('Dropped stale orderNumber_1 unique index');
-    } catch (_) { /* index doesn't exist, that's fine */ }
+      const db = mongoose.connection.db;
+      const indexes = await db.collection('orders').indexes();
+      for (const idx of indexes) {
+        if (idx.name === 'orderNumber_1' || (idx.key && idx.key.orderNumber === 1)) {
+          if (idx.unique) {
+            await db.collection('orders').dropIndex(idx.name);
+            console.log('Dropped unique index on orderNumber');
+          }
+        }
+      }
+    } catch (e) { console.log('Index cleanup note:', e.message); }
     const Category = require('./models/Category');
     const Product = require('./models/Product');
     const catCount = await Category.countDocuments();
@@ -61,8 +68,13 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/notifications', require('./routes/notifications'));
 
 // Health check for uptime monitoring
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '966b976', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+  let indexes = [];
+  try {
+    const db = mongoose.connection.db;
+    indexes = await db.collection('orders').indexes();
+  } catch (_) {}
+  res.json({ status: 'ok', version: '56aea01', indexes, timestamp: new Date().toISOString() });
 });
 
 // Manual re-seed endpoint (admin only)
