@@ -713,6 +713,10 @@ input, textarea, select { font-family: inherit; }
 
 .check-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .check-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
+.admin-notif-btn { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 14px; cursor: pointer; transition: 0.15s; line-height: 1; }
+.admin-notif-btn:hover { border-color: var(--warning); background: var(--warning-bg); }
+.admin-notif-badge { position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; border-radius: 8px; background: var(--warning); color: #fff; font-size: 10px; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 3px; }
+.admin-notif-badge.show { display: flex; }
 
 .select-input {
   -webkit-appearance: none; appearance: none;

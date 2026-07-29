@@ -347,6 +347,7 @@ function navigateTo(page, data) {
         navigateTo('home');
         return;
       }
+      adminRequestNotif();
       loadAdminDashboard();
       break;
     case 'order-manager':
@@ -1441,6 +1442,60 @@ function stopAdminAutoRefresh() {
   if (adminAutoRefreshInterval) { clearInterval(adminAutoRefreshInterval); adminAutoRefreshInterval = null; }
 }
 
+let prevAdminOrders = [];
+let adminAudioCtx = null;
+let adminPrevTitle = document.title;
+let adminTitleFlashInterval = null;
+let adminSoundEnabled = true;
+
+function adminRequestNotif() {
+  if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+
+function adminPlaySound() {
+  if (!adminSoundEnabled) return;
+  try {
+    if (!adminAudioCtx) adminAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    [660, 880, 1100].forEach((f, i) => {
+      const o = adminAudioCtx.createOscillator();
+      const g = adminAudioCtx.createGain();
+      o.connect(g); g.connect(adminAudioCtx.destination);
+      o.frequency.value = f; o.type = 'sine';
+      const t = adminAudioCtx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0.25, t);
+      g.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+      o.start(t); o.stop(t + 0.15);
+    });
+  } catch (e) {}
+}
+
+function adminShowNotif(title, body) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try { const n = new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'admin-order', silent: true }); setTimeout(() => n.close(), 6000); } catch (e) {}
+}
+
+function adminFlashTitle(on) {
+  if (adminTitleFlashInterval) { clearInterval(adminTitleFlashInterval); adminTitleFlashInterval = null; }
+  if (on) {
+    adminTitleFlashInterval = setInterval(() => {
+      document.title = document.title === adminPrevTitle ? '🔔 طلب جديد!' : adminPrevTitle;
+    }, 1000);
+  } else { document.title = adminPrevTitle; }
+}
+
+function adminUpdateBadge(count) {
+  const badge = document.getElementById('admin-notif-badge');
+  if (!badge) return;
+  if (count > 0) { badge.textContent = count > 9 ? '9+' : count; badge.classList.add('show'); }
+  else { badge.classList.remove('show'); }
+}
+
+function adminToggleSound() {
+  adminSoundEnabled = !adminSoundEnabled;
+  const btn = document.getElementById('admin-sound-btn');
+  if (btn) btn.textContent = adminSoundEnabled ? '🔊' : '🔇';
+}
+
 async function loadAdminDashboard() {
   try {
     const [allOrders, dailyRev] = await Promise.all([
@@ -1450,6 +1505,20 @@ async function loadAdminDashboard() {
     const orders = allOrders.orders || [];
     const now = new Date();
     document.getElementById('admin-updated-at').textContent = 'آخر تحديث: ' + now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    const newPending = orders.filter(o => o.status === 'pending');
+    const oldPendingIds = new Set(prevAdminOrders.filter(o => o.status === 'pending').map(o => o._id));
+    const freshOrders = prevAdminOrders.length > 0 ? newPending.filter(o => !oldPendingIds.has(o._id)) : [];
+    if (freshOrders.length > 0) {
+      adminPlaySound();
+      adminShowNotif('🍕 طلب جديد!', `طلب #${freshOrders[0].orderNumber} من ${freshOrders[0].user?.name || 'عميل'}`);
+      adminUpdateBadge(freshOrders.length);
+      adminFlashTitle(true);
+      setTimeout(() => adminFlashTitle(false), 8000);
+    } else if (newPending.length === 0) {
+      adminUpdateBadge(0);
+    }
+    prevAdminOrders = [...orders];
 
     const today = new Date().toDateString();
     const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
