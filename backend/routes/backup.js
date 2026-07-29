@@ -52,9 +52,10 @@ router.post('/restore', adminAuth, async (req, res) => {
       for (const doc of data[col]) {
         try {
           const { _id, __v, ...rest } = doc;
-          // Orders: don't preserve _id (avoid duplicate key errors)
+          // Orders: don't preserve _id or orderNumber (avoid duplicate key errors)
           if (col === 'orders') {
-            await new Model({ ...rest }).save();
+            const { orderNumber, ...orderRest } = rest;
+            await new Model({ ...orderRest }).save();
           } else if (_id) {
             await Model.findByIdAndUpdate(_id, rest, { upsert: true, runValidators: false });
           } else {

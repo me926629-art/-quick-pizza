@@ -33,6 +33,12 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_pizza')
   .then(async () => {
     console.log('MongoDB connected');
+    // Drop stale unique index on orderNumber (daily reset makes it invalid)
+    try {
+      const Order = require('./models/Order');
+      await Order.collection.dropIndex('orderNumber_1');
+      console.log('Dropped stale orderNumber_1 unique index');
+    } catch (_) { /* index doesn't exist, that's fine */ }
     const Category = require('./models/Category');
     const Product = require('./models/Product');
     const catCount = await Category.countDocuments();
@@ -40,7 +46,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
     if (catCount === 0 || prodCount === 0) {
       console.log(`Empty ${catCount === 0 ? 'categories' : 'products'} detected, running seed...`);
       const seed = require('./seed');
-      await seed(true); // force = true → upsert instead of insert
+      await seed(true);
     }
   })
   .catch(err => console.error('MongoDB error:', err));
