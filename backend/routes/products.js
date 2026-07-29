@@ -19,24 +19,16 @@ router.get('/', async (req, res) => {
       ];
     }
     let products = await Product.find(filter).populate('category', 'name nameAr icon').sort('name');
-    let needsSave = false;
-    for (const p of products) {
-      if (p.name && hasArabic(p.name) && p.nameAr && p.name !== p.nameAr) {
-        p.name = genEn(p.name);
-        needsSave = true;
-      } else if (p.name && hasArabic(p.name) && p.nameAr && p.name === p.nameAr) {
-        p.name = genEn(p.nameAr);
-        needsSave = true;
+    products = products.map(p => {
+      p = p.toObject();
+      if (p.name && hasArabic(p.name) && p.nameAr) {
+        p.name = p.name === p.nameAr ? genEn(p.nameAr) : genEn(p.name);
       }
       if (p.description && hasArabic(p.description) && p.descriptionAr && p.description === p.descriptionAr) {
         p.description = genEn(p.descriptionAr);
-        needsSave = true;
       }
-    }
-    if (needsSave) {
-      for (const p of products) await p.save();
-      console.log(`Auto-migrated ${products.length} products`);
-    }
+      return p;
+    });
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
