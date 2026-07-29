@@ -366,8 +366,46 @@ const seed = async (force) => {
     { nameAr: 'مياه معدنية صغير', price: 15, category: cm['Beverages'] }
   ];
 
+  const ar2en = {
+    'بيتزا':'Pizza','فطيرة':'Pie','ساندوتش':'Sandwich','كريب':'Crepe','كالزوني':'Calzone',
+    'فراخ':'Chicken','لحمة':'Meat','لحم مفروم':'Minced Meat','مفرومة':'Minced',
+    'شاورما':'Shawarma','جبنة':'Cheese','موتزاريلا':'Mozzarella','كيري':'Kiri',
+    'رومي':'Roumy','شيدر':'Cheddar','جودة':'Gouda','سجق':'Sausage','سوسيس':'Sausage',
+    'بسطرمة':'Pastrami','سلامي':'Salami','برجر':'Burger','جمبري':'Shrimp','سبيط':'Calamari',
+    'تونة':'Tuna','سمك':'Fish','سي فود':'Seafood','مشروم':'Mushroom','سبانخ':'Spinach',
+    'فلفل':'Pepper','طماطم':'Tomato','زيتون':'Olive','بصل':'Onion','ثوم':'Garlic',
+    'مكرونة':'Pasta','اسباجتي':'Spaghetti','لازانيا':'Lasagna','نجرسكو':'Negresco',
+    'كريمة':'Cream','سكر':'Sugar','عسل':'Honey','قرفة':'Cinnamon','شوكولاتة':'Chocolate',
+    'نوتيلا':'Nutella','لوتس':'Lotus','مكسرات':'Nuts','فواكه':'Fruits','موز':'Banana',
+    'تفاح':'Apple','قشطة':'Cream','بسبوسة':'Basbousa','كنافة':'Konafa',
+    'بطاطس':'Potato','سلطة':'Salad','طحينة':'Tahini','حمص':'Hummus','زبادي':'Yogurt',
+    'تبولة':'Tabbouleh','كول سلو':'Coleslaw','مخلل':'Pickles',
+    'شيش':'Shish','كباب':'Kebab','كفتة':'Kofta','طاووق':'Tawook','ريش':'Ribs',
+    'كبدة':'Liver','بانية':'Pané','باربيكيو':'BBQ','رانش':'Ranch','هوت دوج':'Hot Dog',
+    'صوص':'Sauce','عيش':'Bread','بلدي':'Baladi','مشكل':'Mixed','سوبر':'Super',
+    'كويك':'Quick','مكس':'Mix','مشويات':'Grill','سموكي':'Smoky','تركي مدخن':'Smoked Turkey',
+    'سادة':'Plain','حار':'Spicy','أرز':'Rice','شوربة':'Soup','خضار':'Vegetables','عدس':'Lentils',
+    'فاهيتا':'Fajita','حواوشي':'Hawawshi','بانيني':'Panini','ستيك':'Steak',
+    'نيفا':'Neva','طرب':'Tarb','اسكالوب':'Escalope','حمام':'Pigeon','محشي':'Stuffed',
+    'مكسيكي':'Mexican','دايت':'Diet','جامبو':'Jumbo',
+    'قهوة':'Coffee','نسكافيه':'Nescafe','كابوتشينو':'Cappuccino','لاتيه':'Latte',
+    'اسبريسو':'Espresso','شاي':'Tea','كولا':'Cola','مياه':'Water','معدنية':'Mineral',
+    'باذنجان':'Eggplant','بابا غنوج':'Baba Ghanoush','خيار':'Cucumber','خس':'Lettuce',
+    'مربى':'Jam','زبيب':'Raisins','جوز هند':'Coconut',
+    'بوم فريت':'Pommes Frites','أم علي':'Om Ali','مشلتت':'Mishaltat','بغاشة':'Bughasha',
+    'فروتي':'Fruity','إمبيرو':'Impero','كاستر':'Custard','زعتر':'Thyme',
+    'مايونيز':'Mayonnaise','كاتشب':'Ketchup','مستردة':'Mustard','ليمون':'Lemon',
+    'جرجير':'Arugula','كابوتشا':'Cabbage','فريك':'Freekeh','بتلو':'Veal'
+  };
+  function genEn(ar) {
+    let en = ar;
+    for (const [arWord, enWord] of Object.entries(ar2en)) {
+      en = en.replace(new RegExp(arWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), enWord);
+    }
+    return en;
+  }
   for (const p of products) {
-    if (!p.name) p.name = p.nameAr;
+    if (!p.name) p.name = p.nameAr ? genEn(p.nameAr) : p.nameAr;
     if (!p.description) p.description = p.descriptionAr || '';
     if (!p.sizes) {
       p.sizes = [{ name: 'Regular', nameAr: 'عادي', price: p.price }];
