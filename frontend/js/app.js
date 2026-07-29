@@ -458,8 +458,33 @@ function filterProducts(filter, el) {
 // ===== PRODUCTS =====
 function getProductEmoji(product) {
   const catName = product.category?.name || '';
-  const map = { Pizza: '🍕', Manakish: '🫓', Sides: '🍟', Drinks: '🥤', Desserts: '🍰', Combo: '🍽️' };
+  const map = {
+    Pizza: '🍕', 'Savory Pies': '🫓', Sandwiches: '🥪', Panini: '🥖',
+    'Grill & BBQ': '🥩', Extras: '➕', Soup: '🍜', 'Savory Crepes': '🥞',
+    Calzone: '🥟', 'Italian Pasta': '🍝', 'Sweet Pies': '🥮', 'Sweet Crepes': '🫓',
+    'Salads & Appetizers': '🥗', Beverages: '🥤'
+  };
   return map[catName] || '🍕';
+}
+function getProductGradient(product) {
+  const catName = product.category?.name || '';
+  const map = {
+    Pizza: 'linear-gradient(135deg, #e53935, #c62828)',
+    'Savory Pies': 'linear-gradient(135deg, #f9a825, #f57f17)',
+    Sandwiches: 'linear-gradient(135deg, #ff8f00, #ff6f00)',
+    Panini: 'linear-gradient(135deg, #8d6e63, #5d4037)',
+    'Grill & BBQ': 'linear-gradient(135deg, #d84315, #bf360c)',
+    Extras: 'linear-gradient(135deg, #7b1fa2, #4a148c)',
+    Soup: 'linear-gradient(135deg, #ffb300, #ff8f00)',
+    'Savory Crepes': 'linear-gradient(135deg, #43a047, #2e7d32)',
+    Calzone: 'linear-gradient(135deg, #e65100, #bf360c)',
+    'Italian Pasta': 'linear-gradient(135deg, #c62828, #8e0000)',
+    'Sweet Pies': 'linear-gradient(135deg, #ec407a, #ad1457)',
+    'Sweet Crepes': 'linear-gradient(135deg, #ab47bc, #6a1b9a)',
+    'Salads & Appetizers': 'linear-gradient(135deg, #66bb6a, #2e7d32)',
+    Beverages: 'linear-gradient(135deg, #29b6f6, #0277bd)'
+  };
+  return map[catName] || 'linear-gradient(135deg, #ef5350, #b71c1c)';
 }
 
 function renderFeaturedProducts() {
@@ -492,10 +517,12 @@ function productCard(p) {
   if (p.isFeatured) badges += `<span class="product-badge featured">⭐ ${t('featured')}</span>`;
   if (p.isPopular) badges += `<span class="product-badge popular">🔥 ${t('popular')}</span>`;
 
+  const gradient = getProductGradient(p);
+
   const imgTag = p.image
     ? `<img src="${p.image}" alt="${ln(p)}" class="product-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" onclick="event.stopPropagation(); openImageZoom('${p.image}')">
        <span class="product-emoji" style="display:none">${emoji}</span>`
-    : `<span class="product-emoji">${emoji}</span>`;
+    : `<span class="product-emoji" style="background:${gradient};width:100%;height:100%;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:center;font-size:48px">${emoji}</span>`;
 
   return `
     <div class="product-card" onclick="openProductModal('${p._id}')">
@@ -561,7 +588,7 @@ function openProductModal(productId) {
 
     const c = currentLang === 'en' ? { cal: 'cal', min: 'min', hot: '🔥 Hot', chooseSize: t('chooseSize'), addons: t('addons'), addToCart: t('addToCart'), egp: t('egp') } : { cal: 'سعرة', min: 'دقيقة', hot: '🌶️ ', chooseSize: t('chooseSize'), addons: t('addons'), addToCart: t('addToCart'), egp: t('egp') };
     detail.innerHTML = `
-      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${ln(product)}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in" onclick="event.stopPropagation(); openImageZoom('${product.image}')">` : emoji}</div>
+      <div class="pd-image">${product.image ? `<img src="${product.image}" alt="${ln(product)}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in" onclick="event.stopPropagation(); openImageZoom('${product.image}')">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;background:${getProductGradient(product)}">${emoji}</div>`}</div>
       <div class="pd-body">
         <div class="pd-name">${ln(product)}</div>
         <div class="pd-desc">${ld(product)}</div>
