@@ -95,11 +95,11 @@ const deliveryAreas = {
 router.post('/', auth, async (req, res) => {
   try {
     const { deliveryAddress, specialInstructions, phone } = req.body;
+    console.log('POST /api/orders by user', req.user?._id);
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
     }
-    // Remove items whose product was deleted
     const validItems = cart.items.filter(item => item.product);
     if (validItems.length === 0) {
       cart.items = [];
@@ -144,12 +144,11 @@ router.post('/', auth, async (req, res) => {
     dr.totalOrders += 1;
     await dr.save();
     cart.items = [];
-    cart.couponCode = null;
-    cart.couponDiscount = 0;
     await cart.save();
     res.status(201).json(order);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('ORDER ERROR:', error.message, error.code, error.stack?.slice(0, 200));
+    res.status(500).json({ error: error.message + (error.code ? ' (code: ' + error.code + ')' : '') });
   }
 });
 
