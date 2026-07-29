@@ -55,6 +55,22 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
       const seed = require('./seed');
       await seed(true);
     }
+    const { genEn, hasArabic } = require('./seed');
+    const products = await Product.find({});
+    let migrated = 0;
+    for (const p of products) {
+      let changed = false;
+      if (p.name && hasArabic(p.name) && p.nameAr) {
+        p.name = genEn(p.nameAr);
+        changed = true;
+      }
+      if (p.description && hasArabic(p.description) && p.descriptionAr) {
+        p.description = genEn(p.descriptionAr);
+        changed = true;
+      }
+      if (changed) { await p.save(); migrated++; }
+    }
+    if (migrated) console.log(`Migrated ${migrated} products`);
   })
   .catch(err => console.error('MongoDB error:', err));
 

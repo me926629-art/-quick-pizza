@@ -4,6 +4,85 @@ const Product = require('./models/Product');
 const User = require('./models/User');
 require('dotenv').config();
 
+const ar2en = {
+  'سي فود':'Seafood','بوم فريت':'Pommes Frites','أم علي':'Om Ali','هوت دوج':'Hot Dog','سموكي برجر':'Smoky Burger',
+  'سوبر برجر':'Super Burger','سوبر سوبريم':'Super Supreme','مكس باربيكيو لحوم':'BBQ Meat Mix',
+  'مكس باربيكيو':'BBQ Mix','تركي مدخن':'Smoked Turkey','تشكن رانتش':'Chicken Ranch',
+  'تشكن كرستي':'Crispy Chicken','تشكن باربيكيو':'Chicken BBQ','تشكن كرسبي':'Crispy Chicken',
+  'سموكد تركي':'Smoked Turkey','على مشكل جبن':'with Mixed Cheese','مشكل جبن':'Mixed Cheese',
+  'بالجبنة':'with Cheese','بالفراخ':'with Chicken','شيش طاووق':'Shish Tawook',
+  'بابا غنوج':'Baba Ghanoush','جوز هند':'Coconut','كول سلو':'Coleslaw','لسان عصفور':'Orzo',
+  'داوود باشا':'Dawood Pasha','ورقة لحمة':'Meat Wrap','كوردن بلو':'Cordon Bleu',
+  'أصابع جبنة':'Cheese Sticks','حلقات بصل':'Onion Rings','أصابع الفراخ':'Chicken Fingers',
+  'صوص أحمر':'Red Sauce','صوص أبيض':'White Sauce','صوص باربيكيو':'BBQ Sauce',
+  'كريمة اللوتس':'Lotus Cream','بسكويت اللوتس':'Lotus Biscuit','القديسين':'Abdel Kadesen',
+  'كونستانتينوس':'Konstantinos','فورسيزون':'Four Seasons',  'مارجريتا':'Margherita','سي رانش':'Sea Ranch','عبد القديسين':'Abdel Kadesen','قديسين':'Kadesen','شيف':'Chef',
+  'الفراخ':'Chicken','المكرونة':'Pasta','المشروم':'Mushroom','المتبلة':'Marinated','الفلفل':'Pepper',
+  'البصل':'Onion','الكبيرة':'Large','الصغيرة':'Small','الصلصة':'Sauce','السلطة':'Salad',
+  'الزبادي':'Yogurt','الخبز':'Bread','الجبنة':'Cheese','الجبن':'Cheese','الطحينة':'Tahini',
+  'الحمص':'Hummus','الأرز':'Rice','الخضار':'Vegetables','السلطات':'Salads',
+  'سوسيس أو هوت دوج':'Sausage or Hot Dog','مفرومة بلدي':'Minced Baladi',
+  'لحمة مفرومة بلدي':'Baladi Minced Meat','لحم بلدي':'Baladi Meat',
+  'صدور الفراخ':'Chicken Breast','صدور فراخ':'Chicken Breast','صدور دجاج':'Chicken Breast','فراخ بانية':'Chicken Pané',
+  'فراخ كرسبي':'Crispy Chicken','لحمة مفرومة':'Minced Meat','لحم مفروم':'Minced Meat',
+  'فراخ على مشكل جبن':'Chicken with Mixed Cheese','لحمة على مشكل جبن':'Meat with Mixed Cheese',
+  'شاورما فراخ':'Chicken Shawarma','شاورما لحمة':'Meat Shawarma','مشكل فراخ':'Mixed Chicken',
+  'سجق بلدي':'Baladi Sausage','سجق أو سوسيس':'Sausage or Sausage','كبدة بلدي':'Baladi Liver',
+  'تشيدر':'Cheddar','تشكن':'Chicken','دجاج':'Chicken','بيتزا':'Pizza','فطيرة':'Pie','ساندوتش':'Sandwich',
+  'كريب':'Crepe','كالزوني':'Calzone','فراخ':'Chicken','لحمة':'Meat','مفرومة':'Minced',
+  'شاورما':'Shawarma','جبنة':'Cheese','جبن':'Cheese','موتزاريلا':'Mozzarella','كيري':'Kiri',
+  'رومي':'Roumy','شيدر':'Cheddar','جودة':'Gouda','سجق':'Sausage','سوسيس':'Sausage',
+  'بسطرمة':'Pastrami','سلامي':'Salami','برجر':'Burger','جمبري':'Shrimp','سبيط':'Calamari',
+  'كاليماري':'Calamari','تونة':'Tuna','سمك':'Fish','مشروم':'Mushroom','سبانخ':'Spinach',
+  'فلفل':'Pepper','فلفل رومي':'Bell Pepper','طماطم':'Tomato','زيتون':'Olive','بصل':'Onion',
+  'ثوم':'Garlic','مكرونة':'Pasta','اسباجتي':'Spaghetti','لازانيا':'Lasagna','نجرسكو':'Negresco',
+  'كريمة':'Cream','سكر':'Sugar','عسل':'Honey','قرفة':'Cinnamon','شوكولاتة':'Chocolate',
+  'نوتيلا':'Nutella','لوتس':'Lotus','مكسرات':'Nuts','فواكه':'Fruits','موز':'Banana',
+  'تفاح':'Apple','قشطة':'Cream','بسبوسة':'Basbousa','كنافة':'Konafa','بطاطس':'Potato',
+  'سلطة':'Salad','طحينة':'Tahini','حمص':'Hummus','زبادي':'Yogurt','تبولة':'Tabbouleh',
+  'مخلل':'Pickles','شيش':'Shish','كباب':'Kebab','كفتة':'Kofta','طاووق':'Tawook',
+  'ريش':'Ribs','كبدة':'Liver','بانية':'Pané','باربيكيو':'BBQ','رانش':'Ranch',
+  'صوص':'Sauce','عيش':'Bread','بلدي':'Baladi','مشكل':'Mixed','سوبر':'Super',
+  'كويك':'Quick','مكس':'Mix','مشويات':'Grill','سموكي':'Smoky','سادة':'Plain',
+  'حار':'Spicy','أرز':'Rice','شوربة':'Soup','خضار':'Vegetables','عدس':'Lentils',
+  'فاهيتا':'Fajita','حواوشي':'Hawawshi','بانيني':'Panini','ستيك':'Steak','نيفا':'Neva',
+  'طرب':'Tarb','اسكالوب':'Escalope','حمام':'Pigeon','محشي':'Stuffed','مكسيكي':'Mexican',
+  'دايت':'Diet','جامبو':'Jumbo','قهوة':'Coffee','نسكافيه':'Nescafe','كابوتشينو':'Cappuccino',
+  'لاتيه':'Latte','اسبريسو':'Espresso','شاي':'Tea','كولا':'Cola','بيريل':'Birell',
+  'فيروز':'Fayrouz','شويبس':'Schweppes','مياه':'Water','معدنية':'Mineral','سباتس':'Spats',
+  'باذنجان':'Eggplant','خيار':'Cucumber','خس':'Lettuce','مربى':'Jam','زبيب':'Raisins',
+  'مشلتت':'Mishaltat','بغاشة':'Bughasha','فروتي':'Fruity','إمبيرو':'Impero','كاستر':'Custard',
+  'الشيف':'Chef','صلصة':'Sauce','متبلة':'Marinated','مقرمش':'Crispy','زعتر':'Thyme','مايونيز':'Mayonnaise','كاتشب':'Ketchup','مستردة':'Mustard','ليمون':'Lemon',
+  'جرجير':'Arugula','كابوتشا':'Cabbage','فريك':'Freekeh','بتلو':'Veal','نحل':'Honey',
+  'فلاحي':'Farm','لبن':'Milk','بهارات':'Spices','سمن':'Ghee',
+  'على':' with ','مع':' with ','أو':' or ','من':' of ','صغير':'Small','كبير':'Large','و':' and ',
+  'نوجتس':'Nuggets','كرستي':'Crispy','كرسبي':'Crispy',
+  'بانيه':'Pané','لحم':'Meat','لحوم':'Meats','سوبريم':'Supreme','كالاماري':'Calamari','بستا':'Pasta',
+  'فريدو':'Alfredo','كاربونارا':'Carbonara','نابوليتان':'Neapolitan','إيطالي':'Italian',
+  'أمريكية':'American','ساخنة':'Hot','فرنسي':'French','بسكويت':'Biscuit','ال':'',
+};
+function hasArabic(str) { return /[\u0600-\u06FF]/.test(str); }
+function genEn(ar) {
+  if (!ar || !hasArabic(ar)) return ar;
+  let en = ar;
+  en = en.replace(/[()]/g, '');
+  const sorted = Object.entries(ar2en).sort((a, b) => b[0].length - a[0].length);
+  for (let pass = 0; pass < 2; pass++) {
+    for (const [arWord, enWord] of sorted) {
+      if (arWord.length <= 2) {
+        const re = new RegExp('(^|[\\s/])' + arWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[\\s/]|$|.)', 'g');
+        en = en.replace(re, '$1' + enWord + ' ');
+      } else {
+        en = en.replace(new RegExp(arWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), enWord);
+      }
+    }
+    if (!hasArabic(en)) break;
+  }
+  en = en.replace(/\s+/g, ' ').trim();
+  if (hasArabic(en)) en = ar;
+  return en;
+}
+
 const seed = async (force) => {
   const needsConnect = mongoose.connection.readyState === 0;
   if (needsConnect) await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_pizza');
@@ -365,45 +444,6 @@ const seed = async (force) => {
     { nameAr: 'مياه معدنية كبير', price: 25, category: cm['Beverages'] },
     { nameAr: 'مياه معدنية صغير', price: 15, category: cm['Beverages'] }
   ];
-
-  const ar2en = {
-    'بيتزا':'Pizza','فطيرة':'Pie','ساندوتش':'Sandwich','كريب':'Crepe','كالزوني':'Calzone',
-    'فراخ':'Chicken','لحمة':'Meat','لحم مفروم':'Minced Meat','مفرومة':'Minced',
-    'شاورما':'Shawarma','جبنة':'Cheese','موتزاريلا':'Mozzarella','كيري':'Kiri',
-    'رومي':'Roumy','شيدر':'Cheddar','جودة':'Gouda','سجق':'Sausage','سوسيس':'Sausage',
-    'بسطرمة':'Pastrami','سلامي':'Salami','برجر':'Burger','جمبري':'Shrimp','سبيط':'Calamari',
-    'تونة':'Tuna','سمك':'Fish','سي فود':'Seafood','مشروم':'Mushroom','سبانخ':'Spinach',
-    'فلفل':'Pepper','طماطم':'Tomato','زيتون':'Olive','بصل':'Onion','ثوم':'Garlic',
-    'مكرونة':'Pasta','اسباجتي':'Spaghetti','لازانيا':'Lasagna','نجرسكو':'Negresco',
-    'كريمة':'Cream','سكر':'Sugar','عسل':'Honey','قرفة':'Cinnamon','شوكولاتة':'Chocolate',
-    'نوتيلا':'Nutella','لوتس':'Lotus','مكسرات':'Nuts','فواكه':'Fruits','موز':'Banana',
-    'تفاح':'Apple','قشطة':'Cream','بسبوسة':'Basbousa','كنافة':'Konafa',
-    'بطاطس':'Potato','سلطة':'Salad','طحينة':'Tahini','حمص':'Hummus','زبادي':'Yogurt',
-    'تبولة':'Tabbouleh','كول سلو':'Coleslaw','مخلل':'Pickles',
-    'شيش':'Shish','كباب':'Kebab','كفتة':'Kofta','طاووق':'Tawook','ريش':'Ribs',
-    'كبدة':'Liver','بانية':'Pané','باربيكيو':'BBQ','رانش':'Ranch','هوت دوج':'Hot Dog',
-    'صوص':'Sauce','عيش':'Bread','بلدي':'Baladi','مشكل':'Mixed','سوبر':'Super',
-    'كويك':'Quick','مكس':'Mix','مشويات':'Grill','سموكي':'Smoky','تركي مدخن':'Smoked Turkey',
-    'سادة':'Plain','حار':'Spicy','أرز':'Rice','شوربة':'Soup','خضار':'Vegetables','عدس':'Lentils',
-    'فاهيتا':'Fajita','حواوشي':'Hawawshi','بانيني':'Panini','ستيك':'Steak',
-    'نيفا':'Neva','طرب':'Tarb','اسكالوب':'Escalope','حمام':'Pigeon','محشي':'Stuffed',
-    'مكسيكي':'Mexican','دايت':'Diet','جامبو':'Jumbo',
-    'قهوة':'Coffee','نسكافيه':'Nescafe','كابوتشينو':'Cappuccino','لاتيه':'Latte',
-    'اسبريسو':'Espresso','شاي':'Tea','كولا':'Cola','مياه':'Water','معدنية':'Mineral',
-    'باذنجان':'Eggplant','بابا غنوج':'Baba Ghanoush','خيار':'Cucumber','خس':'Lettuce',
-    'مربى':'Jam','زبيب':'Raisins','جوز هند':'Coconut',
-    'بوم فريت':'Pommes Frites','أم علي':'Om Ali','مشلتت':'Mishaltat','بغاشة':'Bughasha',
-    'فروتي':'Fruity','إمبيرو':'Impero','كاستر':'Custard','زعتر':'Thyme',
-    'مايونيز':'Mayonnaise','كاتشب':'Ketchup','مستردة':'Mustard','ليمون':'Lemon',
-    'جرجير':'Arugula','كابوتشا':'Cabbage','فريك':'Freekeh','بتلو':'Veal'
-  };
-  function genEn(ar) {
-    let en = ar;
-    for (const [arWord, enWord] of Object.entries(ar2en)) {
-      en = en.replace(new RegExp(arWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), enWord);
-    }
-    return en;
-  }
   for (const p of products) {
     if (!p.name) p.name = p.nameAr ? genEn(p.nameAr) : p.nameAr;
     if (!p.description) p.description = p.descriptionAr || '';
@@ -435,3 +475,6 @@ const seed = async (force) => {
 
 if (require.main === module) seed().then(() => process.exit());
 module.exports = seed;
+module.exports.genEn = genEn;
+module.exports.ar2en = ar2en;
+module.exports.hasArabic = hasArabic;

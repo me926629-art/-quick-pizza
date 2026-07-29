@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const { auth, adminAuth } = require('../middleware/auth');
+const { genEn, hasArabic } = require('../seed');
 
 router.get('/', async (req, res) => {
   try {
@@ -17,7 +18,25 @@ router.get('/', async (req, res) => {
         { tags: { $in: [new RegExp(search, 'i')] } }
       ];
     }
-    const products = await Product.find(filter).populate('category', 'name nameAr icon').sort('name');
+    let products = await Product.find(filter).populate('category', 'name nameAr icon').sort('name');
+    let needsSave = false;
+    for (const p of products) {
+      if (p.name && hasArabic(p.name) && p.nameAr && p.name !== p.nameAr) {
+        p.name = genEn(p.name);
+        needsSave = true;
+      } else if (p.name && hasArabic(p.name) && p.nameAr && p.name === p.nameAr) {
+        p.name = genEn(p.nameAr);
+        needsSave = true;
+      }
+      if (p.description && hasArabic(p.description) && p.descriptionAr && p.description === p.descriptionAr) {
+        p.description = genEn(p.descriptionAr);
+        needsSave = true;
+      }
+    }
+    if (needsSave) {
+      for (const p of products) await p.save();
+      console.log(`Auto-migrated ${products.length} products`);
+    }
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -66,6 +85,31 @@ router.delete('/:id', adminAuth, async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: 'Product deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/migrate', adminAuth, async (req, res) => {
+  try {
+    const products = await Product.find({});
+    let count = 0;
+    for (const p of products) {
+      let changed = false;
+      if (p.name && hasArabic(p.name) && p.nameAr) {
+        p.name = genEn(p.nameAr);
+        changed = true;
+      }
+      if (p.description && hasArabic(p.description) && p.descriptionAr) {
+        p.description = genEn(p.descriptionAr);
+        changed = true;
+      }
+      if (changed) {
+        await p.save();
+        count++;
+      }
+    }
+    res.json({ success: true, migrated: count, total: products.length });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
