@@ -248,4 +248,26 @@ router.get('/revenue/history', adminAuth, async (req, res) => {
   }
 });
 
+// Debug: test order creation
+router.post('/test', auth, async (req, res) => {
+  try {
+    const dr = await getOrCreateDailyRevenue();
+    const order = new Order({
+      user: req.user._id,
+      items: [{ product: req.user._id, name: 'Test', nameAr: 'اختبار', quantity: 1, price: 10 }],
+      subtotal: 10, deliveryFee: 0, total: 10,
+      orderNumber: 9999,
+      deliveryAddress: { city: 'Test', deliveryArea: '' },
+      phone: req.user.phone || '01000000000'
+    });
+    await order.save();
+    dr.totalRevenue += 10;
+    dr.totalOrders += 1;
+    await dr.save();
+    res.json({ ok: true, orderId: order._id });
+  } catch (e) {
+    res.status(500).json({ error: 'Test order failed: ' + e.message, code: e.code });
+  }
+});
+
 module.exports = router;
