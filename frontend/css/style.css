@@ -1256,12 +1256,17 @@ input, textarea, select { font-family: inherit; }
 
 /* ===== FOOTER ===== */
 .site-footer {
-  background: #111;
-  color: #ccc;
-  padding: 36px 20px 20px;
-  margin-top: 32px;
-  margin-bottom: 64px;
+  background: #0a0a0a;
+  color: #aaa;
+  padding: 40px 20px 24px;
   direction: rtl;
+  position: relative;
+  overflow: hidden;
+}
+.site-footer::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(229,57,53,0.3), #e53935, rgba(229,57,53,0.3), transparent);
 }
 .footer-inner { max-width: 480px; margin: 0 auto; text-align: center; }
 .footer-brand {
@@ -1269,7 +1274,7 @@ input, textarea, select { font-family: inherit; }
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .footer-logo {
   width: 40px; height: 40px;
@@ -1277,16 +1282,16 @@ input, textarea, select { font-family: inherit; }
   object-fit: cover;
   background: #fff;
 }
-.footer-brand strong { display: block; font-size: 15px; font-weight: 800; color: #eee; }
-.footer-brand small { font-size: 9px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; }
-.footer-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.footer-brand strong { display: block; font-size: 15px; font-weight: 800; color: #eee; letter-spacing: 0.3px; }
+.footer-brand small { font-size: 9px; color: #555; letter-spacing: 1.5px; text-transform: uppercase; }
+.footer-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
 .footer-item {
   font-size: 13px;
-  color: #999;
+  color: #888;
   line-height: 1.6;
 }
-.footer-item .footer-icon { margin-left: 4px; }
-.footer-item a { color: #ddd; text-decoration: none; }
-.footer-item a:hover { color: #ff8a50; }
-.footer-item .footer-sep { color: #444; margin: 0 8px; }
-.footer-copy { text-align: center; color: #555; font-size: 11px; padding-top: 14px; margin-top: 16px; border-top: 1px solid #222; }
+.footer-item .footer-icon { margin-left: 6px; }
+.footer-item a { color: #ccc; text-decoration: none; transition: color 0.2s; }
+.footer-item a:hover { color: #e53935; }
+.footer-item .footer-sep { color: #333; margin: 0 8px; }
+.footer-copy { text-align: center; color: #444; font-size: 10px; padding-top: 16px; margin-top: 16px; border-top: 1px solid #1a1a1a; letter-spacing: 0.5px; }
