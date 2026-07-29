@@ -44,7 +44,7 @@ router.post('/restore', adminAuth, async (req, res) => {
       const Model = { orders: Order, dailyRevenue: DailyRevenue, categories: Category, products: Product, carts: Cart, users: User }[col];
       let ok = 0, fail = 0;
 
-      // For categories & products: replace entirely (delete old, insert backup)
+      // For categories & products: replace entirely
       if (col === 'categories' || col === 'products') {
         await Model.deleteMany({});
       }
@@ -52,7 +52,10 @@ router.post('/restore', adminAuth, async (req, res) => {
       for (const doc of data[col]) {
         try {
           const { _id, __v, ...rest } = doc;
-          if (_id) {
+          // Orders: don't preserve _id (avoid duplicate key errors)
+          if (col === 'orders') {
+            await new Model({ ...rest }).save();
+          } else if (_id) {
             await Model.findByIdAndUpdate(_id, rest, { upsert: true, runValidators: false });
           } else {
             await new Model(rest).save();
@@ -60,7 +63,7 @@ router.post('/restore', adminAuth, async (req, res) => {
           ok++;
         } catch (e) {
           fail++;
-          console.error('Restore error in ' + col + ':', e.message.slice(0, 80));
+          console.error('Restore error in ' + col + ':', e.message.slice(0, 120));
         }
       }
       restored.push(col + ': ' + ok + '/' + (ok + fail));

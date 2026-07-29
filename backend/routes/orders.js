@@ -99,7 +99,18 @@ router.post('/', auth, async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty' });
     }
-    const items = cart.items.map(item => ({
+    // Remove items whose product was deleted
+    const validItems = cart.items.filter(item => item.product);
+    if (validItems.length === 0) {
+      cart.items = [];
+      await cart.save();
+      return res.status(400).json({ error: 'All items in cart are no longer available. Cart cleared.' });
+    }
+    if (validItems.length < cart.items.length) {
+      cart.items = validItems;
+      await cart.save();
+    }
+    const items = validItems.map(item => ({
       product: item.product._id,
       name: item.product.name,
       nameAr: item.product.nameAr,

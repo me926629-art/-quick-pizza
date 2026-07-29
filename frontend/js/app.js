@@ -812,6 +812,11 @@ async function placeOrder() {
     navigateTo('tracking', order._id);
   } catch (e) {
     showToast(e.message || (currentLang === 'en' ? 'Error confirming order' : 'خطأ في تأكيد الطلب'));
+    // Reload cart in case server cleared it
+    const newCart = await apiGet('/api/cart').catch(() => null);
+    if (newCart) cartData = newCart;
+    updateCartCount();
+    renderCart();
   }
 }
 
