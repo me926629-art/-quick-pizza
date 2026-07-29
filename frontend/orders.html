@@ -547,7 +547,7 @@
             <div class="om-card-items">
               ${order.items.map(i => `
                 <div class="om-card-item">
-                  <span class="om-card-item-name">${i.nameAr || i.name}</span>
+                  <span class="om-card-item-name">${i.nameAr || i.name}${i.size ? ` (${({Small:'صغير',Medium:'وسط',Large:'كبير',Regular:'عادي',Slice:'شريحة'}[i.size]||i.size)})` : ''}</span>
                   <span class="om-card-item-qty">×${i.quantity}</span>
                   <span class="om-card-item-price">${i.price * i.quantity} ج</span>
                 </div>

@@ -123,6 +123,20 @@
             <option value="الزنيه قبلي">الزنيه قبلي (25 ج.م)</option>
             <option value="ارمنت الحيط">ارمنت الحيط (50 ج.م)</option>
             <option value="الضبعيه">الضبعيه (30 ج.م)</option>
+            <option value="طيبه">طيبه (70 ج.م)</option>
+            <option value="العشي">العشي (50 ج.م)</option>
+            <option value="المدامود">المدامود (35 ج.م)</option>
+            <option value="المنشاه">المنشاه (25 ج.م)</option>
+            <option value="الحبيل">الحبيل (25 ج.م)</option>
+            <option value="البغدادي">البغدادي (35 ج.م)</option>
+            <option value="المراسي">المراسي (25 ج.م)</option>
+            <option value="الطود">الطود (25 ج.م)</option>
+            <option value="الرضوانيه">الرضوانيه (25 ج.م)</option>
+            <option value="العديسات">العديسات (70 ج.م)</option>
+            <option value="الحيط">الحيط (50 ج.م)</option>
+            <option value="ارمنت الوابورات">ارمنت الوابورات (70 ج.م)</option>
+            <option value="الصعايده">الصعايده (30 ج.م)</option>
+            <option value="الأقالته">الأقالته (70 ج.م)</option>
           </select>
         </div>
         <div class="input-group">
@@ -412,7 +426,8 @@
         <div class="menu-sidebar-scroll" id="menu-sidebar"></div>
         <div class="menu-main">
           <div class="menu-top-bar">
-            <h2 id="menu-title" data-i18n="menu">القائمة</h2>
+            <button class="page-back-btn" onclick="goBack()">←</button>
+          <h2 id="menu-title" data-i18n="menu">القائمة</h2>
             <div class="menu-filter-pills">
               <button class="pill active" onclick="filterProducts('all', this)" data-i18n="all">الكل</button>
               <button class="pill" onclick="filterProducts('popular', this)">🔥 <span data-i18n="popular">الأكثر مبيعاً</span></button>
@@ -428,6 +443,7 @@
     <section id="page-cart" class="page">
       <div class="cart-page">
         <div class="cart-header-bar">
+          <button class="page-back-btn" onclick="goBack()">←</button>
           <h2 data-i18n="cartTitle">🛒 سلة الطلب</h2>
           <button class="btn-text danger" id="clear-cart-btn" onclick="clearCart()" style="display:none" data-i18n="clearAll">مسح الكل</button>
         </div>
@@ -503,6 +519,7 @@
     <section id="page-orders" class="page">
       <div class="page-container">
         <div class="page-title-bar">
+          <button class="page-back-btn" onclick="goBack()">←</button>
           <h2 data-i18n="ordersTitle">📦 طلباتي</h2>
         </div>
         <div id="orders-content">
@@ -530,9 +547,12 @@
     <section id="page-admin" class="page">
       <div class="page-container">
         <div class="admin-header-bar">
-          <div>
-            <h2>⚙️ لوحة التحكم</h2>
-            <p class="admin-subtitle" id="admin-updated-at">آخر تحديث: --</p>
+          <div class="admin-header-title-row">
+            <button class="page-back-btn" onclick="goBack()">←</button>
+            <div>
+              <h2>⚙️ لوحة التحكم</h2>
+              <p class="admin-subtitle" id="admin-updated-at">آخر تحديث: --</p>
+            </div>
           </div>
           <div class="admin-header-actions">
             <button class="btn btn-primary btn-sm" onclick="window.open('/orders.html', '_blank')">🖥️ شاشة الطلبات</button>
@@ -562,7 +582,7 @@
         <!-- Top Bar -->
         <div class="om-topbar">
           <div class="om-topbar-left">
-            <button class="om-back-btn" onclick="navigateTo('admin')">→ رجوع</button>
+            <button class="om-back-btn" onclick="goBack()">→ رجوع</button>
             <div class="om-logo"><span>🍕</span> كويك بيتزا</div>
           </div>
           <div class="om-topbar-center">

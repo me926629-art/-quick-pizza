@@ -169,6 +169,7 @@ function toggleLang() {
   // Re-render current page
   if (currentPage === 'home') loadHomePage();
   else if (currentPage === 'menu') {
+    renderMenuSidebar();
     const cat = currentCategory;
     renderMenuProducts(cat ? allProducts.filter(p => p.category?._id === cat) : allProducts);
   } else if (currentPage === 'cart') renderCart();
@@ -302,6 +303,14 @@ function startHeroSlider() {
 }
 
 // ===== NAVIGATION =====
+let navHistory = [];
+
+function goBack() {
+  const prev = navHistory.pop();
+  if (prev) navigateTo(prev);
+  else navigateTo('home');
+}
+
 function navigateTo(page, data) {
   // Cleanup tracking timers
   if (trackingInterval) { clearInterval(trackingInterval); trackingInterval = null; }
@@ -309,6 +318,9 @@ function navigateTo(page, data) {
   if (ordersAutoRefresh) { clearInterval(ordersAutoRefresh); ordersAutoRefresh = null; }
   if (omAutoRefresh) { clearInterval(omAutoRefresh); omAutoRefresh = null; }
   
+  if (currentPage && currentPage !== page && currentPage !== 'tracking') {
+    navHistory.push(currentPage);
+  }
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const el = document.getElementById('page-' + page);
@@ -400,7 +412,7 @@ function renderMenuSidebar() {
   const c = document.getElementById('menu-sidebar');
   c.innerHTML = `
     <div class="menu-sidebar-item active" onclick="filterByCategory(null, this)">
-      <span class="menu-sidebar-icon">📋</span><span>الكل</span>
+      <span class="menu-sidebar-icon">📋</span><span>${t('all')}</span>
     </div>
     ${allCategories.map(cat => `
       <div class="menu-sidebar-item" onclick="filterByCategory('${cat._id}', this)">
@@ -967,20 +979,20 @@ function renderTrackingPage(order) {
 
   const heroHTML = isDelivered ? `
     <div class="track-delivered-banner">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
+      <div class="track-hero-back" onclick="goBack()">→ ${t('orders')}</div>
       <div class="track-hero-emoji">🎉</div>
       <div class="track-hero-order">${t('delivered')}</div>
       <div class="track-hero-status" style="opacity:0.8;margin-top:6px">${t('deliveredMsg')}</div>
     </div>
   ` : isCancelled ? `
     <div class="track-hero" style="background:linear-gradient(135deg,#616161,#424242)">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
+      <div class="track-hero-back" onclick="goBack()">→ ${t('orders')}</div>
       <div class="track-hero-emoji">❌</div>
       <div class="track-hero-order">${t('cancelled')}</div>
     </div>
   ` : `
     <div class="track-hero">
-      <div class="track-hero-back" onclick="navigateTo('orders')">→ ${t('orders')}</div>
+      <div class="track-hero-back" onclick="goBack()">→ ${t('orders')}</div>
       <div class="track-hero-status">${statusText} <span class="live-dot"></span></div>
       <div class="track-hero-emoji">${statusEmoji}</div>
       <div class="track-hero-order">${t('orderNum')}${order.orderNumber}</div>
@@ -1334,7 +1346,12 @@ function closeAddressModal() {
 }
 
 function getDeliveryFee(area) {
-  const fees = { 'داخل الأقصر': 0, 'القرنه': 70, 'الزنيه قبلي': 25, 'ارمنت الحيط': 50, 'الضبعيه': 30 };
+  const fees = {
+    'داخل الأقصر': 0, 'القرنه': 70, 'الزنيه قبلي': 25, 'ارمنت الحيط': 50,
+    'الضبعيه': 30, 'طيبه': 70, 'العشي': 50, 'المدامود': 35, 'المنشاه': 25,
+    'الحبيل': 25, 'البغدادي': 35, 'المراسي': 25, 'الطود': 25, 'الرضوانيه': 25,
+    'العديسات': 70, 'الحيط': 50, 'ارمنت الوابورات': 70, 'الصعايده': 30, 'الأقالته': 70
+  };
   return fees[area] ?? 0;
 }
 
@@ -1534,7 +1551,7 @@ function adminOrderCard(order) {
           ${(order.phone || order.user?.phone) ? `<a href="tel:${order.phone || order.user?.phone}" class="aoc-phone">📞 ${order.phone || order.user?.phone}</a>` : ''}
         </div>
         <div class="aoc-items">
-          ${order.items.map(i => `<div class="aoc-item"><span>${i.nameAr || i.name} ×${i.quantity}</span><span>${i.price * i.quantity} ج</span></div>`).join('')}
+          ${order.items.map(i => `<div class="aoc-item"><span>${i.nameAr || i.name}${i.size ? ` (${({Small:'صغير',Medium:'وسط',Large:'كبير',Regular:'عادي',Slice:'شريحة'}[i.size]||i.size)})` : ''} ×${i.quantity}</span><span>${i.price * i.quantity} ج</span></div>`).join('')}
         </div>
         <div class="aoc-address">📍 ${[a.city, a.deliveryArea || a.district, a.street].filter(Boolean).join('، ') || 'لم يحدد'}</div>
         ${order.specialInstructions ? `<div class="aoc-note">📝 ${order.specialInstructions}</div>` : ''}
@@ -1945,7 +1962,7 @@ function omOrderCard(order) {
         <div class="om-card-items">
           ${order.items.map(i => `
             <div class="om-card-item">
-              <span class="om-card-item-name">${i.nameAr || i.name}</span>
+              <span class="om-card-item-name">${i.nameAr || i.name}${i.size ? ` (${({Small:'صغير',Medium:'وسط',Large:'كبير',Regular:'عادي',Slice:'شريحة'}[i.size]||i.size)})` : ''}</span>
               <span class="om-card-item-qty">×${i.quantity}</span>
               <span class="om-card-item-price">${i.price * i.quantity} ج</span>
             </div>
