@@ -107,14 +107,41 @@ router.post('/migrate', adminAuth, async (req, res) => {
   }
 });
 
-router.post('/set-default-image', adminAuth, async (req, res) => {
-  try {
-    const imageUrl = '/uploads/logo.jpeg';
-    const result = await Product.updateMany({}, { $set: { image: imageUrl } });
-    res.json({ success: true, updated: result.modifiedCount, imageUrl });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+router.post('/set-category-images', adminAuth, async (req, res) => {
+  const Category = require('../models/Category');
+  const path = require('path');
+  const fs = require('fs');
+  const uploadsDir = path.join(__dirname, '../uploads');
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+  const categories = await Category.find({ image: { $exists: true, $ne: '' } });
+  const results = [];
+
+  for (const cat of categories) {
+    const url = cat.image;
+    const slug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || cat._id;
+    const filename = `cat-${slug}.jpg`;
+    const filepath = path.join(uploadsDir, filename);
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const buffer = Buffer.from(await response.arrayBuffer());
+      fs.writeFileSync(filepath, buffer);
+
+      const imageUrl = '/uploads/' + filename;
+      const updateResult = await Product.updateMany(
+        { category: cat._id },
+        { $set: { image: imageUrl } }
+      );
+
+      results.push({ category: cat.name, imageUrl, productsUpdated: updateResult.modifiedCount });
+    } catch (e) {
+      results.push({ category: cat.name, error: e.message });
+    }
   }
+
+  res.json({ success: true, results });
 });
 
 module.exports = router;

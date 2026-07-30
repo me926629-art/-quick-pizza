@@ -453,7 +453,6 @@ const seed = async (force) => {
       p.price = p.sizes.reduce((min, s) => Math.min(min, s.price), Infinity);
     }
     p.isAvailable = true;
-    if (!p.image) p.image = '/uploads/logo.jpeg';
     if (p.isPopular === undefined) p.isPopular = false;
     if (p.isFeatured === undefined) p.isFeatured = false;
   }
