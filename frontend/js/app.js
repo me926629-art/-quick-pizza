@@ -2411,6 +2411,7 @@ async function downloadExcel() {
     const data = await res.json();
     const orders = data.orders || [];
     const stats = data.stats || {};
+    const todayOrders = data.todayOrders || [];
 
     function fmtDate(d) {
       return new Date(d).toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -2454,7 +2455,6 @@ async function downloadExcel() {
     XLSX.utils.book_append_sheet(wb, ws1, 'كل الطلبات');
 
     // Sheet 2: ملخص اليوم
-    const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString());
     const todayRows = todayOrders.map(o => [
       '#' + (o.orderNumber || ''),
       fmtTime(o.createdAt),
