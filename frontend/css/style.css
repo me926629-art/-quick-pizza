@@ -294,7 +294,7 @@ input, textarea, select { font-family: inherit; }
 .product-card:hover .product-card-img { transform: scale(1.05); }
 .product-card-img { transition: transform 0.5s var(--ease-spring); width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
 .product-img {
-  width: 100%; height: 170px; display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 200px; display: flex; align-items: center; justify-content: center;
   font-size: 64px; position: relative; overflow: hidden; background: var(--surface-2);
 }
 .product-img::after {
@@ -307,6 +307,24 @@ input, textarea, select { font-family: inherit; }
 }
 .product-img .product-emoji { position: relative; z-index: 1; transition: transform 0.4s var(--ease-spring); }
 .product-card:hover .product-emoji { transform: scale(1.2) rotate(-8deg); }
+.product-img-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 50px 12px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  display: flex; align-items: flex-end; gap: 8px;
+}
+.product-img-name { font-size: 13px; font-weight: 800; color: #fff; flex: 1; line-height: 1.3; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+.product-img-price { font-size: 14px; font-weight: 900; color: #fff; white-space: nowrap; }
+.product-img-price small { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 600; }
+.product-img-add {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: var(--primary); color: #fff; font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;
+  transition: transform 0.2s var(--ease-spring);
+}
+.product-img-add:hover { transform: scale(1.15); }
+.product-img-add:active { transform: scale(0.9); }
 .product-badges { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
 .product-badge {
   padding: 3px 10px; border-radius: var(--radius-full); font-size: 10px; font-weight: 700; backdrop-filter: blur(8px);
@@ -927,7 +945,7 @@ input, textarea, select { font-family: inherit; }
   .home-hero-title { font-size: 22px; }
   .home-hero-subtitle { font-size: 13px; }
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .product-img { height: 120px; font-size: 44px; }
+  .product-img { height: 150px; font-size: 44px; }
   .product-body { padding: 10px 10px 14px; }
   .product-name { font-size: 12px; }
   .product-desc { font-size: 10px; margin-bottom: 8px; }

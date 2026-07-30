@@ -535,13 +535,10 @@ function productCard(p) {
         <button class="product-fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${p._id}')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         </button>
-      </div>
-      <div class="product-body">
-        <div class="product-name">${ln(p)}</div>
-        <div class="product-desc">${ld(p)}</div>
-        <div class="product-meta">
-          <div class="product-price">${basePrice} <small>${t('egp')}</small></div>
-          <button class="product-add-btn" onclick="event.stopPropagation(); quickAdd('${p._id}')">+</button>
+        <div class="product-img-overlay">
+          <div class="product-img-name">${ln(p)}</div>
+          <div class="product-img-price">${basePrice} <small>${t('egp')}</small></div>
+          <button class="product-img-add" onclick="event.stopPropagation(); quickAdd('${p._id}')">+</button>
         </div>
       </div>
     </div>
