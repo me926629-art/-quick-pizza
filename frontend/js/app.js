@@ -295,7 +295,11 @@ function checkRestaurantStatus() {
   const m = egyptTime.getUTCMinutes();
 
   const isOpen = h >= 9 || h < 4;
-  if (isOpen || localStorage.getItem('qp_closed_dismissed')) return;
+  if (isOpen) {
+    localStorage.removeItem('qp_closed_dismissed');
+    return;
+  }
+  if (localStorage.getItem('qp_closed_dismissed')) return;
 
   let nextH, nextM;
   if (h < 9) {
