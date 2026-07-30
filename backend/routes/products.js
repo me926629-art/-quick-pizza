@@ -144,4 +144,53 @@ router.post('/set-category-images', adminAuth, async (req, res) => {
   res.json({ success: true, results });
 });
 
+router.post('/set-product-images', adminAuth, async (req, res) => {
+  const Category = require('../models/Category');
+  const path = require('path');
+  const fs = require('fs');
+  const uploadsDir = path.join(__dirname, '../uploads');
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+  const categoryMap = {};
+  (await Category.find({})).forEach(c => { categoryMap[c._id.toString()] = c.name; });
+
+  const products = await Product.find({}).populate('category', 'name');
+  const results = { total: products.length, succeeded: 0, failed: 0, details: [] };
+
+  for (let i = 0; i < products.length; i++) {
+    const p = products[i];
+    const catName = p.category?.name || 'food';
+
+    let name = (p.name && !hasArabic(p.name)) ? p.name : genEn(p.nameAr || p.name || '');
+    name = name.replace(/[^a-zA-Z0-9 ]+/g, ' ').trim();
+    const words = name.split(/\s+/).filter(w => w.length > 2).slice(0, 3);
+    if (words.length === 0) words.push(catName);
+    const keywords = [...new Set([catName.toLowerCase(), ...words.map(w => w.toLowerCase()), 'food'])].join(',');
+
+    const filename = `prod-${p._id}.jpg`;
+    const filepath = path.join(uploadsDir, filename);
+
+    try {
+      const url = `https://loremflickr.com/400/300/${keywords}?random=${Date.now()}`;
+      const response = await fetch(url, { redirect: 'follow', timeout: 10000 });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const buffer = Buffer.from(await response.arrayBuffer());
+      if (buffer.length < 1000) throw new Error('Too small');
+      fs.writeFileSync(filepath, buffer);
+      p.image = '/uploads/' + filename;
+      await p.save();
+      results.succeeded++;
+      results.details.push({ name: p.nameAr || p.name, ok: true });
+    } catch (e) {
+      results.failed++;
+      results.details.push({ name: p.nameAr || p.name, error: e.message });
+    }
+
+    if (i % 10 === 9) await delay(500);
+  }
+
+  res.json(results);
+});
+
 module.exports = router;
