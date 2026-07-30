@@ -291,66 +291,92 @@ let _closeTimer = null;
 
 function checkRestaurantStatus() {
   const egyptOffset = 2 * 60 * 60 * 1000;
+  let _hidden = false;
+
+  function showOverlay(remaining) {
+    let existing = document.getElementById('closed-overlay');
+    if (existing) existing.remove();
+    _hidden = false;
+
+    const hrs = Math.floor(remaining / 3600);
+    const mins = Math.floor((remaining % 3600) / 60);
+    const secs = remaining % 60;
+    const timeStr = (hrs > 0 ? hrs + ' ساعة ' : '') + (mins > 0 || hrs > 0 ? mins + ' دقيقة ' : '') + secs + ' ثانية';
+
+    const el = document.createElement('div');
+    el.id = 'closed-overlay';
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+    el.innerHTML =
+      '<div style="background:var(--surface,#fff);border-radius:20px;max-width:360px;width:100%;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease">' +
+        '<div style="font-size:64px;margin-bottom:12px">😴</div>' +
+        '<h2 style="margin:0 0 8px;font-size:20px;font-weight:800">المطعم مغلق الآن</h2>' +
+        '<p style="margin:0 0 12px;color:var(--text-muted,#666);font-size:14px">مواعيد العمل: 9 صباحاً لـ 4 صباحاً</p>' +
+        '<div style="direction:ltr;font-size:36px;font-weight:900;color:var(--primary,#d32f2f);font-variant-numeric:tabular-nums;margin-bottom:20px;font-family:monospace" id="close-timer">' + timeStr + '</div>' +
+      '</div>';
+    el.addEventListener('click', e => { if (e.target === el) { el.remove(); _hidden = true; } });
+    document.body.appendChild(el);
+  }
 
   function update() {
     const now = new Date();
     const egyptTime = new Date(now.getTime() + egyptOffset);
     const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
 
-    const openStart = 9 * 3600;
-    const openEnd = 4 * 3600;
+    const openStart = 9 * 3600, openEnd = 4 * 3600;
     const daySecs = 24 * 3600;
     const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
 
     const overlay = document.getElementById('closed-overlay');
+
     if (isOpen) {
-      localStorage.removeItem('qp_closed_dismissed');
-      if (overlay) { overlay.remove(); if (_closeTimer) clearInterval(_closeTimer); _closeTimer = null; }
-      return;
-    }
-    if (localStorage.getItem('qp_closed_dismissed')) {
-      if (_closeTimer) clearInterval(_closeTimer);
+      if (overlay) overlay.remove();
       return;
     }
 
-    let remaining;
-    if (totalSeconds < openStart) {
-      remaining = openStart - totalSeconds;
-    } else {
-      remaining = daySecs - totalSeconds + openStart;
-    }
-
-    const hrs = Math.floor(remaining / 3600);
-    const mins = Math.floor((remaining % 3600) / 60);
-    const secs = remaining % 60;
-
-    const timeStr =
-      (hrs > 0 ? hrs + ' ساعة ' : '') +
-      (mins > 0 || hrs > 0 ? mins + ' دقيقة ' : '') +
-      secs + ' ثانية';
+    const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
 
     if (overlay) {
       const timerEl = document.getElementById('close-timer');
-      if (timerEl) timerEl.textContent = timeStr;
-    } else {
-      const el = document.createElement('div');
-      el.id = 'closed-overlay';
-      el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
-      el.innerHTML =
-        '<div style="background:var(--surface,#fff);border-radius:20px;max-width:360px;width:100%;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease">' +
-          '<div style="font-size:64px;margin-bottom:12px">😴</div>' +
-          '<h2 style="margin:0 0 8px;font-size:20px;font-weight:800">المطعم مغلق الآن</h2>' +
-          '<p style="margin:0 0 12px;color:var(--text-muted,#666);font-size:14px">مواعيد العمل: 9 صباحاً لـ 4 صباحاً</p>' +
-          '<div style="direction:ltr;font-size:36px;font-weight:900;color:var(--primary,#d32f2f);font-variant-numeric:tabular-nums;margin-bottom:20px;font-family:monospace" id="close-timer">' + timeStr + '</div>' +
-          '<button onclick="document.getElementById(\'closed-overlay\').remove();localStorage.setItem(\'qp_closed_dismissed\',\'1\');if(_closeTimer)clearInterval(_closeTimer)" style="padding:12px 40px;border:none;border-radius:12px;background:var(--primary,#d32f2f);color:#fff;font-size:15px;font-weight:700;cursor:pointer">حسناً</button>' +
-        '</div>';
-      document.body.appendChild(el);
+      if (timerEl) {
+        const hrs = Math.floor(remaining / 3600);
+        const mins = Math.floor((remaining % 3600) / 60);
+        const secs = remaining % 60;
+        timerEl.textContent = (hrs > 0 ? hrs + ' ساعة ' : '') + (mins > 0 || hrs > 0 ? mins + ' دقيقة ' : '') + secs + ' ثانية';
+      }
+    }
+  }
+
+  function onAnyClick() {
+    if (_hidden && !document.getElementById('closed-overlay')) {
+      const now = new Date();
+      const egyptTime = new Date(now.getTime() + egyptOffset);
+      const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
+      const openStart = 9 * 3600, openEnd = 4 * 3600;
+      const daySecs = 24 * 3600;
+      const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
+      if (!isOpen) {
+        const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
+        showOverlay(remaining);
+      }
     }
   }
 
   if (_closeTimer) clearInterval(_closeTimer);
+  const now = new Date();
+  const egyptTime = new Date(now.getTime() + egyptOffset);
+  const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
+  const openStart = 9 * 3600, openEnd = 4 * 3600;
+  const daySecs = 24 * 3600;
+  const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
+
+  if (!isOpen) {
+    const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
+    showOverlay(remaining);
+  }
+
   update();
   _closeTimer = setInterval(update, 1000);
+  document.addEventListener('click', onAnyClick);
 }
 
 // ===== SCROLL HEADER =====
