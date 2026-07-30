@@ -11,6 +11,9 @@ console.log('JWT_SECRET loaded:', !!process.env.JWT_SECRET);
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
+const exportsDir = path.join(__dirname, '../frontend/exports');
+if (!fs.existsSync(exportsDir)) fs.mkdirSync(exportsDir, { recursive: true });
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 

@@ -349,6 +349,7 @@ function navigateTo(page, data) {
       }
       adminRequestNotif();
       loadAdminDashboard();
+      startEndOfDayCheck();
       break;
     case 'order-manager':
       if (!currentUser || currentUser.role !== 'admin') {
@@ -2483,6 +2484,62 @@ async function downloadExcel() {
     showToast('خطأ: ' + e.message);
     console.error(e);
   }
+}
+
+let _endOfDayInterval = null;
+
+async function checkEndOfDay() {
+  try {
+    const token = localStorage.getItem('qp_token');
+    if (!token) return;
+    const res = await fetch('/api/orders/day-end-status', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) return;
+    const data = await res.json();
+    const reminderKey = 'qp_eod_reminder_' + data.todayStr;
+
+    // Auto-export if within 30 min of day end and not done yet
+    if (data.dayEndsInMin > 0 && data.dayEndsInMin <= 30 && !data.autoExportDone) {
+      const exportRes = await fetch('/api/orders/auto-export', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const exportData = await exportRes.json();
+      if (exportRes.ok && !exportData.cached) {
+        showToast('✅ تم حفظ التقرير اليومي تلقائياً: ' + exportData.filename);
+        if (data.dayEndsInMin <= 5 && !localStorage.getItem(reminderKey)) {
+          if (confirm('📊 تم إنشاء تقرير اليوم! هل تريد فتحه؟')) {
+            window.open('/exports/' + exportData.filename, '_blank');
+          }
+        }
+        localStorage.setItem(reminderKey, 'done');
+      }
+    }
+
+    // Show reminder if in window (after 11 PM or before 6 AM) and not done
+    if (data.inReminderWindow && !data.autoExportDone && !localStorage.getItem(reminderKey)) {
+      const hoursLeft = Math.floor(data.dayEndsInMin / 60);
+      const minsLeft = data.dayEndsInMin % 60;
+      const msg = data.dayEndsInMin > 0
+        ? `⚠️ اليوم على وشك الانتهاء! متبقي ${hoursLeft} ساعة و ${minsLeft} دقيقة.\nهل تريد تحميل تقرير Excel الآن؟`
+        : '⚠️ اليوم على وشك الانتهاء! هل تريد تحميل تقرير Excel الآن؟';
+      if (confirm(msg + '\n\n(سيتم التأكيد تلقائياً قبل 5 دقائق من انتهاء اليوم)')) {
+        await downloadExcel();
+        localStorage.setItem(reminderKey, 'done');
+      } else {
+        // Remind again in 15 min
+        localStorage.setItem(reminderKey, 'snooze');
+        setTimeout(() => localStorage.removeItem(reminderKey), 15 * 60 * 1000);
+      }
+    }
+  } catch (e) {
+    console.error('End-of-day check error:', e);
+  }
+}
+
+function startEndOfDayCheck() {
+  if (_endOfDayInterval) clearInterval(_endOfDayInterval);
+  checkEndOfDay();
+  _endOfDayInterval = setInterval(checkEndOfDay, 60000);
 }
 
 // ===== BACKUP =====

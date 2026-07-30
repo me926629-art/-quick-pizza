@@ -1,9 +1,28 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs');
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const DailyRevenue = require('../models/DailyRevenue');
 const { auth, adminAuth } = require('../middleware/auth');
+
+const exportsDir = path.join(__dirname, '../../frontend/exports');
+if (!fs.existsSync(exportsDir)) fs.mkdirSync(exportsDir, { recursive: true });
+
+function getEgyptTime() {
+  const now = new Date();
+  const egyptOffset = 2 * 60 * 60 * 1000;
+  return new Date(now.getTime() + egyptOffset);
+}
+
+function getEgyptHours() { return getEgyptTime().getUTCHours(); }
+function getEgyptMinutes() { return getEgyptTime().getUTCMinutes(); }
+function getTimeTo6AM() {
+  let h = getEgyptHours(), m = getEgyptMinutes();
+  if (h >= 6) return 0;
+  return (5 - h) * 60 + (60 - m);
+}
 
 function getOrderDayStart() {
   const now = new Date();
@@ -78,6 +97,64 @@ function getDateStrFromDate(date) {
   return d.toISOString().slice(0, 10);
 }
 
+const TRACKER_PATH = path.join(exportsDir, '.tracker.json');
+function getTracker() { try { return JSON.parse(fs.readFileSync(TRACKER_PATH, 'utf8')); } catch { return {}; } }
+function saveTracker(t) { fs.writeFileSync(TRACKER_PATH, JSON.stringify(t)); }
+
+async function generateDailyExport() {
+  const todayStr = getDateStr();
+  const tracker = getTracker();
+  if (tracker[todayStr]) return { cached: true, filename: tracker[todayStr], todayStr };
+
+  const XLSX = require('xlsx');
+  const orders = await Order.find({})
+    .populate('user', 'name email phone')
+    .populate('items.product', 'name nameAr image')
+    .sort('-createdAt');
+  const todayOrders = orders.filter(o => getDateStrFromDate(new Date(o.createdAt)) === todayStr);
+
+  function fmtDate(d) { return new Date(d).toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
+  function fmtTime(d) { return new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }); }
+  function statusAr(s) { return { pending: 'بانتظار', confirmed: 'مؤكد', preparing: 'تحضير', ready: 'جاهز', out_for_delivery: 'في الطريق', delivered: 'تم التوصيل', cancelled: 'ملغي' }[s] || s; }
+
+  const allRows = orders.map(o => [
+    '#' + (o.orderNumber || ''), fmtDate(o.createdAt), fmtTime(o.createdAt),
+    o.user?.name || 'غير معروف', o.phone || o.user?.phone || '',
+    o.items.map(i => `${i.nameAr || i.name}${i.size ? ' (' + ({Small:'صغير',Medium:'وسط',Large:'كبير',Slice:'شريحة',Regular:'عادي'}[i.size]||i.size) + ')' : ''} x${i.quantity}`).join('\n'),
+    o.subtotal, o.deliveryFee, o.total, statusAr(o.status),
+    [o.deliveryAddress?.city, o.deliveryAddress?.district, o.deliveryAddress?.street].filter(Boolean).join(' - '),
+    o.rating ? `${o.rating}/5 ${o.review ? '- ' + o.review : ''}` : '', o.specialInstructions || ''
+  ]);
+  const todayRows = todayOrders.map(o => [
+    '#' + (o.orderNumber || ''), fmtTime(o.createdAt), o.user?.name || '', o.total, statusAr(o.status)
+  ]);
+
+  const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet([
+    ['📊 كويك بيتزا - تقرير الطلبات'],
+    ['تاريخ التقرير:', new Date().toLocaleDateString('ar-EG')],
+    ['إجمالي الطلبات:', orders.length, '', 'إيرادات:', orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0) + ' ج.م'],
+    ['طلبات اليوم:', todayOrders.length, '', 'إيرادات اليوم:', todayOrders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0) + ' ج.م'],
+    ['بانتظار:', orders.filter(o => o.status === 'pending').length, '', 'تم التوصيل:', orders.filter(o => o.status === 'delivered').length, '', 'ملغي:', orders.filter(o => o.status === 'cancelled').length],
+    [],
+    ['رقم', 'التاريخ', 'الوقت', 'العميل', 'الهاتف', 'الأصناف', 'الفرعي', 'التوصيل', 'الإجمالي', 'الحالة', 'العنوان', 'التقييم', 'ملاحظات'],
+    ...allRows
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws1, 'كل الطلبات');
+  const ws2 = XLSX.utils.aoa_to_sheet([
+    ['📅 تقرير اليوم - ' + new Date().toLocaleDateString('ar-EG')], [],
+    ['رقم', 'الوقت', 'العميل', 'الإجمالي', 'الحالة'], ...todayRows
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws2, 'اليوم');
+
+  const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+  const filename = `تقرير_يومي_${todayStr}.xlsx`;
+  fs.writeFileSync(path.join(exportsDir, filename), wbout);
+  tracker[todayStr] = filename;
+  saveTracker(tracker);
+  return { cached: false, filename, todayStr, todayCount: todayOrders.length };
+}
+
 router.get('/export', adminAuth, async (req, res) => {
   try {
     const orders = await Order.find({})
@@ -96,6 +173,38 @@ router.get('/export', adminAuth, async (req, res) => {
       cancelled: orders.filter(o => o.status === 'cancelled').length
     };
     res.json({ orders, todayOrders, stats });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/day-end-status', adminAuth, async (req, res) => {
+  try {
+    const egyptTime = getEgyptTime();
+    const h = egyptTime.getUTCHours();
+    const m = egyptTime.getUTCMinutes();
+    const inReminderWindow = h < 6 || h >= 23;
+    const tracker = getTracker();
+    const todayStr = getDateStr();
+    const exportsList = fs.readdirSync(exportsDir).filter(f => f.endsWith('.xlsx')).sort().reverse();
+    res.json({
+      egyptHour: h, egyptMinute: m,
+      inReminderWindow,
+      dayEndsInMin: getTimeTo6AM(),
+      todayStr,
+      autoExportDone: !!tracker[todayStr],
+      autoExportFile: tracker[todayStr] || null,
+      exports: exportsList
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/auto-export', adminAuth, async (req, res) => {
+  try {
+    const result = await generateDailyExport();
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
