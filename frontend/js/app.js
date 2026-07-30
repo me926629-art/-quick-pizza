@@ -281,9 +281,49 @@ async function initApp() {
       initPushNotifications();
     }
     updateLocationUI();
+    checkRestaurantStatus();
   } catch (error) {
     console.error('Init error:', error);
   }
+}
+
+function checkRestaurantStatus() {
+  const now = new Date();
+  const egyptOffset = 2 * 60 * 60 * 1000;
+  const egyptTime = new Date(now.getTime() + egyptOffset);
+  const h = egyptTime.getUTCHours();
+  const m = egyptTime.getUTCMinutes();
+
+  const isOpen = h >= 9 || h < 4;
+  if (isOpen || localStorage.getItem('qp_closed_dismissed')) return;
+
+  let nextH, nextM;
+  if (h < 9) {
+    nextH = 9 - h;
+    nextM = m === 0 ? 0 : 60 - m;
+    if (m > 0) nextH--;
+  } else {
+    nextH = 24 - h + 9;
+    nextM = m === 0 ? 0 : 60 - m;
+    if (m > 0) nextH--;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = 'closed-overlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+  overlay.innerHTML =
+    '<div style="background:var(--surface,#fff);border-radius:20px;max-width:360px;width:100%;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease">' +
+      '<div style="font-size:64px;margin-bottom:12px">😴</div>' +
+      '<h2 style="margin:0 0 8px;font-size:20px;font-weight:800">المطعم مغلق الآن</h2>' +
+      '<p style="margin:0 0 4px;color:var(--text-muted,#666);font-size:14px">' +
+        'مواعيد العمل: 9 صباحاً لـ 4 صباحاً' +
+      '</p>' +
+      '<p style="margin:0 0 20px;color:var(--primary,#d32f2f);font-size:16px;font-weight:700">' +
+        'متبقي ' + nextH + ' ساعة و ' + nextM + ' دقيقة على الفتح' +
+      '</p>' +
+      '<button onclick="document.getElementById(\'closed-overlay\').remove();localStorage.setItem(\'qp_closed_dismissed\',\'1\')" style="padding:12px 40px;border:none;border-radius:12px;background:var(--primary,#d32f2f);color:#fff;font-size:15px;font-weight:700;cursor:pointer">حسناً</button>' +
+    '</div>';
+  document.body.appendChild(overlay);
 }
 
 // ===== SCROLL HEADER =====
@@ -1329,7 +1369,7 @@ function showContactInfo() {
         <p style="margin:6px 0"><strong>📱 موبايل:</strong> 01111053251 - 01028700900 - 01281078250</p>
         <p style="margin:6px 0"><strong>🌐 الموقع:</strong> <a href="https://quick-pizza-production.up.railway.app" target="_blank" rel="noopener" style="color:var(--primary)">quick-pizza-production.up.railway.app</a></p>
       </div>
-      <p style="color:var(--text-muted);font-size:13px">ننتظرك من 9 صباحاً لـ 4 الفجر</p>
+      <p style="color:var(--text-muted);font-size:13px">ننتظرك من 9 صباحاً لـ 4 صباحاً</p>
       <button onclick="this.closest('div[style]').remove()" style="margin-top:16px;padding:10px 32px;border:none;border-radius:8px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;cursor:pointer">تم</button>
     </div>
   `;
