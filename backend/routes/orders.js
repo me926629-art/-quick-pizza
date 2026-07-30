@@ -244,6 +244,28 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+router.get('/export', adminAuth, async (req, res) => {
+  try {
+    const orders = await Order.find({})
+      .populate('user', 'name email phone')
+      .populate('items.product', 'name nameAr image')
+      .sort('-createdAt');
+    const today = new Date().toDateString();
+    const stats = {
+      total: orders.length,
+      today: orders.filter(o => new Date(o.createdAt).toDateString() === today).length,
+      revenue: orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0),
+      todayRevenue: orders.filter(o => new Date(o.createdAt).toDateString() === today && o.status === 'delivered').reduce((s, o) => s + o.total, 0),
+      pending: orders.filter(o => o.status === 'pending').length,
+      delivered: orders.filter(o => o.status === 'delivered').length,
+      cancelled: orders.filter(o => o.status === 'cancelled').length
+    };
+    res.json({ orders, stats });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/revenue/current', adminAuth, async (req, res) => {
   try {
     const dr = await getOrCreateDailyRevenue();

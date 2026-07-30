@@ -2402,6 +2402,89 @@ async function restoreBackup() {
   input.click();
 }
 
+async function downloadExcel() {
+  try {
+    showToast('جاري تجهيز ملف Excel...');
+    const token = localStorage.getItem('qp_token');
+    const res = await fetch('/api/orders/export', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) throw new Error('Export failed');
+    const data = await res.json();
+    const orders = data.orders || [];
+    const stats = data.stats || {};
+
+    function fmtDate(d) {
+      return new Date(d).toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+    function fmtTime(d) {
+      return new Date(d).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    }
+    function statusAr(s) {
+      return { pending: 'بانتظار', confirmed: 'مؤكد', preparing: 'تحضير', ready: 'جاهز', out_for_delivery: 'في الطريق', delivered: 'تم التوصيل', cancelled: 'ملغي' }[s] || s;
+    }
+
+    const rows = orders.map(o => [
+      '#' + (o.orderNumber || ''),
+      fmtDate(o.createdAt),
+      fmtTime(o.createdAt),
+      o.user?.name || 'غير معروف',
+      o.phone || o.user?.phone || '',
+      o.items.map(i => `${i.nameAr || i.name}${i.size ? ' (' + ({Small:'صغير',Medium:'وسط',Large:'كبير',Slice:'شريحة',Regular:'عادي'}[i.size]||i.size) + ')' : ''} ×${i.quantity}`).join('\n'),
+      o.subtotal,
+      o.deliveryFee,
+      o.total,
+      statusAr(o.status),
+      [o.deliveryAddress?.city, o.deliveryAddress?.district, o.deliveryAddress?.street].filter(Boolean).join(' - '),
+      o.rating ? `${o.rating}/5 ${o.review ? '- ' + o.review : ''}` : '',
+      o.specialInstructions || ''
+    ]);
+
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: كل الطلبات
+    const ws1 = XLSX.utils.aoa_to_sheet([
+      ['📊 كويك بيتزا - تقرير الطلبات'],
+      ['تاريخ التقرير:', new Date().toLocaleDateString('ar-EG')],
+      ['إجمالي الطلبات:', stats.total, '', 'إيرادات:', stats.revenue + ' ج.م'],
+      ['طلبات اليوم:', stats.today, '', 'إيرادات اليوم:', stats.todayRevenue + ' ج.م'],
+      ['بانتظار:', stats.pending, '', 'تم التوصيل:', stats.delivered, '', 'ملغي:', stats.cancelled],
+      [],
+      ['رقم', 'التاريخ', 'الوقت', 'العميل', 'الهاتف', 'الأصناف', 'الفرعي', 'التوصيل', 'الإجمالي', 'الحالة', 'العنوان', 'التقييم', 'ملاحظات'],
+      ...rows
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws1, 'كل الطلبات');
+
+    // Sheet 2: ملخص اليوم
+    const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString());
+    const todayRows = todayOrders.map(o => [
+      '#' + (o.orderNumber || ''),
+      fmtTime(o.createdAt),
+      o.user?.name || '',
+      o.total,
+      statusAr(o.status)
+    ]);
+    const ws2 = XLSX.utils.aoa_to_sheet([
+      ['📅 تقرير اليوم - ' + new Date().toLocaleDateString('ar-EG')],
+      [],
+      ['رقم', 'الوقت', 'العميل', 'الإجمالي', 'الحالة'],
+      ...todayRows
+    ]);
+    XLSX.utils.book_append_sheet(wb, ws2, 'اليوم');
+
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `تقرير_الطلبات_${new Date().toISOString().slice(0,10)}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('تم تحميل ملف Excel ✅');
+  } catch (e) {
+    showToast('خطأ: ' + e.message);
+    console.error(e);
+  }
+}
+
 // ===== BACKUP =====
 async function downloadBackup() {
   try {

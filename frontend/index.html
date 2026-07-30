@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900;1000&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/logo.jpeg">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <meta name="apple-mobile-web-app-title" content="كويك بيتزا">
   <script>if('serviceWorker'in navigator)navigator.serviceWorker.getRegistrations().then(r=>r.forEach(s=>s.unregister()))</script>
 </head>
@@ -566,6 +567,7 @@
               <button class="btn btn-primary btn-sm" onclick="window.open('/orders.html', '_blank')">🖥️ شاشة الطلبات</button>
             <button class="btn btn-outline btn-sm" onclick="downloadBackup()">💾 باك أب</button>
             <button class="btn btn-outline btn-sm" onclick="restoreBackup()" style="border-color:var(--primary);color:var(--primary)">📂 استعادة</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadExcel()" style="border-color:var(--success);color:var(--success)">📊 Excel</button>
             <button class="btn btn-outline btn-sm" onclick="loadAdminDashboard()">🔄 تحديث</button>
             <button class="admin-notif-btn" id="admin-sound-btn" onclick="adminToggleSound()" title="الصوت">🔊</button>
             <button class="admin-notif-btn" id="admin-notif-btn" onclick="adminUpdateBadge(0); adminFlashTitle(false)" title="الطلبات الجديدة" style="position:relative">
