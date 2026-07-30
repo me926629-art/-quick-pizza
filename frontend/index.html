@@ -361,6 +361,13 @@
         </div>
       </div>
 
+      <!-- Closed Banner -->
+      <div id="closed-banner" style="display:none;background:var(--primary);color:#fff;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;position:relative">
+        <span>😴 المطعم مغلق الآن — مواعيد العمل: 9 صباحاً لـ 4 صباحاً · </span>
+        <span id="closed-banner-timer" style="font-weight:900;font-family:monospace;direction:ltr;display:inline-block;min-width:80px"></span>
+        <button onclick="this.parentElement.style.display='none';_closedBannerHidden=true" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px 8px">✕</button>
+      </div>
+
       <!-- Quick Categories -->
       <section class="section">
         <div class="section-header">
@@ -385,7 +392,11 @@
           </div>
           <a class="see-all-btn" onclick="navigateTo('menu')" data-i18n="viewAll">عرض الكل →</a>
         </div>
-        <div class="products-scroll" id="featured-products"></div>
+        <div class="products-scroll-wrap">
+          <button class="cat-scroll-btn" onclick="scrollHoriz('featured-products',-1)" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);z-index:2">‹</button>
+          <div class="products-scroll" id="featured-products"></div>
+          <button class="cat-scroll-btn" onclick="scrollHoriz('featured-products',1)" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);z-index:2">›</button>
+        </div>
       </section>
 
       <!-- Popular Products -->
@@ -396,7 +407,11 @@
             <p class="section-subtitle" data-i18n="mostOrdered">الأكثر من عند الناس</p>
           </div>
         </div>
-        <div class="products-scroll" id="popular-products"></div>
+        <div class="products-scroll-wrap">
+          <button class="cat-scroll-btn" onclick="scrollHoriz('popular-products',-1)" style="position:absolute;right:-6px;top:50%;transform:translateY(-50%);z-index:2">‹</button>
+          <div class="products-scroll" id="popular-products"></div>
+          <button class="cat-scroll-btn" onclick="scrollHoriz('popular-products',1)" style="position:absolute;left:-6px;top:50%;transform:translateY(-50%);z-index:2">›</button>
+        </div>
       </section>
 
 

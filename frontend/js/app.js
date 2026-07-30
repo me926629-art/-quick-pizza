@@ -288,33 +288,26 @@ async function initApp() {
 }
 
 let _closeTimer = null;
+let _closedBannerHidden = false;
 
 function checkRestaurantStatus() {
   const egyptOffset = 2 * 60 * 60 * 1000;
-  let _hidden = false;
+  const banner = document.getElementById('closed-banner');
+  const timerEl = document.getElementById('closed-banner-timer');
 
-  function showOverlay(remaining) {
-    let existing = document.getElementById('closed-overlay');
-    if (existing) existing.remove();
-    _hidden = false;
-
+  function showToastRemaining(remaining) {
     const hrs = Math.floor(remaining / 3600);
     const mins = Math.floor((remaining % 3600) / 60);
     const secs = remaining % 60;
-    const timeStr = (hrs > 0 ? hrs + ' ساعة ' : '') + (mins > 0 || hrs > 0 ? mins + ' دقيقة ' : '') + secs + ' ثانية';
-
-    const el = document.createElement('div');
-    el.id = 'closed-overlay';
-    el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
-    el.innerHTML =
-      '<div style="background:var(--surface,#fff);border-radius:20px;max-width:360px;width:100%;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease">' +
-        '<div style="font-size:64px;margin-bottom:12px">😴</div>' +
-        '<h2 style="margin:0 0 8px;font-size:20px;font-weight:800">المطعم مغلق الآن</h2>' +
-        '<p style="margin:0 0 12px;color:var(--text-muted,#666);font-size:14px">مواعيد العمل: 9 صباحاً لـ 4 صباحاً</p>' +
-        '<div style="direction:ltr;font-size:36px;font-weight:900;color:var(--primary,#d32f2f);font-variant-numeric:tabular-nums;margin-bottom:20px;font-family:monospace" id="close-timer">' + timeStr + '</div>' +
-      '</div>';
-    el.addEventListener('click', e => { if (e.target === el) { el.remove(); _hidden = true; } });
-    document.body.appendChild(el);
+    const msg = '😴 المطعم مغلق - متبقي ' +
+      (hrs > 0 ? hrs + ' ساعة ' : '') +
+      (mins > 0 ? mins + ' دقيقة ' : '') +
+      secs + ' ثانية على الفتح';
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#c62828;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeIn 0.3s ease;max-width:90vw;text-align:center';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.transition = 'opacity 0.5s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 3000);
   }
 
   function update() {
@@ -326,42 +319,47 @@ function checkRestaurantStatus() {
     const daySecs = 24 * 3600;
     const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
 
-    const overlay = document.getElementById('closed-overlay');
-
     if (isOpen) {
-      if (overlay) overlay.remove();
+      if (banner) banner.style.display = 'none';
       return;
     }
 
     const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
 
-    if (overlay) {
-      const timerEl = document.getElementById('close-timer');
-      if (timerEl) {
-        const hrs = Math.floor(remaining / 3600);
-        const mins = Math.floor((remaining % 3600) / 60);
-        const secs = remaining % 60;
-        timerEl.textContent = (hrs > 0 ? hrs + ' ساعة ' : '') + (mins > 0 || hrs > 0 ? mins + ' دقيقة ' : '') + secs + ' ثانية';
-      }
+    if (banner && !_closedBannerHidden) {
+      banner.style.display = 'block';
+    }
+
+    if (timerEl) {
+      const hrs = Math.floor(remaining / 3600);
+      const mins = Math.floor((remaining % 3600) / 60);
+      const secs = remaining % 60;
+      timerEl.textContent =
+        String(hrs).padStart(2, '0') + ':' +
+        String(mins).padStart(2, '0') + ':' +
+        String(secs).padStart(2, '0');
     }
   }
 
-  function onAnyClick() {
-    if (_hidden && !document.getElementById('closed-overlay')) {
-      const now = new Date();
-      const egyptTime = new Date(now.getTime() + egyptOffset);
-      const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
-      const openStart = 9 * 3600, openEnd = 4 * 3600;
-      const daySecs = 24 * 3600;
-      const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
-      if (!isOpen) {
-        const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
-        showOverlay(remaining);
-      }
+  function onProductClick(e) {
+    const btn = e.target.closest('.product-img-add, .product-add-btn, .home-hero-btn, .product-card');
+    if (!btn) return;
+    const now = new Date();
+    const egyptTime = new Date(now.getTime() + egyptOffset);
+    const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
+    const openStart = 9 * 3600, openEnd = 4 * 3600;
+    const daySecs = 24 * 3600;
+    if (totalSeconds >= openStart && totalSeconds >= openEnd) return;
+    if (totalSeconds < openStart || totalSeconds >= openEnd) {
+      const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
+      e.preventDefault();
+      showToastRemaining(remaining);
     }
   }
 
   if (_closeTimer) clearInterval(_closeTimer);
+  _closedBannerHidden = false;
+
   const now = new Date();
   const egyptTime = new Date(now.getTime() + egyptOffset);
   const totalSeconds = egyptTime.getUTCHours() * 3600 + egyptTime.getUTCMinutes() * 60 + egyptTime.getUTCSeconds();
@@ -370,13 +368,20 @@ function checkRestaurantStatus() {
   const isOpen = totalSeconds >= openStart || totalSeconds < openEnd;
 
   if (!isOpen) {
-    const remaining = totalSeconds < openStart ? openStart - totalSeconds : daySecs - totalSeconds + openStart;
-    showOverlay(remaining);
+    if (banner) banner.style.display = 'block';
   }
 
   update();
   _closeTimer = setInterval(update, 1000);
-  document.addEventListener('click', onAnyClick);
+  document.addEventListener('click', onProductClick);
+
+  // Reset hidden state on each page navigation
+  const origNav = navigateTo;
+  window._origNav = origNav;
+  window.navigateTo = function(page, data) {
+    _closedBannerHidden = false;
+    origNav(page, data);
+  };
 }
 
 // ===== SCROLL HEADER =====
@@ -644,6 +649,11 @@ function openImageZoom(src) {
   overlay.innerHTML = `<img src="${src}" style="max-width:100%;max-height:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);object-fit:contain">`;
   overlay.onclick = () => overlay.remove();
   document.body.appendChild(overlay);
+}
+
+function scrollHoriz(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 300, behavior: 'smooth' });
 }
 
 // ===== FAVORITES =====

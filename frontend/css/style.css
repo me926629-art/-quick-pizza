@@ -275,6 +275,7 @@ input, textarea, select { font-family: inherit; }
 .category-pill-name { font-size: 12px; font-weight: 800; color: #fff; position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 
 /* ===== PRODUCTS ===== */
+.products-scroll-wrap { position: relative; }
 .products-scroll {
   display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px;
   scrollbar-width: none; scroll-snap-type: x mandatory;
