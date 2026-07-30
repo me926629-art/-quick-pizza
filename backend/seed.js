@@ -103,12 +103,12 @@ const seed = async (force) => {
     { name: 'Extras', nameAr: 'إضافات', icon: '➕', order: 6, image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop' },
     { name: 'Soup', nameAr: 'شوربة', icon: '🍜', order: 7, image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop' },
     { name: 'Savory Crepes', nameAr: 'كريب حادق', icon: '🥞', order: 8, image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?w=400&h=300&fit=crop' },
-    { name: 'Calzone', nameAr: 'كالزوني', icon: '🥟', order: 9, image: 'https://images.unsplash.com/photo-1668236543090-82bbe76a5e3d?w=400&h=300&fit=crop' },
+    { name: 'Calzone', nameAr: 'كالزوني', icon: '🥟', order: 9, image: 'https://images.unsplash.com/photo-1753656681797-3234c89d6d4d?w=400&h=300&fit=crop' },
     { name: 'Italian Pasta', nameAr: 'معجنات إيطالية', icon: '🍝', order: 10, image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop' },
     { name: 'Sweet Pies', nameAr: 'فطائر حلو', icon: '🥮', order: 11, image: 'https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=400&h=300&fit=crop' },
     { name: 'Sweet Crepes', nameAr: 'كريب حلو', icon: '🫓', order: 12, image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?w=400&h=300&fit=crop' },
     { name: 'Salads & Appetizers', nameAr: 'سلطات ومقبلات', icon: '🥗', order: 13, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop' },
-    { name: 'Beverages', nameAr: 'مشروبات', icon: '🥤', order: 14, image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop' }
+    { name: 'Beverages', nameAr: 'مشروبات', icon: '🥤', order: 14, image: 'https://images.unsplash.com/photo-1711154319718-24e9aaac4497?w=400&h=300&fit=crop' }
   ]);
   const cm = {};
   cats.forEach(c => cm[c.name] = c._id);
