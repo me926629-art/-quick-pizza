@@ -71,6 +71,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
         p.description = genEn(p.descriptionAr);
         changed = true;
       }
+      if (!p.image) {
+        p.image = '/uploads/logo.jpeg';
+        changed = true;
+      }
       if (changed) { await p.save(); migrated++; }
     }
     if (migrated) console.log(`Migrated ${migrated} products`);

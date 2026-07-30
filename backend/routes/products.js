@@ -107,4 +107,14 @@ router.post('/migrate', adminAuth, async (req, res) => {
   }
 });
 
+router.post('/set-default-image', adminAuth, async (req, res) => {
+  try {
+    const imageUrl = '/uploads/logo.jpeg';
+    const result = await Product.updateMany({}, { $set: { image: imageUrl } });
+    res.json({ success: true, updated: result.modifiedCount, imageUrl });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
