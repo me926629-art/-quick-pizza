@@ -100,7 +100,7 @@ const seed = async (force) => {
     { name: 'Sandwiches', nameAr: 'سندوتشات', icon: '🥪', order: 3, image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop' },
     { name: 'Panini', nameAr: 'بانيني', icon: '🥖', order: 4, image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop' },
     { name: 'Grill & BBQ', nameAr: 'مشويات', icon: '🥩', order: 5, image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=300&fit=crop' },
-    { name: 'Extras', nameAr: 'إضافات الوجبات', icon: '➕', order: 6, image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop' },
+    { name: 'Extras', nameAr: 'إضافات', icon: '➕', order: 6, image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&h=300&fit=crop' },
     { name: 'Soup', nameAr: 'شوربة', icon: '🍜', order: 7, image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop' },
     { name: 'Savory Crepes', nameAr: 'كريب حادق', icon: '🥞', order: 8, image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?w=400&h=300&fit=crop' },
     { name: 'Calzone', nameAr: 'كالزوني', icon: '🥟', order: 9, image: 'https://images.unsplash.com/photo-1668236543090-82bbe76a5e3d?w=400&h=300&fit=crop' },

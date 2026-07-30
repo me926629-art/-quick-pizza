@@ -71,6 +71,12 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quick_piz
       if (changed) { await p.save(); migrated++; }
     }
     if (migrated) console.log(`Migrated ${migrated} products`);
+    const extrasCat = await Category.findOne({ name: 'Extras', nameAr: 'إضافات الوجبات' });
+    if (extrasCat) {
+      extrasCat.nameAr = 'إضافات';
+      await extrasCat.save();
+      console.log('Updated Extras category name');
+    }
   })
   .catch(err => console.error('MongoDB error:', err));
 

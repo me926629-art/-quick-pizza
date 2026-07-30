@@ -1776,7 +1776,7 @@ function openAddProductModal() {
   document.getElementById('pf-nameAr').value = '';
   document.getElementById('pf-desc').value = '';
   document.getElementById('pf-descAr').value = '';
-  document.getElementById('pf-price').value = '';
+  document.getElementById('pf-price').value = '0';
   document.getElementById('pf-prepTime').value = '';
   document.getElementById('pf-calories').value = '';
   document.getElementById('pf-spicy').value = '0';
@@ -1789,6 +1789,7 @@ function openAddProductModal() {
   document.getElementById('pf-image-preview').style.display = 'none';
   document.getElementById('product-form-title').textContent = '➕ إضافة منتج جديد';
   populateCategorySelect();
+  renderSizeRows([{ name: 'Regular', nameAr: 'عادي', price: '' }]);
   document.getElementById('product-form-modal').classList.remove('hidden');
 }
 
@@ -1819,6 +1820,7 @@ function openEditProductModal(productId) {
   }
   document.getElementById('product-form-title').textContent = '✏️ تعديل المنتج';
   populateCategorySelect(p.category?._id);
+  renderSizeRows((p.sizes && p.sizes.length > 0) ? p.sizes : [{ name: 'Regular', nameAr: 'عادي', price: p.price }]);
   document.getElementById('product-form-modal').classList.remove('hidden');
 }
 
@@ -1843,15 +1845,57 @@ function previewProductImage(input) {
   }
 }
 
+function renderSizeRows(sizes) {
+  const container = document.getElementById('pf-sizes-container');
+  if (!container) return;
+  container.innerHTML = sizes.map((s, i) => `
+    <div class="size-row" data-index="${i}">
+      <span class="size-name">${s.name}</span>
+      <span class="size-name-ar">(${s.nameAr})</span>
+      <input type="number" class="size-price-input" value="${s.price !== undefined && s.price !== '' ? s.price : ''}" placeholder="السعر" min="0" required>
+      ${s.name !== 'Regular' ? `<button type="button" class="size-del-btn" onclick="this.closest('.size-row').remove()">✕</button>` : ''}
+      <input type="hidden" class="size-name-input" value="${s.name}">
+      <input type="hidden" class="size-nameAr-input" value="${s.nameAr}">
+    </div>
+  `).join('');
+}
+
+function addSizeRow() {
+  const container = document.getElementById('pf-sizes-container');
+  if (!container) return;
+  const i = container.children.length;
+  const div = document.createElement('div');
+  div.className = 'size-row';
+  div.innerHTML = `
+    <input class="size-name-input" style="min-width:90px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Cairo';font-size:13px;text-align:center" placeholder="مثل Large">
+    <input class="size-nameAr-input" style="min-width:70px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Cairo';font-size:13px;text-align:center" placeholder="مثل كبيرة">
+    <input type="number" class="size-price-input" style="width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Cairo';font-size:14px;text-align:center" placeholder="السعر" min="0" required>
+    <button type="button" class="size-del-btn" onclick="this.closest('.size-row').remove()">✕</button>
+  `;
+  container.appendChild(div);
+}
+
+function getSizesFromForm() {
+  const rows = document.querySelectorAll('#pf-sizes-container .size-row');
+  return Array.from(rows).map(row => ({
+    name: row.querySelector('.size-name-input')?.value || row.querySelector('.size-name')?.textContent.trim() || 'Regular',
+    nameAr: row.querySelector('.size-nameAr-input')?.value || row.querySelector('.size-name-ar')?.textContent.replace(/[()]/g, '').trim() || 'عادي',
+    price: Number(row.querySelector('.size-price-input').value) || 0
+  }));
+}
+
 async function handleProductForm(e) {
   e.preventDefault();
   const id = document.getElementById('pf-id').value;
+  const sizes = getSizesFromForm();
+  const basePrice = sizes.length > 0 ? sizes[0].price : 0;
   const data = {
     name: document.getElementById('pf-name').value,
     nameAr: document.getElementById('pf-nameAr').value,
     description: document.getElementById('pf-desc').value,
     descriptionAr: document.getElementById('pf-descAr').value,
-    price: Number(document.getElementById('pf-price').value),
+    price: basePrice,
+    sizes: sizes,
     category: document.getElementById('pf-category').value,
     prepTime: Number(document.getElementById('pf-prepTime').value) || 0,
     calories: Number(document.getElementById('pf-calories').value) || 0,
@@ -1886,7 +1930,6 @@ async function handleProductForm(e) {
       await apiPut(`/api/products/${id}`, data);
       showToast('تم تعديل المنتج بنجاح ✅');
     } else {
-      data.sizes = [{ name: 'Regular', nameAr: 'عادي', price: data.price }];
       data.toppings = [];
       await apiPost('/api/products', data);
       showToast('تم إضافة المنتج بنجاح ✅');

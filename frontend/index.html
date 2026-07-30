@@ -190,16 +190,20 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="input-group">
-            <span class="input-icon">💰</span>
-            <input type="number" id="pf-price" placeholder="السعر الأساسي" min="0" required>
-          </div>
-          <div class="input-group">
             <span class="input-icon">📁</span>
             <select id="pf-category" class="input-group select-input" required>
               <option value="">اختر القسم</option>
             </select>
           </div>
         </div>
+        <div style="margin:12px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong style="font-size:14px">💰 الأسعار حسب الحجم</strong>
+            <button type="button" class="btn btn-outline btn-xs" onclick="addSizeRow()" style="font-size:12px;padding:4px 10px">➕ إضافة حجم</button>
+          </div>
+          <div id="pf-sizes-container"></div>
+        </div>
+        <input type="hidden" id="pf-price" value="0">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
           <div class="input-group">
             <span class="input-icon">⏱️</span>

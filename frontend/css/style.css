@@ -713,6 +713,15 @@ input, textarea, select { font-family: inherit; }
 
 .check-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .check-label input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
+.size-row { display:flex; gap:8px; align-items:center; margin-bottom:8px; background:var(--surface-2); padding:8px 10px; border-radius:8px; border:1px solid var(--border); }
+.size-row .size-name { min-width:80px; font-size:13px; font-weight:700; color:var(--text-secondary); }
+.size-row .size-name-ar { min-width:60px; font-size:13px; color:var(--text-muted); }
+.size-row input[type="number"] { width:100px; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-family:'Cairo'; font-size:14px; text-align:center; outline:none; transition:border 0.2s; }
+.size-row input[type="number"]:focus { border-color:var(--primary); }
+.size-del-btn { background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer; padding:4px 6px; line-height:1; opacity:0.5; transition:0.15s; }
+.size-del-btn:hover { opacity:1; }
+.add-size-btn { display:inline-flex; align-items:center; gap:4px; padding:6px 14px; border-radius:6px; border:1px dashed var(--border); background:transparent; color:var(--text-muted); font-family:'Cairo'; font-size:12px; font-weight:700; cursor:pointer; transition:0.15s; }
+.add-size-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-bg); }
 .admin-notif-btn { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 14px; cursor: pointer; transition: 0.15s; line-height: 1; }
 .admin-notif-btn:hover { border-color: var(--warning); background: var(--warning-bg); }
 .admin-notif-badge { position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; border-radius: 8px; background: var(--warning); color: #fff; font-size: 10px; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 3px; }
@@ -741,6 +750,7 @@ input, textarea, select { font-family: inherit; }
 .btn-block { width: 100%; }
 .btn-lg { padding: 14px 28px; font-size: 16px; }
 .btn-sm { padding: 8px 18px; font-size: 13px; }
+.btn-xs { padding: 4px 12px; font-size: 11px; }
 
 /* ===== MODALS ===== */
 .modal { position: fixed; inset: 0; z-index: 10002; display: flex; align-items: flex-end; justify-content: center; }
