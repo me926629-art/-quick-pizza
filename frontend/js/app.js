@@ -1430,7 +1430,7 @@ function showContactInfo() {
         <p style="margin:6px 0"><strong>📍 الفرع:</strong> الأقصر - شارع التلفزيون</p>
         <p style="margin:6px 0"><strong>📞 تليفون:</strong> 2272970 - 2282002</p>
         <p style="margin:6px 0"><strong>📱 موبايل:</strong> 01111053251 - 01028700900 - 01281078250</p>
-        <p style="margin:6px 0"><strong>🌐 الموقع:</strong> <a href="https://quick-pizza-production.up.railway.app" target="_blank" rel="noopener" style="color:var(--primary)">quick-pizza-production.up.railway.app</a></p>
+        <p style="margin:6px 0"><strong>📘 فيسبوك:</strong> <a href="https://www.facebook.com/share/1ECzUUgtqF/?mibextid=wwXIfr" target="_blank" rel="noopener" style="color:var(--primary)">تابعنا على فيسبوك</a></p>
       </div>
       <p style="color:var(--text-muted);font-size:13px">ننتظرك من 9 صباحاً لـ 4 صباحاً</p>
       <button onclick="this.closest('div[style]').remove()" style="margin-top:16px;padding:10px 32px;border:none;border-radius:8px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;cursor:pointer">تم</button>
